@@ -1,0 +1,408 @@
+\documentclass[11pt]{article}
+\usepackage{fullpage}
+
+\RequirePackage{amsthm,amsmath,amssymb}
+\RequirePackage[colorlinks,citecolor=blue,urlcolor=blue]{hyperref}
+\RequirePackage{hypernat}
+\RequirePackage{graphicx}
+\RequirePackage{enumerate}
+
+\newcommand{\reals}{\mathbb{R}}
+\newcommand{\trans}{\mathrm{T}}
+\DeclareMathOperator*{\Tr}{Tr}
+\DeclareMathOperator*{\diag}{diag}
+\newcommand{\Normal}[1][]{\mathcal{N}_{#1}}
+\newcommand{\Wishart}[1][]{\mathcal{W}_{#1}}
+\DeclareMathOperator*{\argmin}{argmin}
+
+
+\begin{document}
+\begin{center}
+    \LARGE{\textbf{%
+        Notes on ``Implementing regularization implicitly\ldots''%
+    }}
+    
+    \Large{%
+        Patrick O.\ Perry%
+    }
+\end{center}
+
+\section*{Notation}
+
+For real $\mu$ and positive real $\sigma$, let $\Normal(\mu, \sigma^2)$ denote the
+normal (Gaussian) distribution with mean $\mu$ and variance $\sigma^2$.  For
+$d$-dimensional real vector $\mu$ and $d \times d$ positive-semidefinite real matrix
+$\Sigma$, let $\Normal[d](\mu, \Sigma)$ denote the $d$-dimensional multivariate
+normal distribution with mean $\mu$ and covariance matrix $\Sigma$.  Let $I_d$
+denote the $d\times d$ identity matrix.  Let $1_d = (1, \ldots, 1)$ be the
+vector of all ones in $\reals^d$. For any square matrix $A$, let $|A|$
+denote the determinant of $A$.
+
+
+\section{Bayesian interpretation of regularization}\label{S:Bayesianization}
+
+One interpretation of regularization is as the ``Bayesianization'' of a problem.  
+The canonical example is regularized least squares regression.  Let $\beta$
+be an unknown parameter vector in $\reals^d$ and let
+$(x_1, y_1), \ldots, (x_n, y_n)$ be independent observations.  For each $i$, the
+vector $x_i$ is a nonrandom element of $\reals^d$, and $y_i$ is distributed as
+a normal random variable with mean $\beta^\trans x_i$ and variance $\sigma^2$,
+denoted $y_i \sim \Normal(\beta^\trans x_i, \sigma^2)$.
+
+The data likelihood is
+\[
+    L(\beta \mid y_1, \ldots, y_n)
+    =
+    \Big(\frac{1}{\sqrt{2 \pi} \sigma}\Big)^n
+    \exp\Big\{
+        -\frac{1}{2 \sigma^2} \sum_{i=1}^{n} (y_i - \beta^\trans x_i)^2
+    \Big\}.
+\]
+Often, we estimate $\beta$ by the maximum likelihood estimator (MLE), the value
+that maximizes $L(\cdot \mid y_1, \ldots, y_n)$.  Operationally, this is
+equivalent to taking the value that minimizes
+$-2 \sigma^2 \log L(\cdot \mid y_1, \ldots, y_n)$.  Denote the MLE by
+$\hat \beta$, so that
+\[
+    \hat \beta
+        =
+        \argmin_\beta
+            \sum_{i=1}^{n}
+                (y_i - \beta^\trans x_i)^2
+\]
+Note that the normalization constant $(1/\sqrt{2 \pi} \sigma)^n$ does not affect the
+optimization.  Sometimes we bias our estimate of $\beta$ towards the
+origin by introducing a penalty term.  In the case of $L^2$-penalization, we
+fix positive $\eta$ and then estimate $\beta$ by $\hat \beta_\eta$, given by
+\[
+    \hat \beta_\eta
+        =
+        \argmin_\beta
+            \sum_{i=1}^{n}
+                (y_i - \beta^\trans x_i)^2
+            +
+            \frac{1}{\eta}
+            \sum_{j=1}^{d}
+                \beta_j^2.
+\]
+The penalty term stabilizes the estimation by reducing the variance of
+the estimate.
+
+Suppose we have prior information about $\beta$, specifically that $\beta$ was
+drawn as $\Normal[d](0, \tau^2 I_d)$ with known $\tau^2$.  After observing the
+data, the posterior distribution for $\beta$, denoted
+$p(\beta \mid y_1, \ldots, y_n)$, is proportional to
+\[
+    L(\beta \mid y_1, \ldots, y_n)
+    \cdot
+    \Big(\frac{1}{\sqrt{2 \pi}\tau}\Big)^d
+    \exp\Big\{ - \frac{1}{2 \tau^2} \sum_{j=1}^{d} \beta_j^2 \Big\}
+\]
+The maximum \textit{a posteriori} probability (MAP) estimator of $\beta$ is the
+value that maximizes $p(\cdot \mid y_1, \ldots, y_n)$, equivalently the value
+that minimizes $-2 \sigma^2 \log p(\cdot \mid y_1, \ldots, y_n)$.  Note that the
+MAP estimator is equal to $\hat \beta_{\tau^2 / \sigma^2}$, the $L^2$-regularized
+least squares regression estimator with penalty factor $\sigma^2/\tau^2$.  Thus,
+$L^2$-regularized least squares regression can be interpreted as MAP estimation
+with a normal prior on the coefficient vector.
+
+More generally, we can consider arbitrary prior distributions for $\beta$.  MAP
+estimation for different priors leads to different regularized least squares
+problems.  For example, MAP estimation under the Laplace prior with density
+$\prod_{j=1}^d (1/2\lambda) \exp(-|\beta_j|/\lambda)$ leads to
+the the $L^1$-regularized optimization problem
+\[
+    \argmin_\beta
+        \sum_{i=1}^{n}
+            (y_i - \beta^\trans x_i)^2
+        +
+        \frac{2 \sigma^2}{\lambda}
+        \sum_{j=1}^{d}
+            |\beta_j|.
+\]
+For $p(\cdot)$ a general prior density on $\beta$, we get the MAP estimator
+\[
+    \argmin_\beta
+        \sum_{i=1}^{n}
+            (y_i - \beta^\trans x_i)^2
+        -
+        2 \sigma^2 \log p(\beta).
+\]
+Conversely, the penalized least squares problem
+\[
+    \argmin_\beta
+        \sum_{i=1}^{n}
+            (y_i - \beta^\trans x_i)^2
+        +
+        1/\eta \cdot g(\beta)
+\]
+can be identified with the MAP estimator from prior density proportional to
+\(
+    \exp\{ -g(\beta) / 2 \sigma^2 \eta \}.
+\)
+If the integral $\int  \exp\{ -g(\beta) / 2 \sigma^2 \eta \} \,d\beta$ diverges
+then the prior is improper; otherwise this defines a valid probability distribution.
+
+The Bayesian interpretation of regularization extends beyond least squares
+regression.  Suppose $\beta$ is an unknown parameter and we observe data $x$ drawn
+from a distribution with density $q(\cdot | \beta)$.  If $\beta$ is
+drawn from a distribution with density $p(\cdot)$, then the posterior distribution
+for $\beta$ after having observed $x$ has density proportional
+to $q(x | \beta) \, p(\beta)$.  The MAP estimator of $\beta$ is
+\[
+    \hat \beta
+        =
+        \argmin_\beta
+            -
+            \log q(x | \beta)
+            -
+            \log p(\beta).
+\]
+Conversely, the optimization problem
+\[
+    \hat \beta
+        =
+        \argmin_\beta
+            f(\beta, x)
+            +
+            1/\eta
+            \cdot
+            g(\beta)
+\]
+admits a Bayesian interpretation.  Given such a problem, let
+\begin{gather*}
+    q(x \mid \beta)
+        =
+        \frac{\exp\{ -\tfrac{1}{2} f(\beta, x) \}}
+             {\int \exp\{ -\tfrac{1}{2} f(\beta, x') \} \, dx'}, \\
+    p(\beta)
+        \propto
+            \exp\{-g(\beta)/2 \eta\}
+            \cdot
+            \int \exp\{ -\tfrac{1}{2} f(\beta, x') \} \, dx'.
+\end{gather*}
+Assuming the integral in the denominator of $q(x \mid \beta)$ exists, this
+defines a distribution for $x$ parametrized by $\beta$ and a prior distribution for
+$\beta$ (possibly improper).  The optimization problem is equivalent to MAP
+estimation of $\beta$ after observing $x$ drawn with density $q(x\mid\beta)$, with
+prior density $p(\beta)$ for $\beta$.
+
+There are multiple Bayesianizations of every regularization problem.  For any
+positive number $\alpha_0$ and function $f_0$,
+\[
+    \argmin_\beta
+        f(\beta, x)
+        +
+        1/\eta
+        \cdot
+        g(\beta)
+\]
+has the same solution as
+\[
+    \argmin_\beta
+        \big(\alpha_0 \cdot f(\beta, x) + f_0(x)\big)
+        +
+        \alpha_0/\eta \cdot g(\beta).
+\]
+Varying $\alpha_0$ and $f_0$ gives rise to different distributions for $x$ and
+priors for $\beta$.
+
+
+\section{A Bayesianization of the regularized eigenvector problem}
+
+One Bayesianization of the regularized eigenvector problem involves the Wishart
+distribution on positive-definite matrices.  Recall that if $\Sigma$ is
+positive-semidefinite and $x_1, \ldots, x_n$ are independent
+$\Normal[d](0, \Sigma)$ random vectors, then the scaled sample covariance matrix
+defined by $A = \sum_{i=1}^n x_i x_i^\trans$ is said to follow the $d$-dimensional
+Wishart distribution with shape parameter $\Sigma$ and scale $n$.  We denote
+this by $A \sim \Wishart[d](\Sigma, n)$.  If $\Sigma$ is positive-definite and $n \geq d$, then
+$A$ has density over the set of positive-definite matrices given by
+\[
+    f_{\Wishart}(A \mid \Sigma, n)
+    =
+    \frac{
+        |A|^{(n-d-1)/2} \exp\{-\tfrac{1}{2} \Sigma^{-1} \bullet A \}
+    }{
+        2^{dn/2} \pi^{d(d-1)/4}
+        |\Sigma|^{n/2}
+        \prod_{j=1}^{d} \Gamma\big(\tfrac{1}{2} (n + 1 - j)\big)
+    },
+\]
+where $\Gamma(\cdot)$ is the Gamma function.  For $d > 1$ this generalizes the
+chi-squared distribution.  If $S = \tfrac{1}{n} A$ is a sample covariance matrix
+with $n$ degrees of freedom, then $S$ has density over the set of
+positive-definite matrices equal to
+\(
+    n^d \cdot f_{\Wishart}(n S \mid \Sigma, n).
+\)
+
+Recall that the regularized eigenvector problem takes the form
+\begin{equation}\label{E:evec-reg}
+    \argmin_{\Phi}
+        S \bullet \Phi
+        +
+        1/\eta \cdot F(\Phi),
+\end{equation}
+where $F$ has support on the set 
+\(
+    \{ \Phi : \Tr(\Phi) = 1, \Phi \succeq 0 \}.
+\)
+It is convenient to think of $S$ as a sample covariance matrix with $n$ degrees
+of freedom, so that $A = n S$ is a Wishart matrix.
+The form of~\eqref{E:evec-reg} suggests interpreting $\Phi^{-1}$ as the
+expectation of $S$, so that $\Phi$ is is a precision matrix
+(the inverse of a covariance matrix).
+
+Solving \eqref{E:evec-reg} is equivalent to solving the following:
+\begin{equation*}
+    \argmin_{\Phi}
+        \big[
+            (n S) \bullet \Phi
+            -
+            (n-d-1) \log |n S|
+            -
+            n \log |\Phi|
+        \big]
+        +
+        \big[
+            n/\eta \cdot F(\Phi)
+            +
+            n \log |\Phi|
+        \big].
+\end{equation*}
+Recognize this as the MAP estimator for $\Phi$ after observing $S$, a 
+sample covariance matrix with $n$ degrees of freedom and expectation
+$\Phi^{-1}$; the prior density for $\Phi$ is supported on the
+set $\{ \Phi : \Tr(\Phi) = 1, \Phi \succeq 0\}$, and is given by
+\begin{equation}\label{E:prior-phi}
+    p_{F}(\Phi | n, \eta)
+        \propto
+        \frac{
+            \exp\{-\tfrac{n}{2\eta} F(\Phi) \}
+        }{
+            |\Phi|^{n/2}
+        }.
+\end{equation}
+We consider $n$ and $\eta$ to be a hyper-parameters.  As before, when
+$\int p_{F}(\Phi | n, \eta) d\Phi$ diverges, the prior is improper.
+
+
+\subsection{Priors corresponding to orthogonally invariant penalties}
+
+When $F$ is orthogonally invariant, $p_F(\Phi | n, \eta)$ depends only on the
+eigenvalues of $\Phi$.  Letting $\Phi = O \Lambda O^\trans$ be the
+eigendecomposition of $\Phi$, our prior belief is that $O$ is Haar-distributed over
+the group of $d\times d$ orthogonal matrices.  Set
+$\Lambda = \diag(\lambda_1, \ldots, \lambda_d)$.  Under orthogonal invariance,
+the prior $p_F(\Phi | n, \eta)$ is completely specified by defining
+$p_F(\Lambda | n, \eta)$.  In what follows, we derive the priors corresponding
+to the choices for $F$ given in Section~3 of ``Implementing regularization
+implicitly\ldots''.
+
+\subsubsection*{Generalized Entropy}
+
+On the simplex, for $F_H$ being Generalized Entropy,
+\begin{align*}
+    F_H(\Lambda)
+        &= \Tr(\Lambda \log \Lambda) - \Tr(\Lambda) \\
+        &= \log \Big[ \prod_{j=1}^d \lambda_j^{\lambda_j} \Big] - 1.
+\end{align*}
+Thus, from \eqref{E:prior-phi} it follows that
+\[
+    p_{F_H}(\Lambda | n, \eta)
+        \propto
+            \prod_{j=1}^d
+                \exp\Big\{
+                    -\tfrac{n}{2}
+                    \big(
+                        \tfrac{\lambda_j}{\eta}
+                        +
+                        1
+                    \big)
+                    \log \lambda_j
+                \Big\}.
+\]
+This distribution does not follow a recognizable parametric form.
+
+
+\subsubsection*{Log-determinant}
+
+With $F_D$ being Log-determinant,
+\begin{align*}
+    F_D(\Lambda)
+        &= -\log |\Lambda| \\
+        &= -\log \Big[ \prod_{j=1}^d \lambda_j \Big].
+\end{align*}
+Thus,
+\[
+    p_{F_D}(\Lambda | n, \eta)
+        \propto
+            \prod_{j=1}^d
+                \lambda_j^{n \cdot (\eta^{-1} - 1)/2}.
+\]
+When $n \cdot (\eta^{-1} - 1) > -2$, this defines a proper density, specifically
+that of the Dirichlet distribution with parameter vector $\alpha 1_d$, where
+$\alpha = \tfrac{n}{2} \cdot (\eta^{-1} - 1) + 1$.
+
+
+\subsubsection*{Standard $k$-norm}
+
+For the Standard $k$-norm function,
+\[
+    F_k(\Lambda)
+        = \frac{1}{k} \Tr(\Lambda^k)
+        = \frac{1}{k} \sum_{j=1}^d \lambda_j^k
+\]
+Thus,
+\[
+    p_{F_k}(\Lambda | n, \eta)
+        \propto
+            \exp\Big\{
+                -
+                \frac{n}{2k \eta}
+                \sum_{j=1}^{d} \lambda_j^k
+                -
+                \frac{n}{2}
+                \sum_{j=1}^{d} \log \lambda_j
+            \Big\}.
+\]
+As with Generalized Entropy, this does not correspond to a recognizable
+distribution.
+
+
+\subsection{Discussion}
+
+The priors in this section have modes where the eigenvalues are all equal,
+so that $p_F(\Phi|n, \eta)$ is maximized when $\Phi = \tfrac{1}{d} I_d$.  This
+follows since $p_F(\Phi|n, \eta)(\Phi)$ is log-concave in the eigenvalues of
+$\Phi$ and has support where the eigenvalues are in the simplex.
+
+As noted at the end of Section~\ref{S:Bayesianization}, the Bayesianization of
+an optimization problem is not unique.  This makes interpreting the prior
+$p_F(\cdot | n, \eta)$ difficult.  At first, it is troubling that the prior
+depends on $n$, a parameter that appears nowhere in the optimization problem.
+However, this has to be the case; there needs to be a parameter indicating
+the ``precision'' of the data, $S$.
+
+The Wishart is not the only possible distribution for $n S$.  Recall that the
+Wishart distribution arrises when the the density of $S$ is supported on
+$\{ S : S \succ 0 \}$, and its log is proportional to
+\[
+    n S \bullet \Phi
+        - (n-d-1) \log |n S|.
+\]
+We could have pursued two alternatives:
+\begin{enumerate}
+    \item Instead of multiplying by $n$ and adding $-(n-d-1) \log |n S|$ to the
+        optimization criterion, we could have added a different function of
+        $|S|$.
+    \item Instead of considering the density of $S$ to be supported over
+        all positive-definite matrices, we could have considered it to be
+        supported over a subset of the positive-definite matrices
+        (e.g. valid graph Laplacians).  This would change the normalization
+        constant (which depends on $\beta$), and would consequently change the
+        prior for $\beta$.
+\end{enumerate}
+
+\end{document}
