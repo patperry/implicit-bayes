@@ -1,0 +1,10 @@
+\begin{thebibliography}{}
+
+\bibitem[\protect\citeauthoryear{Mahoney and Orecchia}{Mahoney and
+  Orecchia}{2010}]{mahoney2010implementing}
+Mahoney, M.~W. and L.~Orecchia (2010).
+\newblock Implementing regularization implicitly via approximate eigenvector
+  computation.
+\newblock arXiv:1010.0703v1 [cs.DS].
+
+\end{thebibliography}

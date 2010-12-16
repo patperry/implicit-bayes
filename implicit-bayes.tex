@@ -1,0 +1,68 @@
+\documentclass{article}
+\RequirePackage[OT1]{fontenc}
+\RequirePackage{fullpage}
+\RequirePackage{amsbsy,amsmath,amssymb,amsthm}
+\RequirePackage{natbib}
+
+\begin{document}
+
+\title{
+  Regularized Eigenvector Estimation
+}
+\author{
+  Patrick O.\ Perry
+  \and
+  Michael W.\ Mahoney
+}
+\date{
+  \today
+}
+\maketitle
+
+\begin{abstract}
+\end{abstract}
+
+\section{Introduction}
+\label{S:introduction}
+
+Given a weighted symmetric graph, $G$, we can construct a Laplacian, $L$.  The Laplacian is a linear operator on functions of the graph vertices.  The eigenvector of $L$ corresponding to the smallest nontrivial eigenvalue can be used to partition the nodes of $G$ into two sets such that the conductance of the partition is good.  This is the idea of spectral clustering.   The eigenvector corresponding
+to the smallest eigenvalue solves an optimization problem:
+\[
+\begin{aligned}
+  & \underset{x}{\text{minimize}}
+  & & x' L x \\
+  & \text{subject to}
+  & & x' x = 1
+\end{aligned}
+\]
+The solution vector $x$ facilitiates partitioning the vertices of the graph as
+\begin{align*}
+  S(x,t)      &= \{ i : x_i >= t \} \\
+  \bar S(x,t) &= \{ i : x_i < t \}.
+\end{align*}
+Cheeger's inequality gaurantees that for appropriate choice of $t$, the partition has good conductance properties.
+
+Alternatively, we can define a random walk on the graph $G$, also known as a diffusion.  Three possible choices are edge-weighted random walk, PageRank surfer, and heat diffusion.  The ``bottlenecks'' in the random walks reveal structure in the graph.  Given a diffusion operator, $M$, we can find a partition of the nodes by taking an initial vector $x_0$ with positive entries, choosing time horizon, $k$, and a threshold, $t$.  The first set of partition is $S(M^k x_0, t)$; the other set is the complement.  If we let $k\to \infty$, then the Laplacian-based partition will agree with the diffusion-based partition for many (all?) types of diffusion.  We can also get a ``local'' partition by taking $x_0$ to have support over a small set of nodes and chosen a small time-horizon~$k$.
+
+\cite{mahoney2010implementing} show that diffusion operators arrise as solutions to regularized, relaxed Laplacian eigenvector computations.  Specifically, they show that for certain choices of ``penalty'' function, $F$, the solution of an SDP relaxation of the Laplacian eigenvector optimization problem is a diffusion operator.  The SDP relaxation of the eigenvector problems considers $x$ to be a Gaussian random variable with zero mean and covariance matrix $X$, the problem then, is to choose $X$ to minimize the expectation of $x' L x$, equivalently $\mathrm{tr}(L X)$.  The regularized relaxed problem is
+\[
+\begin{aligned}
+  & \underset{X}{\text{minimize}}
+  & & \mathrm{tr}(LX) + F(X) \\
+  & \text{subject to}
+  & & \mathrm{tr}(X) = 1 \\
+  & & & X \succeq 0
+\end{aligned}.
+\]
+
+\textit{\textbf{Issue (4) from email.} The is a big issue lurking which we haven't discussed at all: specifically, we are essentially arguing that there is a connection between graph diffusions and covariance matrices.  The only connection, though, is that two seemingly-unrelated problems have the same solution.  Right now, that seems like an accident, and I would like to understand it better.}
+
+The role of the penalty function, $F$, is to regularize the solution of the optimization problem.  Regularization can often be associated with prior assumptions on the data.  In linear regression, and $L^2$ penalty corresponds to a Gaussian prior on the coefficent vector, and the solution to the regularized regression problem is the maximium a posterior (MAP) estimator.  In the same setting, $L^1$ regularization corresponds to a Laplace prior on the coefficent vector.
+
+Empirical experience has shown that certain diffusions are more or less appropriate for certain classes of graphs (expanders, low-dimension, etc.).  No one yet understands why this is the case.  Our hope is to shed light on the issue by investigating the role of $F$.  For each class of graphs, there is a corresponding class of prior distributions.  Each prior distributions manifest in a different penalty function, $F$.  Thus, the diffusion associate with $F$ will be most appropriate for graphs coming from the class determined by the prior distribution.
+
+
+\bibliographystyle{chicagoa}
+\bibliography{refs.bib}
+
+\end{document}
