@@ -1,0 +1,136 @@
+\documentclass{article}
+\usepackage{fullpage}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE Notes on ``Implementing regularization implicitly\ldots'' (10/8/2010)}
+    {\Large Patrick O.\ Perry}
+\end{center}
+    
+\section{Gaussian Models for Low-Dimensional Graphs and Expanders}
+
+Suppose we have a graph, $\mathcal{G}$ with $n$ vertices.  When we
+say that $\mathcal{G}$ is ``low-dimensional,'' we mean we can embed the
+vertices in $\mathbb{R}^d$ with $d \ll n$ such that Euclidean distance
+for the embedded points agrees with geodesic distance on the graph.  When
+we say that $\mathcal{G}$ is an ``expander,'' we mean that no low-dimensional
+Euclidean embedding preserves the distances.
+
+These concepts have analogues for sequences of high-dimensional,
+independent and identically distributed (i.i.d.) points.  Let $p$ be
+a dimension, conceptually big.  Suppose $x_1, \ldots, x_n$ is a sequence
+of independent Gaussian-distributed vectors in $\mathbb{R}^d$ with population
+mean zero and covariance matrix $\Sigma \in \mathbb{R}^{p \times p}$ 
+(which is positive semi-definite).  One way of generating such a sequence
+is the following:
+\begin{enumerate}
+    \item draw $Z$ in $\mathbb{R}^{n \times p}$, a random matrix whose
+        entries are independent Gaussians having mean $0$ and variance $1$;
+    \item compute $\Sigma^{1/2}$ such that
+        $[\Sigma^{1/2}] [\Sigma^{1/2}]^T = \Sigma$ and set
+        $X = Z [\Sigma^{1/2}]^{T}$;
+    \item take $x_1, \ldots, x_n$ to be the rows of $Z$.
+\end{enumerate}
+If $\Sigma$ has low rank, $d$, then $x_1, \ldots, x_n$ can be projected
+into a $d$-dimensional subspace such that distances between the points
+are preserved.  The subspace is spanned by the $d$ eigenvectors of
+$\Sigma$ corresponding to its nonzero eigenvalues.  If $\Sigma$ is
+a scalar multiple of the identity matrix, then no such low-dimensional
+projection exists; for $n \geq p$, the $x$'s span $\mathbb{R}^p$ with
+probability $1$, and they are not concentrated in any low-dimensional
+subspace [this is a little hand-wavy].
+
+In general the ``low-dimensionality'' and ``expanderness'' of a
+high-dimensional distribution is determined by the eigenvalues of $\Sigma$,
+its covariance matrix.  The projection onto the eigenvector of $\Sigma$
+corresponding to eigenvalue $\lambda$ captures fraction
+$\lambda / \mathrm{Tr}(\Sigma)$ of the total variance.  For low-dimensional
+distributions, most of the eigenvalues are zero.  For expanders, the
+eigenvalues are all about equal.  For in-between, the eigenvalues decay
+slowly to zero.
+
+
+\section{Posterior Estimates of Population Covariance}
+
+A natural estimation problem is to be given random points
+and to try to estimate the population covariance matrix for their
+generating distribution.  Often, we will have prior knowledge about
+the covariance matrix, which can use to aid estimation.
+
+Let $x_1, \ldots, x_n$ be i.i.d., drawn from $\mathrm{Normal}(0, \Sigma)$
+for unknown $\Sigma$.  Matrix $\Sigma^{-1}$, is called the precision
+matrix.  Set $\tau = \mathrm{Tr}(\Sigma^{-1})$ and
+$\Phi = \tau^{-1} \Sigma^{-1}$.  Say we have prior information that the
+eigenvectors of $\Phi$ are uniformly (Haar) distributed, and that the
+eigenvalues are Dirichlet distributed with parameter vector
+$(\alpha, \ldots, \alpha)$ for some $\alpha > 0$.  The prior density
+of $\Phi$ over the space of positive-definite matrices given by
+\[
+    \pi(\Phi) \propto |\Phi|^{\alpha-1}
+\]
+(the proportionality constant depends only on $\alpha$ and $p$).
+Assume a uniform prior for $\tau$.
+Define
+\[
+    A = \sum_{i=1}^n x_i x_i^T,
+\]
+the unnormalized sample covariance matrix.  Given $\Phi$, matrix $A$
+follows a Wishart distribution with shape $\Sigma$ and scale $n$.  Its
+density is
+\[
+    f(A | \Phi, \tau)
+        \propto
+        \exp\{
+            -\tfrac{\tau}{2} A \cdot \Phi
+            + \tfrac{n}{2} \log | \Phi| + \tfrac{np}{2} \log \tau
+        \}
+\]
+(here, the proportionality constant depends only on $A$ and $n$).  The
+posterior distribution for $\Phi$ and $\tau$ is the proportional to the
+product of the prior and the likelihood:
+\[
+    \pi(\Phi, \tau | A)
+        \propto
+        \exp\{
+            -\tfrac{\tau}{2} A \cdot \Phi
+            + \tfrac{n}{2} \log | \Phi| + \tfrac{np}{2} \log \tau
+            +
+            (\alpha - 1)
+            \log |\Phi|
+        \}
+\]
+Collecting logs, taking logs and multiplying by $-2$, the maximum a
+posteriori (MAP) estimate of $\Phi$ and $\tau$ is the solution to the
+optimization problem:
+\begin{align*}
+    \min \qquad &\tau A \cdot \Phi - (n + 2 (\alpha - 1)) \log |\Phi| + np \log \tau \\
+    \text{s.t.} \qquad & I \cdot \Phi = 1 \\
+    \phantom{\text{s.t.}} \qquad & \Phi \succeq 0 \\
+    \phantom{\text{s.t.}} \qquad & \tau \geq 0
+\end{align*}
+
+The solution is
+\[
+    \Phi = - [\tfrac{1}{n + (2\alpha - 1)}(\lambda I - \tau A)]^{-1}
+\]
+
+\ldots to be continued
+
+[This isn't quite the optimization problem in the paper, but it's close;
+the solution takes the same form as the pagerank/log-determinant instance.
+I'm not sure what to do about the $\tau$ parameter.  We can either assume
+it is a known constant, or else choose a prior for it, which will then
+enter into the optimization problem.  Right now, the prior is uniform.
+
+The current formulation works forwards from a model instead of backwards
+from an optimization problem.  Personally, I think the presentation is
+much more convincing this way.  Unfortunately, the optimization problem
+is a modified form of what is in the earlier drafts.  For log-determinant
+penalty, things are still pretty simple  I don't know how easy it is to get
+the heat kernel and truncated random walk solutions.]
+
+\end{document}
