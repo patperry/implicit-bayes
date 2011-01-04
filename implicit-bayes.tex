@@ -12,6 +12,8 @@
 \newcommand{\Wishart}[1][]{\mathcal{W}_{#1}}
 \DeclareMathOperator*{\argmin}{argmin}
 
+\newcommand{\prob}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
 
 \begin{document}
 
@@ -72,6 +74,89 @@ The role of the penalty function, $F$, is to regularize the solution of the opti
 
 Empirical experience has shown that certain diffusions are more or less appropriate for certain classes of graphs (expanders, low-dimension, etc.).  No one yet understands why this is the case.  Our hope is to shed light on the issue by investigating the role of $F$.  For each class of graphs, there is a corresponding class of prior distributions.  Each prior distributions manifest in a different penalty function, $F$.  Thus, the diffusion associate with $F$ will be most appropriate for graphs coming from the class determined by the prior distribution.
 
+
+\section{Sample Laplacians}
+
+To cast graph partitioning as an estimation problem, we need to take
+into about the data-generating sampling mechanism.  Suppose
+$G~=~(V,E)$ is an undirected graph, where $V = \{ 1, \ldots, N \}$,
+and let $w : E \to \reals_+$ assign nonnegative weights to the edges
+of the graph.  Set $W~=~\sum_{e \in E} w(e)$ to be the total edge
+weight and set $L$ to be the combinatorial Laplacian of the graph.
+
+In problems of practical interest, we do not observe the graph in
+entirety, but merely a sample of its edges.  There are many schemes for sampling
+graphs, including snowball and traceroute sampling (TODO: add refs.).
+We presume a simplistic sampling scheme which, although not
+universally applicable, is at least amenable to theoretical analysis.
+Specifically, we suppose that the edges we observed have been sampled
+independently according to the weights specified by $w$, which may be
+unknown.
+
+The data generating mechanism is as follows: $n$ edges are sampled
+independently and in the same manner.  The $i$th edge, $e_i$ is determined by
+choosing a random edge from $E$, with probability proportional to the
+weight of the edge; for fixed edge $e$, the probability of $e_i$ being
+equal to $e$ is $w(e) / W$.  The sample degree of vertex $v$ is
+\[
+  d_n(v) = \sum_{i = 1}^{n} 1\{ v \in e \};
+\]
+the sample weight of edge $e$ is
+\[
+  w_n(e) = \sum_{i = 1}^{n} 1\{ e_i = e \};
+\]
+and the sample Laplacian is
+\[
+  L_n = D_n - W_n,
+\]
+where $D_n = \diag(d_n(1), \ldots, d_n(N))$ and
+$W_n(u,v) = w_n(\{u,v\})$.
+
+For large $n$, we approximate the distribution of $L_n$ by a Wishart
+matrix.  To motivate the approximation, let $s_1, \ldots, s_n$ be IID
+with $\prob\{ s_i = +1 \} = \prob\{ s_i = -1 \} = \tfrac{1}{2}$.
+Intepret $s_i$ as the orientation of edge $i$.  Given an edge,
+$e = \{ u, v \}$ with $u \leq v$, and an
+orientation, $s$, construct a vector, $x$, in $\reals^N$ by
+\[
+  x(e,s) = s \cdot \delta_u - s \cdot \delta_v,
+\]
+where $\delta_v$ is the Dirac delta.
+Set $x_i = x(e_i, s_i)$ for $i = 1, \ldots, n$ and note that
+\[
+  L_n = \sum_{i=1}^{n} x_i x_i'.
+\]
+Moreover, the random vector $x_i$ has expectation $0$ and covariance
+matrix $\tfrac{1}{W} L$.  The representation of $L_n$ in terms of
+outer products is standard in the spectral graph theory litterature.
+The random orientation $s_i$ assures the first moment of $x_i$ is
+zero. For the second moments, with $u,v$ in $V$ and $u \neq v$ we have
+\begin{align*}
+  \E[x_i(u) x_i(v)]
+    &= \E\big[ - 1\big\{ e_i = \{u,v\}\big\}\big] \\
+    &= - \prob\big\{ e_i = \{u,v\}\big\} \\
+    &= -\frac{w(u,v)}{W}
+\end{align*}
+and
+\begin{align*}
+  \E[x_i(u)^2]
+    &= \E\Big[ \sum_{v \in V} 1\big\{e_i = \{u,v\}\big\} \Big] \\
+    &= \sum_{v \in V} \frac{w(u,v)}{W}.
+\end{align*}
+
+Since $L_n$ is a sum of IID objects, the Central Limit Theorem gaurantees
+that the elements of $(1/\sqrt{n}) L_n$ converge in distribution to a multivariate
+normal.  The Lindeberg-Feller proof of this result approximates the
+distribution of the elements of $x_i x_i'$ by a multivariate normal
+distribution.  A more accurate distributional approximation replaces $x_i$ by a
+multivariate normal, $\tilde x_i$, with the same first and second
+moments, so that $x_i x_i'$ gets approximated by $\tilde x_i \tilde
+x_i'$, a Wishart matrix.
+ Vector $x_i$ is random with mean $0$ and covariance matrix
+$\tfrac{1}{W} L$.  Thus, $x_i x_i'$ is approximated by a central
+Wishart with shape $\tfrac{1}{W} L$ and scale $1$; the sample
+Laplacian $L_n$ is then approximated by Wishart with the same shape
+but scale $n$ instead, i.e. $L_n$ is approximately $\mathcal{W}(\tfrac{1}{W} L, n)$.
 
 \section{Connection to covariance estimation}
 \label{S:connection-to-covariance}
