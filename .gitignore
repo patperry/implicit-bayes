@@ -1,6 +1,7 @@
 *.aux
 *.blg
 *.out
+.Rhistory
 implicit-bayes.pdf
 notes-sept.pdf
 notes-oct.pdf
