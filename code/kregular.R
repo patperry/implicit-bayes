@@ -109,19 +109,22 @@ shuffle.edges <- function(adj, nswaps) {
 }
 
 
-demo <- function(width = 25, height = 25, nswaps = 2^seq(0,10), seed = 0) {
+demo <- function(width = 25, height = 25, nswaps = 2^seq(0,10), seed = 0,
+                 hist = TRUE) {
   require("RColorBrewer")
   pal <- brewer.pal(4, "OrRd")
   col <- colorRampPalette(pal, space="Lab")(length(nswaps) + 1)
   
   adj <- grid.2d(width, height)
-  plot((4 - eigen(adj, TRUE, TRUE)$values[-1]), col=col[1], t="l",
+  lambda <- (4 - eigen(adj, TRUE, TRUE)$values[-1])
+  plot(lambda, col=col[1], t="l",
        xlab="Index", ylab="(Unnormalized) Laplacian Eigenvalue")
   
   for (i in seq_along(nswaps)) {
     set.seed(seed)
     adj1 <- shuffle.edges(adj, nswaps[i])
-    lines((4 - eigen(adj1, TRUE, TRUE)$values[-1]), col=col[1+i])
+    lambda1 <- (4 - eigen(adj1, TRUE, TRUE)$values[-1])
+    lines(lambda1, col=col[1+i])
   }
 
   axis(3, labels=FALSE)
