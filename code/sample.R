@@ -1,34 +1,8 @@
 # sample.R
 # --------
 
-source("code/kregular.R")
-
-
-sample.adj <- function(n, adj) {
-    e.ix <- which(adj > 0) # includes duplicate edges (both i ~ j and j ~ i)
-    ix <- suppressWarnings(sample(e.ix, n, replace = TRUE, prob = adj[e.ix]))
-    ix.tab <- tabulate(ix, nbins = nrow(adj) * ncol(adj))
-    adj.samp <- matrix(ix.tab, nrow(adj), ncol(adj))
-    adj.samp <- adj.samp + t(adj.samp)
-    adj.samp
-}
-
-laplacian <- function(adj) {
-    d <- rowSums(adj)
-    l <- -adj
-    diag(l) <- diag(l) + d
-    l
-}
-
-
-pseudoinv <- function(a, tol = 1e-8, scale = FALSE) {
-    udv <- svd(a)
-    active <- udv$d > tol
-    ainv <- udv$u[,active] %*% ((1/udv$d[active]) * t(udv$v[,active]))
-    if (scale)
-        ainv <- ainv / sum(diag(ainv))
-    ainv
-}
+source("code/graph.R")
+source("code/laplacian.R")
 
 rank1 <- function(x) {
     ev <- eigen(x)
@@ -65,26 +39,9 @@ mle <- function(lap) {
     ilap / sum(diag(ilap))
 }
 
-pagerank <- function(lap, penalty = 1.0) {
-    if (penalty <= 0)
-        stop("'penalty' is negative")
-    
-    p <- nrow(lap)
-    ev <- eigen(lap)
-    ev$values <- ev$values[-p]
-    ev$vectors <- ev$vectors[,-p]
 
-    f <- function(lambda) { sum(-1/(penalty*(lambda - ev$values))) - 1 }
-    lower <- -1; while(is.finite(lower) && f(lower) >= 0) { lower <- lower * 10 }
-    upper <- min(ev$values) - 1e-10
-    lambda <- uniroot(f, c(lower, upper))$root
-
-    est <- ev$vectors %*% (-1/(penalty*(lambda - ev$values)) * t(ev$vectors))
-    est
-}
-
-
-demo <- function(width = 4, height = 4, nswaps = 1024, psamp = 0.99, seed = 0) {
+demo <- function(width = 10, height = 5, nswaps = 0, psamp = 0.99,
+                 penalty = seq(0.1, 50, length.out = 100), seed = 0, ev.tol = 1e-8) {
     set.seed(seed)
 
     # generate population graph and laplacian
@@ -95,7 +52,7 @@ demo <- function(width = 4, height = 4, nswaps = 1024, psamp = 0.99, seed = 0) {
     
     # generate sample graph and laplacian
     n <- floor(nedge * psamp)
-    adj.samp <- sample.adj(n, adj)
+    adj.samp <- sample.edges(n, adj)
     lap.samp <- laplacian(adj.samp)
 
     # compute the true normalized inverse laplacian
@@ -105,32 +62,97 @@ demo <- function(width = 4, height = 4, nswaps = 1024, psamp = 0.99, seed = 0) {
     iln.samp <- pseudoinv(lap.samp, scale = TRUE)
 
     # compute the pagerank estimate of normalized inverse laplacian
-    penalty <- seq(0.1, 20, len = 100)
-    npenalty <- length(penalty)    
+    npenalty <- length(penalty)
     loss.frobenius <- rep(NA, npenalty)
     loss.spectral <- rep(NA, npenalty)
+    eigen.lap.samp <- eigen(lap.samp, symmetric = TRUE)
+    ev.ok <- abs(eigen.lap.samp$values) > ev.tol
+    if (sum(!ev.ok) > 1)
+        warning("sample laplacian is not connected")
+
     for (i in seq_len(npenalty)) {
-        iln.pr <- pagerank(lap.samp, penalty = penalty[[i]])
+        iln.pr <- pagerank(lap.samp, eigen.lap.samp, penalty = penalty[[i]], ev.tol = ev.tol)
         l <- loss(iln, iln.pr)
         loss.frobenius[[i]] <- l$frobenius
         loss.spectral[[i]] <- l$spectral
     }
 
+    penalty.mle = sum(1/eigen.lap.samp$values[ev.ok])
+    loss.mle <- loss(iln, iln.samp)
+
+    
+    res <- list(penalty = penalty, loss.frobenius = loss.frobenius, loss.spectral = loss.spectral,
+                penalty.mle = penalty.mle, loss.frobenius.mle = loss.mle$frobenius,
+                loss.spectral.mle = loss.mle$spectral)
+
     par(mfrow=c(1,2))
     plot(penalty, loss.spectral, main="Spectral",
-         ylim=c(min(c(loss.spectral, loss(iln, iln.samp)$spectral)),
-                max(c(loss.spectral, loss(iln, iln.samp)$spectral))))
+         ylim=c(min(c(loss.spectral, loss.mle$spectral)),
+                max(c(loss.spectral, loss.mle$spectral))))
     abline(v=penalty[which.min(loss.spectral)], col=2)
-    abline(h=loss(iln, iln.samp)$spectral, col=3, lty=2)
+    abline(h=loss.mle$spectral, col=3, lty=2)
     plot(penalty, loss.frobenius, main="Frobenius",
-         ylim=c(min(c(loss.frobenius, loss(iln, iln.samp)$frobenius)),
-                max(c(loss.frobenius, loss(iln, iln.samp)$frobenius))))
+         ylim=c(min(c(loss.frobenius, loss.mle$frobenius)),
+                max(c(loss.frobenius, loss.mle$frobenius))))
     abline(v=penalty[which.min(loss.frobenius)], col=2)
-    abline(h=loss(iln, iln.samp)$frobenius, col=3, lty=2)    
+    abline(h=loss.mle$frobenius, col=3, lty=2)
 
+    cat("penalty.mle: ", penalty.mle, "\n")
     cat("sample l2: ", loss(iln, iln.samp)$spectral, "\n")
     cat("sample lF: ", loss(iln, iln.samp)$frobenius, "\n")
     cat("best regularized l2: ", min(loss.spectral), "\n")
     cat("best regularized lF: ", min(loss.frobenius), "\n")
 
+    invisible(res)
+}
+
+repdemo <- function(nreps = 200,  penalty = seq(0.1, 100, length.out = 100), ...) {
+    npenalty <- length(penalty)
+
+    seed <- seq_len(nreps)
+    loss.spectral <- array(NA, c(nreps, npenalty))
+    loss.frobenius <- array(NA, c(nreps, npenalty))
+    loss.spectral.mle <- array(NA, c(nreps))
+    loss.frobenius.mle <- array(NA, c(nreps))
+    penalty.mle <- array(NA, c(nreps))
+
+    for (r in seq_len(nreps)) {
+        d <- demo(..., penalty = penalty, seed = seed[[r]])
+        loss.spectral[r,] <- d$loss.spectral
+        loss.frobenius[r,] <- d$loss.frobenius
+        loss.spectral.mle[r] <- d$loss.spectral.mle
+        loss.frobenius.mle[r] <- d$loss.frobenius.mle
+        penalty.mle[r] <- d$penalty.mle
+    }
+
+    loss.spectral.mean <- apply(loss.spectral, 2, mean)
+    loss.frobenius.mean <- apply(loss.frobenius, 2, mean)
+    loss.spectral.mle.mean <- mean(loss.spectral.mle)
+    loss.frobenius.mle.mean <- mean(loss.frobenius.mle)
+    penalty.mle.mean <- mean(penalty.mle)
+
+    loss.spectral.sd <- apply(loss.spectral, 2, sd)
+    loss.frobenius.sd <- apply(loss.frobenius, 2, sd)
+    loss.spectral.mle.sd <- sd(loss.spectral.mle)
+    loss.frobenius.mle.sd <- sd(loss.frobenius.mle)
+    penalty.mle.sd <- sd(penalty.mle)
+    
+    par(mfrow=c(1,2))
+    plot(penalty, loss.spectral.mean, main="Spectral",
+         ylim=c(min(c(loss.spectral.mean, loss.spectral.mle.mean)),
+                max(c(loss.spectral.mean, loss.spectral.mle.mean))))
+    lines(penalty, loss.spectral.mean + loss.spectral.sd)
+    lines(penalty, loss.spectral.mean - loss.spectral.sd)    
+    abline(h=loss.spectral.mle.mean, col=3, lty=2)
+    abline(h=loss.spectral.mle.mean + loss.spectral.mle.sd, col=3, lty=1)
+    abline(h=loss.spectral.mle.mean - loss.spectral.mle.sd, col=3, lty=1)
+ 
+    plot(penalty, loss.frobenius.mean, main="Frobenius",
+         ylim=c(min(c(loss.frobenius.mean, loss.frobenius.mle.mean)),
+                max(c(loss.frobenius.mean, loss.frobenius.mle.mean))))
+    lines(penalty, loss.frobenius.mean + loss.frobenius.sd)
+    lines(penalty, loss.frobenius.mean - loss.frobenius.sd)    
+    abline(h=loss.frobenius.mle.mean, col=3, lty=2)
+    abline(h=loss.frobenius.mle.mean + loss.frobenius.mle.sd, col=3, lty=1)
+    abline(h=loss.frobenius.mle.mean - loss.frobenius.mle.sd, col=3, lty=1)
 }
