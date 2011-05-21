@@ -1,5 +1,27 @@
 \begin{thebibliography}{}
 
+\bibitem[\protect\citeauthoryear{Andersen, Chung, and Lang}{Andersen
+  et~al.}{2006}]{andersen2006local}
+Andersen, R., F.~Chung, and K.~Lang (2006).
+\newblock Local graph partitioning using {P}age{R}ank vectors.
+\newblock In {\em 47th Annual IEEE Symposium on Foundations of Computer Science
+  (FOCS'06)}, pp.\  475--486.
+
+\bibitem[\protect\citeauthoryear{Chandra, Raghavan, Ruzzo, Smolensky, and
+  Tiwari}{Chandra et~al.}{1989}]{chandra1989electrical}
+Chandra, A.~K., P.~Raghavan, W.~L. Ruzzo, R.~Smolensky, and P.~Tiwari (1989).
+\newblock The electrical resistance of a graph captures its commute and cover
+  times.
+\newblock In {\em Proc. Twenty-first Ann. ACM Symp. Theor. Comp.}, pp.\
+  574--586. ACM Press, Seattle.
+
+\bibitem[\protect\citeauthoryear{Chebotarev and Shamis}{Chebotarev and
+  Shamis}{1998}]{chebotarev1998proximity}
+Chebotarev, P.~Y. and E.~V. Shamis (1998).
+\newblock On proximity measures for graph vertices.
+\newblock {\em Automation and Remote Control\/}~{\em 59\/}(10), 1443--1459.
+
+
 \bibitem[\protect\citeauthoryear{Mahoney and Orecchia}{Mahoney and
   Orecchia}{2010}]{mahoney2010implementing}
 Mahoney, M.~W. and L.~Orecchia (2010).

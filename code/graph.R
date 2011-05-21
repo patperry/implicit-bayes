@@ -158,6 +158,22 @@ shuffle.edges <- function(adj, nswaps) {
 }
 
 
+add.edges <- function(adj, nadd) {
+    if (nadd == 0)
+        return(adj)
+
+    n <- nrow(adj)
+    i1 <- sample.int(n, nadd, replace = TRUE)
+    i2 <- 1 + (sample.int(n - 1, nadd, replace = TRUE) + i1 - 1) %% n
+
+    for (i in seq_len(nadd)) {
+        adj[i1[i], i2[i]] <- adj[i1[i], i2[i]] + 1
+        adj[i2[i], i1[i]] <- adj[i2[i], i1[i]] + 1
+    }
+
+    adj
+}
+
 sample.edges <- function(n, adj) {
     e.ix <- which(adj > 0) # includes duplicate edges (both i ~ j and j ~ i)
     ix <- suppressWarnings(sample(e.ix, n, replace = TRUE, prob = adj[e.ix]))

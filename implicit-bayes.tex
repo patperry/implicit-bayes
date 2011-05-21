@@ -101,63 +101,132 @@ appropriate choice of $K$, the partition is well-behaved, according to a
 measure called ``conductance.''
 
 
+\subsection{Local spectral clustering}
+
+Spectral clustering reduces a graph to a single vector---the smallest
+nontrivial eigenvector of the graph's Laplacian---and then clusters
+the nodes using the information in the vector.  It is possible to use
+more information about the graph by using more than one eigenvector
+from the Laplacian.  In particular the elements of the pseudoinverse
+of the Laplacian give local (node-specific) information about random
+walks on the graph.
+
+Let $G$ be a graph with combinatorial Laplacian $L_G$, and let
+$L_G^+$ denote its pseudoinverse. The pseudoinverse of the Laplacian is closely
+related to random walks on the graph.  In particular, 
+$L_{G}^{+}$ defines a proximity measure on the graph with the
+following properties:
+\begin{description}
+  \item[Symmetry]
+    $L_G^{+}(u,v) = L_G^{+}(v,u)$;
+ \item[Diagonal maximality]
+    $L_G^{+}(u,u) > L_G^{+} (u,v)$ whenever $u \neq v$;
+  \item[Triangle inequality for proximities]
+    If $u$ and $v$ are in the same connected component, then
+    $L_G^{+} (u,v) + L_G^{+} (u,w) - L_G^{+} (v,w) \leq L_G^{+} (u,u)$, with strict inequality
+    holding when $v = w$ and $u \neq v$;
+  \item[Metric representability]
+   $L_G^{+} (u,u) + L_G^{+} (v,v) - L_G^{+} (u,v) - L_G^{+} (v,u)$
+    defines a metric on every connected component of $V_G$;  this is commonly called
+    \emph{resistance distance} on $G$.
+ \item[Transit property]
+    if $G$ contains a path from $u$ to $v$, and each path from $u$ to
+    $v$ includes $w$, distinct from $u$ and $v$, then $L_G^{+}(u,w) >
+    L_G^{+}(u,v)$.
+\end{description}
+These properties follow from \citefullauthor{chebotarev1998proximity}'s
+(\citeyear{chebotarev1998proximity}) topological representation of
+$L_G^{+}$.  A full discusion of this representation is beyond the
+scope of the present treatment, but for unweighted, connected graphs,
+\citefullauthor{chebotarev1998proximity} show that if $|V_G| = n$,
+then
+\[
+  L_G^{+}(u,v) = \frac{|\mathcal{F}_{n-2}^{uv}| - \frac{1}{n}
+    \sum_{w} |\mathcal{F}_{n-2}^{uw}|}{|\mathcal{F}_{n-1}|},
+\]
+where $\mathcal{F}_k$ and $\mathcal{F}_k^{uv}$ are sets of subgraphs
+of $G$; the set $\mathcal{F}_{k}$ comprises all rooted spanning forests
+with $k$ edges, and $\mathcal{F}_{k}^{uv}$ comprises all rooted spanning
+spanning forests with $k$ edges such that $u$ is a root, and $v$
+belongs to the same tree as $u$.  \cite{chandra1989electrical} show that the
+quantity
+$L_G^{+} (u,u) + L_G^{+} (v,v) - L_G^{+} (u,v) - L_G^{+} (v,u)$ is
+proportional to the length of time before a random walker started at
+node $u$ reaches node $v$.  It is likely that $L_G^{+}(u,v)$ has a
+probabalistic interpretaiton in terms of random walks on the graph,
+but we do not know of any such interpretation.
+
+Given a cutoff value, $K$, we can define a local partition around node
+$u$ via $P_K(u) = \{ v : L_G^{+}(u,v) > K \}$.  Note that if $v$ is in
+$P_K(u)$, then $u$ is in $P_K(v)$.  In light of the disconnection
+condition, if the graph is disconnected, then there exists a $K$ such
+that $u$ and $v$ are in the same connected component iff
+$v \in P_K(u)$.  We call this partitioning ``local spectral
+clustering.''
+
+[Add Guattery example here, showing benefits of local spectral.]
+
+
 \subsection{Diffusion clustering}
 
-An alternative solution to the vertex partitioning problem looks at the
-behaviors of certain random walks on the vertices of a graph. A (Markov)
-random walk on the vertices of the graph and is defined by a
-transition matrix, $M \in \reals^{V_G \times V_G}$ satisfying
-$M(u,v) \geq 0$ for all $u,v$ and $\sum_v M(u,v) = 1$ for all
-$u$.  The random walk starts at an initial vertex, $w(0)$; at time
-$t$, given that the walk is at vertex $w(t) = u$, the probabiliity that
-the walk transitions to vertex $v$ is
-$\prob\{w(t+1) = v \mid w(t) = u\} = M(u, v)$.
-
-Three possible choices are edge-weighted random walk, PageRank surfer, and heat diffusion.  The ``bottlenecks'' in the random walks reveal structure in the graph.  Given a diffusion operator, $M$, we can find a partition of the nodes by taking an initial vector $x_0$ with positive entries, choosing time horizon, $t$, and a threshold, $K$.  The first set of partition is $C(M^t x_0, K)$; the other set is the complement.  If we let $t\to \infty$, then the Laplacian-based partition will agree with the diffusion-based partition for many (all?) types of diffusion.  We can also get a ``local'' partition by taking $x_0$ to have support over a small set of nodes and chosen a small time-horizon~$t$.
-
-
-\textit{\textbf{Issue (4).  What is the relationship between a random vector defined on the graph and a diffusion matrix?} The is a big issue lurking which we haven't discussed at all: specifically, we are essentially arguing that there is a connection between graph diffusions and covariance matrices.  The only connection, though, is that two seemingly-unrelated problems have the same solution.  Right now, that seems like an accident, and I would like to understand it better.}
-
-
-
-\subsection{Relationship between spectral and and diffusion clustering}
-
-The eigenvector corresponding to the smallest nontrivial eigenvalue of
-the Laplacian $L$ solves an optimization problem:
-\[
-\begin{aligned}
-  & \underset{x}{\text{minimize}}
-  & & x' L x \\
-  & \text{subject to}
-  & & x' x = 1, \\
-  & & & 1' x = 0
-\end{aligned}
-\]
-\cite{mahoney2010implementing} show that diffusion operators arrise as
-solutions to regularized, relaxed Laplacian eigenvector computations.
-Specifically, they show that for certain choices of ``penalty''
-function, $F$, the solution of an SDP relaxation of the Laplacian
-eigenvector optimization problem is a diffusion operator.  The SDP
-relaxation of the eigenvector problems considers $x$ to be a mean-zero
-Gaussian random variable with covariance matrix $X$, the problem then, is to choose $X$ to minimize the expectation of $x' L x$, equivalently $\mathrm{tr}(L X)$.  The regularized relaxed problem is
+In practrice, the pseudoinverse of the Laplacian is seldom (if ever)
+use to partition the nodes of a graph.  The more common alternatives
+to spectral clustering involve random walks or diffusions on the
+graph.  These approaches assign positive and negative to the nodes,
+and then let the distribution of charge evolve according to dynamics
+derived fromt the graph structure (see, e.g., \citet{andersen2006local}).
+Three canonical evolution dynamics are the following
+\begin{description}
+  \item[heat kernel]
+    charge evolves according to the dynamics of the heat equation
+    $\frac{\partial H_t}{\partial t} = - L_G H_t$;
+  \item[PageRank]
+    charge at a node evolves by either teleporting to a random node or moving
+    to a neighber of the current node;
+  \item[lazy random walk]
+    charge either stays at the current node or moves to a neighbor.
+\end{description}
+\citet{mahoney2010implementing} showed that the above dynamics arrise
+as solution to semi-definite programs of the form
 \[
 \begin{aligned}
   & \underset{X}{\text{minimize}}
-  & & \mathrm{tr}(LX) + F(X) \\
+  & & \mathrm{tr}(L_G X) + F(X) \\
   & \text{subject to}
   & & X \succeq 0, \\
   & & & \mathrm{tr}(X) = 1, \\
   & & & \mathrm{tr}(X J) = 0,
 \end{aligned}
 \]
-where $J = 1 1'$.
+where $J = 1_{V_G} 1_{V_G}'$.  Notably, when $F = 0$, the solution
+to the above SDP is $u u'$, where $u$ is the smallest nontrivial
+eigenvector of $L_G$.  Thus, in some sense, the heat kernel, PageRank,
+and lazy random walk dynamics can be seen as ``regularized'' versions
+of spectral clustering, where the function $F$ is acting as a penalty
+function, analogous to the penalty in ridge regression or LASSO.
 
-The role of the penalty function, $F$, is to regularize the solution of the optimization problem.  Regularization can often be associated with prior assumptions on the data.  In linear regression, and $L^2$ penalty corresponds to a Gaussian prior on the coefficent vector, and the solution to the regularized regression problem is the maximium a posterior (MAP) estimator.  In the same setting, $L^1$ regularization corresponds to a Laplace prior on the coefficent vector.
+In the sequal, we extend \citefullauthor{mahoney2010implementing}'s
+result, showing that solutions to the regularized SDP can be
+interpreted as regularized estimates of the pseudoinverse of the
+Laplacian.  Specifically, we set up a sampling model, whereby the
+Laplacian is interpreted as an observation from a random process.  We
+posit the existence of a ``population Laplacian'' driving the random
+process.  We then define an estimation problem: finding the inverse of
+the population Laplacian.  It turns out that the solution to the
+regularized SDP arrises as the maximium a posteriori probability (MAP)
+estimate of the inverse of the population Laplacian.  The role of the
+penalty funciton, $F$, is to encode prior assumptions about the
+population Laplacian.
 
-Empirical experience has shown that certain diffusions are more or less appropriate for certain classes of graphs (expanders, low-dimension, etc.).  No one yet understands why this is the case.  Our hope is to shed light on the issue by investigating the role of $F$.  For each class of graphs, there is a corresponding class of prior distributions.  Each prior distributions manifest in a different penalty function, $F$.  Thus, the diffusion associate with $F$ will be most appropriate for graphs coming from the class determined by the prior distribution.
+Our approach is reminiscent of the Bayesian interpretation of
+regularized linear regression.  In linear regression, an $L^2$ penalty
+corresponds to a Gaussian prior on the coefficent vector, and the
+solution to the regularized regression problem is the maximium a
+posterior (MAP) estimator.  In the same setting, $L^1$ regularization
+corresponds to a Laplace prior on the coefficent vector.
 
 
-\section{Sample Laplacians}
+\section{A statistical framework for graph estimation}
 
 We view spectral and diffusion clustering as procedures for estimating
 features of an unobserved graph Laplacian.  In our formuation, there

@@ -2,13 +2,13 @@
 source("code/graph.R")
 source("code/laplacian.R")
 
-PAUSE <- TRUE
+PAUSE <- FALSE
 
 nrep <- 50
 nstart <- 5
-npenalty <- 50
+npenalty <- 20
 
-psamp = 0.5
+psamp = 0.9
 
 penalty <- seq(0.1, 5000, len = npenalty)
 pmid <- floor(npenalty / 2) + 1
@@ -16,6 +16,8 @@ pmid <- floor(npenalty / 2) + 1
 
 width <- 10
 height <- 5
+nadd <- 5
+nshuffle <- 0
 
 steps <- 1
 
@@ -30,8 +32,8 @@ accuracy <- function(cl.true, cl) {
 for (r in seq_len(nrep)) {
     set.seed(r)
 
-    adj <- grid.2d(width, height)
-    adj.samp <- sample.edges(round(psamp * width * height * 4), adj)
+    adj <- shuffle.edges(grid.2d(width, height), nshuffle)
+    adj.samp <- add.edges(sample.edges(round(psamp * width * height * 4), adj), nadd)
     init <- matrix(rnorm(nstart * nrow(adj)), nstart, nrow(adj))
     
     lap <- laplacian(adj)
@@ -43,8 +45,8 @@ for (r in seq_len(nrep)) {
     
     for (s in seq_len(nstart)) {
         x0 <- init[s,,drop=TRUE]
-        cl.samp[s,] <- powclust(ilap.samp, init = x0, steps = steps)
-        #cl.samp[s,] <- specclust(lap.samp)
+        #cl.samp[s,] <- powclust(ilap.samp, init = x0, steps = steps)
+        cl.samp[s,] <- specclust(lap.samp)
         acc.samp[r,s] <- accuracy(cl.samp[s,], cl.true)
         
         for (p in seq_len(npenalty)) {
