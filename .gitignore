@@ -1,6 +1,9 @@
 *.aux
 *.blg
+*.dvi
 *.out
+*.pdf
+.RData
 .Rhistory
 implicit-bayes.pdf
 notes-sept.pdf
