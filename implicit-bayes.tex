@@ -27,7 +27,7 @@
 
 
 \title{
-  Regularized Eigenvector Estimation
+  Regularized Laplacian Estimation
 }
 \author{
   Patrick O.~Perry \\
@@ -477,290 +477,85 @@ $-m \log |X|$ in the optimization criterion.
 
 To successfully leverage the results in the preceding section, we need
 to choose densities $p(\mathcal{L})$ that encode our prior beliefs in
-particular application regimes.
+particular application regimes.  In this section, we present three
+parametric forms for the prior that allow us to interpolate between
+``expander-like'' graphs and ``low-dimensional'' graphs.
+
+We encode information about the
+``low-dimensionality'' or ``expanderness'' of a network through its
+spectrum.  For a network to be expander-like, we expect the gaps
+between consecutive eigenvalues of the Laplacian to be small.  For a
+network to be low-dimensional, we expect the smallest non-trivial
+eigenvalues to be well-separated from the rest of the spectrum.
+
+
+\subsection{Support sets}
+
+The support sets of the priors are subsets of the
+positive-semidefinite matrices.  Take $\mathcal{S}$ to be a typical
+support set.  Firstly, since every combinatorial Laplacian
+$\mathcal{L}$ satisfies $\mathcal{L} 1 = 0$, we will generally require
+this property of all matrices in $\mathcal{S}$.  Secondly, since the
+scale of the Laplacian cannot be identified in our samply scheme
+(i.e., the distribution of $L$ remains unchanged if $\mathcal{L}$ is
+replaced by $c \cdot \mathcal{L}$ for any positive constant $c$), we
+fix a scale for the matrices in $\mathcal{S}$.  A convenient way of
+fixing the scale is to specify that $\Tr(\mathcal{L}^+) = 1$ for
+all $\mathcal{L}$ in $\mathcal{S}$.  Finally to avoid undue technical
+complications, we require that all matrices in $\mathcal{S}$ have rank
+$n-1$.
 
 
 
-\clearpage
+\subsection{Densities}
 
-\section{Connection to covariance estimation}
-\label{S:connection-to-covariance}
+The priors we specify only depend on the eigenvalues of the Laplacian.
+Equivalently, they depend on the eigenvalues of the pseudoinverse of
+the Laplacian.  If $\mathcal{L}^+ = U \Lambda U'$ is the spectral
+decomposition of the pseudoinverse of Laplacian $\mathcal{L}$, where
+$U \in \reals^{n \times n -1}$ and
+$\Lambda = \diag\big(\lambda(1), \dotsc, \lambda({n-1})\big)$, then the prior
+weight on $\mathcal{L}$ only depends on $\Lambda$.  The implication is
+that $U$ is uniformly distributed over the space of orthogonal
+matrices satisfying $(n-1) U U' \in \mathcal{S}$, where $\mathcal{S}$ is the
+support set of the prior.  This follows since $U'1 = 0$ and $\Tr([(n-1) U U']^+) =
+\Tr((n-1)^{-1} U U') = 1$.
 
-The relaxed eigenvector problems appears related to a standard covariance estimation problem.
+The priors below all take the form $p(\mathcal{L}) \propto
+\exp\{-\tfrac{1}{2} F(\mathcal{L}^{+})\}$, where $F(\mathcal{L}^{+})$
+depends only on $\Lambda = \diag(\lambda_1, \dotsc, \lambda_{n-1})$, the nonzero
+eigenvalues of $\mathcal{L}^{+}$.  They all depend on a
+meta-parameter, $\eta$:
 
-
-Let $x_1, \ldots, x_n$ be i.i.d., drawn from $\mathrm{Normal}(0, \Sigma)$
-for unknown $\Sigma$.  Matrix $\Sigma^{-1}$, is called the precision
-matrix.  Set $\tau = \mathrm{Tr}(\Sigma^{-1})$ and
-$\Phi = \tau^{-1} \Sigma^{-1}$.  Say we have prior information that the
-eigenvectors of $\Phi$ are uniformly (Haar) distributed, and that the
-eigenvalues are Dirichlet distributed with parameter vector
-$(\alpha, \ldots, \alpha)$ for some $\alpha > 0$.  The prior density
-of $\Phi$ over the space of positive-definite matrices given by
+\begin{description}
+  \item[Generalized entropy]
+    \[
+      F_H(\mathcal{L}^+) = \tfrac{1}{\eta}[ \Tr( \Lambda \log \Lambda)
+      - \Tr(\Lambda)];
+    \]
+  \item[Log-determinant]
+    \[
+      F_D(\mathcal{L}^{+}) = - \tfrac{1}{\eta} \log |\Lambda|;
+    \]
+  \item[Standard $k$-norm]
+    \[
+      F_k(\mathcal{L}^+)
+        = \frac{1}{k \, \eta} \Tr(\Lambda^k).
+  \]
+\end{description}
+ 
+For the log-determinant prior, we have
 \[
-    \pi(\Phi) \propto |\Phi|^{\alpha-1}
+  p(\mathcal{L})
+    \propto \prod_{v=1}^{n-1} \lambda(v)^{1/2 \eta},
 \]
-(the proportionality constant depends only on $\alpha$ and $p$).
-Assume a uniform prior for $\tau$.
-Define
-\[
-    A = \sum_{i=1}^n x_i x_i^T,
-\]
-the unnormalized sample covariance matrix.  Given $\Phi$, matrix $A$
-follows a Wishart distribution with shape $\Sigma$ and scale $n$.  Its
-density is
-\[
-    f(A | \Phi, \tau)
-        \propto
-        \exp\{
-            -\tfrac{\tau}{2} A \cdot \Phi
-            + \tfrac{n}{2} \log | \Phi| + \tfrac{np}{2} \log \tau
-        \}
-\]
-(here, the proportionality constant depends only on $A$ and $n$).  The
-posterior distribution for $\Phi$ and $\tau$ is the proportional to the
-product of the prior and the likelihood:
-\[
-    \pi(\Phi, \tau | A)
-        \propto
-        \exp\{
-            -\tfrac{\tau}{2} A \cdot \Phi
-            + \tfrac{n}{2} \log | \Phi| + \tfrac{np}{2} \log \tau
-            +
-            (\alpha - 1)
-            \log |\Phi|
-        \}
-\]
-Collecting logs, taking logs and multiplying by $-2$, the maximum a
-posteriori (MAP) estimate of $\Phi$ and $\tau$ is the solution to the
-optimization problem:
-\begin{align*}
-    \min \qquad &\tau A \cdot \Phi - (n + 2 (\alpha - 1)) \log |\Phi| + np \log \tau \\
-    \text{s.t.} \qquad & I \cdot \Phi = 1 \\
-    \phantom{\text{s.t.}} \qquad & \Phi \succeq 0 \\
-    \phantom{\text{s.t.}} \qquad & \tau \geq 0
-\end{align*}
+i.e. the nonzero eigenvalues of $\mathcal{L}^{+}$ are
+Dirichlet-distributed over the simplex with parameters $\alpha(1) =
+\alpha(2) = \dotsb = \alpha(n-1) = 1 + \tfrac{1}{2\eta}$.  The other
+priors do not correspond to standard parametric forms.
 
-The solution is
-\[
-    \Phi = - [\tfrac{1}{n + (2\alpha - 1)}(\lambda I - \tau A)]^{-1}
-\]
-
-\textit{\textbf{Issue (1). How is $\Phi$ a pagerank?.}
-We can show under certain model/prior assumptions that the MAP estimator of the inverse covariance matrix is a ``pagerank,'' $P$, but the ``pagerank'' matrix has negative entries, so what exactly does that mean?  You brought up the idea of replacing $P$ by, say, $P + x x'$ for suitable chosen $x$ such that $P + x x'$ is positive, performing the pagerank surfer walk with $P + x x'$, and then projecting orthogonal to $x$.  I'm not sure if this makes sense, though, because different choices of $x$ will give different answers.}
-
-
-\section{Relationship between covariance estimation and graph Laplacians}
-
-\textit{\textbf{Issue (2). This section is pretty flimsy.} The connection between graph Laplacians and sample covariance matrices is tenuous.  There is some sparse, graph-like structure in the inverse covariance matrix which might be the connection, but that's more like an adjacency matrix, not a Laplacian.}
-
-Suppose we have a graph, $\mathcal{G}$ with $n$ vertices.  When we
-say that $\mathcal{G}$ is ``low-dimensional,'' we mean we can embed the
-vertices in $\mathbb{R}^d$ with $d \ll n$ such that Euclidean distance
-for the embedded points agrees with geodesic distance on the graph.  When
-we say that $\mathcal{G}$ is an ``expander,'' we mean that no low-dimensional
-Euclidean embedding preserves the distances.
-
-These concepts have analogues for sequences of high-dimensional,
-independent and identically distributed (i.i.d.) points.  Let $p$ be
-a dimension, conceptually big.  Suppose $x_1, \ldots, x_n$ is a sequence
-of independent Gaussian-distributed vectors in $\mathbb{R}^d$ with population
-mean zero and covariance matrix $\Sigma \in \mathbb{R}^{p \times p}$ 
-(which is positive semi-definite).  One way of generating such a sequence
-is the following:
-\begin{enumerate}
-    \item draw $Z$ in $\mathbb{R}^{n \times p}$, a random matrix whose
-        entries are independent Gaussians having mean $0$ and variance $1$;
-    \item compute $\Sigma^{1/2}$ such that
-        $[\Sigma^{1/2}] [\Sigma^{1/2}]^T = \Sigma$ and set
-        $X = Z [\Sigma^{1/2}]^{T}$;
-    \item take $x_1, \ldots, x_n$ to be the rows of $X$.
-\end{enumerate}
-If $\Sigma$ has low rank, $d$, then $x_1, \ldots, x_n$ can be projected
-into a $d$-dimensional subspace such that distances between the points
-are preserved.  The subspace is spanned by the $d$ eigenvectors of
-$\Sigma$ corresponding to its nonzero eigenvalues.  If $\Sigma$ is
-a scalar multiple of the identity matrix, then no such low-dimensional
-projection exists; for $n \geq p$, the $x$'s span $\mathbb{R}^p$ with
-probability $1$, and they are not concentrated in any low-dimensional
-subspace [this is a little hand-wavy].
-
-In general the ``low-dimensionality'' and ``expanderness'' of a
-high-dimensional distribution is determined by the eigenvalues of $\Sigma$,
-its covariance matrix.  The projection onto the eigenvector of $\Sigma$
-corresponding to eigenvalue $\lambda$ captures fraction
-$\lambda / \mathrm{Tr}(\Sigma)$ of the total variance.  For low-dimensional
-distributions, most of the eigenvalues are zero.  For expanders, the
-eigenvalues are all about equal.  For in-between, the eigenvalues decay
-slowly to zero.
-
-
-\section{Other diffusions}
-
-Other choices of the penalty function, $F$ yield different diffusions.  One way to derive priors for these distrubutions is by working backwards.
-
-\textit{\textbf{The resulting priors depend on the data.  Does this make sense?}}
-
-
-One Bayesianization of the regularized eigenvector problem involves the Wishart
-distribution on positive-definite matrices.  Recall that if $\Sigma$ is
-positive-semidefinite and $x_1, \ldots, x_n$ are independent
-$\Normal[d](0, \Sigma)$ random vectors, then the scaled sample covariance matrix
-defined by $A = \sum_{i=1}^n x_i x_i^\trans$ is said to follow the $d$-dimensional
-Wishart distribution with shape parameter $\Sigma$ and scale $n$.  We denote
-this by $A \sim \Wishart[d](\Sigma, n)$.  If $\Sigma$ is positive-definite and $n \geq d$, then
-$A$ has density over the set of positive-definite matrices given by
-\[
-    f_{\Wishart}(A \mid \Sigma, n)
-    =
-    \frac{
-        |A|^{(n-d-1)/2} \exp\{-\tfrac{1}{2} \Sigma^{-1} \bullet A \}
-    }{
-        2^{dn/2} \pi^{d(d-1)/4}
-        |\Sigma|^{n/2}
-        \prod_{j=1}^{d} \Gamma\big(\tfrac{1}{2} (n + 1 - j)\big)
-    },
-\]
-where $\Gamma(\cdot)$ is the Gamma function.  For $d > 1$ this generalizes the
-chi-squared distribution.  If $S = \tfrac{1}{n} A$ is a sample covariance matrix
-with $n$ degrees of freedom, then $S$ has density over the set of
-positive-definite matrices equal to
-\(
-    n^d \cdot f_{\Wishart}(n S \mid \Sigma, n).
-\)
-
-Recall that the regularized eigenvector problem takes the form
-\begin{equation}\label{E:evec-reg}
-    \argmin_{\Phi}
-        S \bullet \Phi
-        +
-        1/\eta \cdot F(\Phi),
-\end{equation}
-where $F$ has support on the set 
-\(
-    \{ \Phi : \Tr(\Phi) = 1, \Phi \succeq 0 \}.
-\)
-It is convenient to think of $S$ as a sample covariance matrix with $n$ degrees
-of freedom, so that $A = n S$ is a Wishart matrix.
-The form of~\eqref{E:evec-reg} suggests interpreting $\Phi^{-1}$ as the
-expectation of $S$, so that $\Phi$ is is a precision matrix
-(the inverse of a covariance matrix).
-
-Solving \eqref{E:evec-reg} is equivalent to solving the following:
-\begin{equation*}
-    \argmin_{\Phi}
-        \big[
-            (n S) \bullet \Phi
-            -
-            (n-d-1) \log |n S|
-            -
-            n \log |\Phi|
-        \big]
-        +
-        \big[
-            n/\eta \cdot F(\Phi)
-            +
-            n \log |\Phi|
-        \big].
-\end{equation*}
-Recognize this as the MAP estimator for $\Phi$ after observing $S$, a 
-sample covariance matrix with $n$ degrees of freedom and expectation
-$\Phi^{-1}$; the prior density for $\Phi$ is supported on the
-set $\{ \Phi : \Tr(\Phi) = 1, \Phi \succeq 0\}$, and is given by
-\begin{equation}\label{E:prior-phi}
-    p_{F}(\Phi | n, \eta)
-        \propto
-        \frac{
-            \exp\{-\tfrac{n}{2\eta} F(\Phi) \}
-        }{
-            |\Phi|^{n/2}
-        }.
-\end{equation}
-We consider $n$ and $\eta$ to be a hyper-parameters.  As before, when
-$\int p_{F}(\Phi | n, \eta) d\Phi$ diverges, the prior is improper.
-
-
-\subsection{Priors corresponding to orthogonally invariant penalties}
-
-When $F$ is orthogonally invariant, $p_F(\Phi | n, \eta)$ depends only on the
-eigenvalues of $\Phi$.  Letting $\Phi = O \Lambda O^\trans$ be the
-eigendecomposition of $\Phi$, our prior belief is that $O$ is Haar-distributed over
-the group of $d\times d$ orthogonal matrices.  Set
-$\Lambda = \diag(\lambda_1, \ldots, \lambda_d)$.  Under orthogonal invariance,
-the prior $p_F(\Phi | n, \eta)$ is completely specified by defining
-$p_F(\Lambda | n, \eta)$.  In what follows, we derive the priors corresponding
-to the choices for $F$ given in Section~3 of ``Implementing regularization
-implicitly\ldots''.
-
-\subsubsection*{Generalized Entropy}
-
-On the simplex, for $F_H$ being Generalized Entropy,
-\begin{align*}
-    F_H(\Lambda)
-        &= \Tr(\Lambda \log \Lambda) - \Tr(\Lambda) \\
-        &= \log \Big[ \prod_{j=1}^d \lambda_j^{\lambda_j} \Big] - 1.
-\end{align*}
-Thus, from \eqref{E:prior-phi} it follows that
-\[
-    p_{F_H}(\Lambda | n, \eta)
-        \propto
-            \prod_{j=1}^d
-                \exp\Big\{
-                    -\tfrac{n}{2}
-                    \big(
-                        \tfrac{\lambda_j}{\eta}
-                        +
-                        1
-                    \big)
-                    \log \lambda_j
-                \Big\}.
-\]
-This distribution does not follow a recognizable parametric form.
-
-
-\subsubsection*{Log-determinant}
-
-With $F_D$ being Log-determinant,
-\begin{align*}
-    F_D(\Lambda)
-        &= -\log |\Lambda| \\
-        &= -\log \Big[ \prod_{j=1}^d \lambda_j \Big].
-\end{align*}
-Thus,
-\[
-    p_{F_D}(\Lambda | n, \eta)
-        \propto
-            \prod_{j=1}^d
-                \lambda_j^{n \cdot (\eta^{-1} - 1)/2}.
-\]
-When $n \cdot (\eta^{-1} - 1) > -2$, this defines a proper density, specifically
-that of the Dirichlet distribution with parameter vector $\alpha 1_d$, where
-$\alpha = \tfrac{n}{2} \cdot (\eta^{-1} - 1) + 1$.
-
-
-\subsubsection*{Standard $k$-norm}
-
-For the Standard $k$-norm function,
-\[
-    F_k(\Lambda)
-        = \frac{1}{k} \Tr(\Lambda^k)
-        = \frac{1}{k} \sum_{j=1}^d \lambda_j^k
-\]
-Thus,
-\[
-    p_{F_k}(\Lambda | n, \eta)
-        \propto
-            \exp\Big\{
-                -
-                \frac{n}{2k \eta}
-                \sum_{j=1}^{d} \lambda_j^k
-                -
-                \frac{n}{2}
-                \sum_{j=1}^{d} \log \lambda_j
-            \Big\}.
-\]
-As with Generalized Entropy, this does not correspond to a recognizable
-distribution.
+For all three parametric forms, by varying $\eta$ we can put more or
+less prior weight on expanders or low-dimensional graphs.
 
 
 
