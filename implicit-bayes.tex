@@ -373,20 +373,20 @@ approximation for $p(L \mid \mathcal{L})$.
   \]
 \end{proof}
 
-\begin{lemma}
+\begin{lemma}\label{L:approx-wishart}
   The random matrix $\tilde L$ is distrubted as a Wishart matrix with
   shape $\mathcal{L}$ and scale $m$.  This distribution, denoted
   $\mathcal{W}(\mathcal{L}, m)$ is supported on the set of
   positive-semidefinite matrices with the same nullspace as $\mathcal{L}$.  When
   $m \geq \rank(\mathcal{L})$, the distribution has a denisty on this space
   given by
-  \[
+  \begin{equation}\label{E:wishart-density}
     f_\mathcal{W}( \tilde L \mid \mathcal{L}, m)
       \propto
       \frac{|\tilde L|^{(m - \rank(\mathcal{L}) - 1)/2}
         \exp\{-\tfrac{1}{2} \Tr(\mathcal{L}^+ \tilde L) \}}
         {|\mathcal{L}|^{m/2}}
-  \]
+  \end{equation}
   where the constant of proportionality depends only on $m$ and $\rank(\mathcal{L})$,
   and where $|\cdot|$ denotes pseudodeterminant (product of nonzero
   eigenvalues).
@@ -412,8 +412,28 @@ approximation for $p(L \mid \mathcal{L})$.
 
 \subsection{Approximate posterior inference}
 
+Lemma~\ref{L:approx-wishart} gives us an approximation for
+$p(L \mid \mathcal{L})$.  Namely, we can approximate
+$p(L \mid \mathcal{L})$ by
+$\tilde p(L \mid \mathcal{L}) = f_\mathcal{W}(L \mid \mathcal{L}, m)$,
+where $f_\mathcal{W}$ is as defined in Eq.~\eqref{E:wishart-density}.
+With a specification for the prior density $p(\mathcal{L})$, we can
+get an approximation to the posterior denisty:
+\[
+  p(\mathcal{L} \mid L)
+  \approx
+  \tilde p(\mathcal{L} \mid L)
+    \propto \tilde p(L \mid \mathcal{L}) \, p(\mathcal{L}).
+\]
+We can then estimate $\mathcal{L}$ by maximizing
+$\tilde p(\mathcal{L} \mid L)$.
 
-
+Suppose the prior takes the form
+\[
+  p(\mathcal{L}) \propto \exp\{ - F(\mathcal{L}) \}
+\]
+for some function, $F$, supported on the space of
+positive-semidefinite matrices
 
 \clearpage
 
@@ -697,39 +717,6 @@ As with Generalized Entropy, this does not correspond to a recognizable
 distribution.
 
 
-\subsection{Discussion}
-
-The priors in this section have modes where the eigenvalues are all equal,
-so that $p_F(\Phi|n, \eta)$ is maximized when $\Phi = \tfrac{1}{d} I_d$.  This
-follows since $p_F(\Phi|n, \eta)(\Phi)$ is log-concave in the eigenvalues of
-$\Phi$ and has support where the eigenvalues are in the simplex.
-
-As noted at the end of Section~\ref{S:Bayesianization}, the Bayesianization of
-an optimization problem is not unique.  This makes interpreting the prior
-$p_F(\cdot | n, \eta)$ difficult.  At first, it is troubling that the prior
-depends on $n$, a parameter that appears nowhere in the optimization problem.
-However, this has to be the case; there needs to be a parameter indicating
-the ``precision'' of the data, $S$.
-
-The Wishart is not the only possible distribution for $n S$.  Recall that the
-Wishart distribution arrises when the the density of $S$ is supported on
-$\{ S : S \succ 0 \}$, and its log is proportional to
-\[
-    n S \bullet \Phi
-        - (n-d-1) \log |n S|.
-\]
-We could have pursued two alternatives:
-\begin{enumerate}
-    \item Instead of multiplying by $n$ and adding $-(n-d-1) \log |n S|$ to the
-        optimization criterion, we could have added a different function of
-        $|S|$.
-    \item Instead of considering the density of $S$ to be supported over
-        all positive-definite matrices, we could have considered it to be
-        supported over a subset of the positive-definite matrices
-        (e.g. valid graph Laplacians).  This would change the normalization
-        constant (which depends on $\beta$), and would consequently change the
-        prior for $\beta$.
-\end{enumerate}
 
 \section{Empirical evaluation}
 
