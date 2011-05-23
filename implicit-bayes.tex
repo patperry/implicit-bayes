@@ -383,11 +383,11 @@ approximation for $p(L \mid \mathcal{L})$.
   \[
     f_\mathcal{W}( \tilde L \mid \mathcal{L}, m)
       \propto
-      \frac{|\tilde L|^{(m - n - 1)/2}
+      \frac{|\tilde L|^{(m - \rank(\mathcal{L}) - 1)/2}
         \exp\{-\tfrac{1}{2} \Tr(\mathcal{L}^+ \tilde L) \}}
         {|\mathcal{L}|^{m/2}}
   \]
-  where the constant of proportionality depends only on $m$ and $n$,
+  where the constant of proportionality depends only on $m$ and $\rank(\mathcal{L})$,
   and where $|\cdot|$ denotes pseudodeterminant (product of nonzero
   eigenvalues).
 \end{lemma}
