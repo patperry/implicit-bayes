@@ -1,8 +1,7 @@
 \documentclass[12pt]{article}
-\RequirePackage[OT1]{fontenc}
-\RequirePackage{fullpage}
+\usepackage{nips11submit_e,times}
+%\RequirePackage[OT1]{fontenc}
 \RequirePackage{amsbsy,amsmath,amssymb,amsthm}
-\RequirePackage{natbib}
 
 \newcommand{\reals}{\mathbb{R}}
 \newcommand{\trans}{\mathrm{T}}
@@ -25,19 +24,28 @@
 \newtheorem{remark}[theorem]{Remark}
 
 
-\begin{document}
+
 
 \title{
   Regularized Eigenvector Estimation
 }
 \author{
-  Patrick O.\ Perry
-  \and
+  Patrick O.~Perry \\
+  School of Engineering and Applied Sciences \\
+  Harvard University \\
+  Harvard, MA 02138 \\
+  \texttt{patperry@seas.harvard.edu} \\
+  \And
   Michael W.\ Mahoney
 }
-\date{
-  \today
-}
+
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+
+%\nipsfinalcopy % Uncomment for camera-ready version
+
+\begin{document}
+
 \maketitle
 
 \begin{abstract}
@@ -146,11 +154,11 @@ following properties:
     $v$ includes $w$, distinct from $u$ and $v$, then $L_G^{+}(u,w) >
     L_G^{+}(u,v)$.
 \end{description}
-These properties follow from \citefullauthor{chebotarev1998proximity}'s
-(\citeyear{chebotarev1998proximity}) topological representation of
-$L_G^{+}$.  A full discusion of this representation is beyond the
-scope of the present treatment, but for unweighted, connected graphs,
-\citefullauthor{chebotarev1998proximity} show that if $|V_G| = n$,
+These properties follow from Chebotarev and Shamis' topological
+representation of of the combinatorial Laplacian
+\cite{chebotarev1998proximity}.  A full discusion of this
+representation is beyond the scope of the present treatment, but for
+unweighted, connected graphs, the authors show that if $|V_G| = n$,
 then
 \[
   L_G^{+}(u,v) = \frac{|\mathcal{F}_{n-2}^{uv}| - \frac{1}{n}
@@ -160,11 +168,11 @@ where $\mathcal{F}_k$ and $\mathcal{F}_k^{uv}$ are sets of subgraphs
 of $G$; the set $\mathcal{F}_{k}$ comprises all rooted spanning forests
 with $k$ edges, and $\mathcal{F}_{k}^{uv}$ comprises all rooted spanning
 spanning forests with $k$ edges such that $u$ is a root, and $v$
-belongs to the same tree as $u$.  \cite{chandra1989electrical} show that the
-quantity
-$L_G^{+} (u,u) + L_G^{+} (v,v) - L_G^{+} (u,v) - L_G^{+} (v,u)$ is
+belongs to the same tree as $u$.  Chandra et al.\ show that the
+quantity $L_G^{+} (u,u) + L_G^{+} (v,v) - L_G^{+} (u,v) - L_G^{+} (v,u)$ is
 proportional to the length of time before a random walker started at
-node $u$ reaches node $v$.  It is likely that $L_G^{+}(u,v)$ has a
+node $u$ reaches node $v$ whenever $u$ and $v$ are in the same
+connected component \cite{chandra1989electrical}.  It is likely that $L_G^{+}(u,v)$ has a
 probabalistic interpretaiton in terms of random walks on the graph,
 but we do not know of any such interpretation.
 
@@ -186,7 +194,8 @@ use to partition the nodes of a graph.  The more common alternatives
 to spectral clustering involve random walks or diffusions on the
 graph.  These approaches assign positive and negative to the nodes,
 and then let the distribution of charge evolve according to dynamics
-derived fromt the graph structure (see, e.g., \citet{andersen2006local}).
+derived fromt the graph structure (for example, Anderson et al.'s local
+PageRank takes this approach \cite{andersen2006local}).
 Three canonical evolution dynamics are the following
 \begin{description}
   \item[heat kernel]
@@ -198,8 +207,8 @@ Three canonical evolution dynamics are the following
   \item[lazy random walk]
     charge either stays at the current node or moves to a neighbor.
 \end{description}
-\citet{mahoney2010implementing} showed that the above dynamics arrise
-as solution to semi-definite programs of the form
+Mahoney and Orecchia showed that the above dynamics arrise
+as solutions to semi-definite programs of the form
 \[
 \begin{aligned}
   & \underset{X}{\text{minimize}}
@@ -210,14 +219,15 @@ as solution to semi-definite programs of the form
   & & & \mathrm{tr}(X J) = 0,
 \end{aligned}
 \]
-where $J = 1_{V_G} 1_{V_G}'$.  Notably, when $F = 0$, the solution
+where $J = 1_{V_G} 1_{V_G}'$ and $F$ is a penalty function
+\cite{mahoney2010implementing}.  Notably, when $F = 0$, the solution
 to the above SDP is $u u'$, where $u$ is the smallest nontrivial
 eigenvector of $L_G$.  Thus, in some sense, the heat kernel, PageRank,
 and lazy random walk dynamics can be seen as ``regularized'' versions
 of spectral clustering, where the function $F$ is acting as a penalty
 function, analogous to the penalty in ridge regression or LASSO.
 
-In the sequal, we extend \citefullauthor{mahoney2010implementing}'s
+In the sequal, we extend Mahoney and Orecchia's
 result, showing that solutions to the regularized SDP can be
 interpreted as regularized estimates of the pseudoinverse of the
 Laplacian.  Specifically, we set up a sampling model, whereby the
@@ -384,7 +394,7 @@ approximation for $p(L \mid \mathcal{L})$.
     f_\mathcal{W}( \tilde L \mid \mathcal{L}, m)
       \propto
       \frac{|\tilde L|^{(m - \rank(\mathcal{L}) - 1)/2}
-        \exp\{-\tfrac{1}{2} \Tr(\mathcal{L}^+ \tilde L) \}}
+        \exp\{-\tfrac{1}{2} \Tr(\tilde L \mathcal{L}^+) \}}
         {|\mathcal{L}|^{m/2}}
   \end{equation}
   where the constant of proportionality depends only on $m$ and $\rank(\mathcal{L})$,
@@ -430,10 +440,46 @@ $\tilde p(\mathcal{L} \mid L)$.
 
 Suppose the prior takes the form
 \[
-  p(\mathcal{L}) \propto \exp\{ - F(\mathcal{L}) \}
+  p(\mathcal{L}) \propto \exp\{ -\tfrac{1}{2} F(\mathcal{L^+}) \}
 \]
-for some function, $F$, supported on the space of
-positive-semidefinite matrices
+for some function, $F$, supported on a subset, $\mathcal{S}$, of all
+positive-semidefinite matrices.  An approximation to the
+maximum a posteriori probability estimate of $\mathcal{L}$ maximizes
+$\tilde p(\mathcal{L} \mid L)$.  Suppose that the
+matrices in $\mathcal{S}$ have the same rank, which is less than or
+equal to $m$.
+Up to a constant, twice the negative logarithm of the optimization criterion is
+\begin{align*}
+  -2 \log \tilde p(\mathcal{L} \mid L)
+   &= - 2 \log \tilde p(L \mid \mathcal{L}) - 2 \log p(\mathcal{L}) \\
+   &= \Tr(L \mathcal{L}^+) + F(\mathcal{L^+}) - m \log | \mathcal{L}^+ |
+\end{align*}
+The approximate MAP for $\mathcal{L}^+$ is the solution to the program
+\[
+\begin{aligned}
+  & \underset{X}{\text{minimize}}
+  & & \Tr(L X) + F(X) - m \log |X| \\
+  & \text{subject to}
+  & & X^+ \in \mathcal{S}.
+\end{aligned}
+\]
+Note the similarity with Mahoney and Orecchia's relaxed SDP.
+In particular, if
+\(
+  \mathcal{S} = \{ \mathcal{L} : \mathcal{L} \succeq 0,
+  \Tr(\mathcal{L} J) = 0, \Tr(\mathcal{L}^{+} J) = 1 \},
+\)
+then the two programs are identical except for the factor
+$-m \log |X|$ in the optimization criterion.
+
+
+\section{Prior specification}
+
+To successfully leverage the results in the preceding section, we need
+to choose densities $p(\mathcal{L})$ that encode our prior beliefs in
+particular application regimes.
+
+
 
 \clearpage
 
@@ -722,7 +768,7 @@ distribution.
 
 \section{Concluding remarks}
 
-\bibliographystyle{chicagoa}
-\bibliography{refs.bib}
+\bibliographystyle{plain}
+\bibliography{refs}
 
 \end{document}

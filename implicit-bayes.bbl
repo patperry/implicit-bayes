@@ -1,32 +1,27 @@
-\begin{thebibliography}{}
+\begin{thebibliography}{1}
 
-\bibitem[\protect\citeauthoryear{Andersen, Chung, and Lang}{Andersen
-  et~al.}{2006}]{andersen2006local}
-Andersen, R., F.~Chung, and K.~Lang (2006).
+\bibitem{andersen2006local}
+R.~Andersen, F.~Chung, and K.~Lang.
 \newblock Local graph partitioning using {P}age{R}ank vectors.
 \newblock In {\em 47th Annual IEEE Symposium on Foundations of Computer Science
-  (FOCS'06)}, pp.\  475--486.
+  (FOCS'06)}, pages 475--486, 2006.
 
-\bibitem[\protect\citeauthoryear{Chandra, Raghavan, Ruzzo, Smolensky, and
-  Tiwari}{Chandra et~al.}{1989}]{chandra1989electrical}
-Chandra, A.~K., P.~Raghavan, W.~L. Ruzzo, R.~Smolensky, and P.~Tiwari (1989).
+\bibitem{chandra1989electrical}
+A.~K. Chandra, P.~Raghavan, W.~L. Ruzzo, R.~Smolensky, and P.~Tiwari.
 \newblock The electrical resistance of a graph captures its commute and cover
   times.
-\newblock In {\em Proc. Twenty-first Ann. ACM Symp. Theor. Comp.}, pp.\
-  574--586. ACM Press, Seattle.
+\newblock In {\em Proc. Twenty-first Ann. ACM Symp. Theor. Comp.}, pages
+  574--586. ACM Press, Seattle, 1989.
 
-\bibitem[\protect\citeauthoryear{Chebotarev and Shamis}{Chebotarev and
-  Shamis}{1998}]{chebotarev1998proximity}
-Chebotarev, P.~Y. and E.~V. Shamis (1998).
+\bibitem{chebotarev1998proximity}
+P.~Yu Chebotarev and E.~V. Shamis.
 \newblock On proximity measures for graph vertices.
-\newblock {\em Automation and Remote Control\/}~{\em 59\/}(10), 1443--1459.
+\newblock {\em Automation and Remote Control}, 59(10):1443--1459, 1998.
 
-
-\bibitem[\protect\citeauthoryear{Mahoney and Orecchia}{Mahoney and
-  Orecchia}{2010}]{mahoney2010implementing}
-Mahoney, M.~W. and L.~Orecchia (2010).
+\bibitem{mahoney2010implementing}
+M.~W. Mahoney and L.~Orecchia.
 \newblock Implementing regularization implicitly via approximate eigenvector
   computation.
-\newblock arXiv:1010.0703v1 [cs.DS].
+\newblock arXiv:1010.0703v1 [cs.DS], 2010.
 
 \end{thebibliography}
