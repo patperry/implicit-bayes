@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[12pt]{article}
 \RequirePackage[OT1]{fontenc}
 \RequirePackage{fullpage}
 \RequirePackage{amsbsy,amsmath,amssymb,amsthm}
@@ -8,12 +8,22 @@
 \newcommand{\trans}{\mathrm{T}}
 \DeclareMathOperator*{\Tr}{Tr}
 \DeclareMathOperator*{\diag}{diag}
+\DeclareMathOperator*{\rank}{rank}
 \newcommand{\Normal}[1][]{\mathcal{N}_{#1}}
 \newcommand{\Wishart}[1][]{\mathcal{W}_{#1}}
 \DeclareMathOperator*{\argmin}{argmin}
 
 \newcommand{\prob}{\mathbb{P}}
 \newcommand{\E}{\mathbb{E}}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{remark}[theorem]{Remark}
+
 
 \begin{document}
 
@@ -32,6 +42,8 @@
 
 \begin{abstract}
 \end{abstract}
+
+\section{Introduction}
 
 \section{Graph partitioning}
 \label{S:introduction}
@@ -228,104 +240,182 @@ corresponds to a Laplace prior on the coefficent vector.
 
 \section{A statistical framework for graph estimation}
 
-We view spectral and diffusion clustering as procedures for estimating
-features of an unobserved graph Laplacian.  In our formuation, there
-is an unobserved graph, $G$ with vertex set $V_G = V$ and edge weight
-function $w_G = w$.  Let $E$ be the subset of edges on $V$, with the
-equivalence relation $(u,v) \sim (v,u)$.  Note that $|E| =
-\binom{|V|}{2}$, regardless of $w$.  The weight function is normalized such that
-$\sum_{(u,v) \in E} w(u,v) = 1$.  We observe $G_n$, a random weighted graph with
-vertex set $V_{G_n} = V$ and edge weight function $w_{G_n} = w_n$.
-The random graph has the property that $\E[w_n(u,v)] = w(u,v)$ for
-each vertex pair $(u,v) \in E$.  We set $L$ to be the combinatorial
-Laplacian of $G$, and set $L_n$ to be the combinatorial Laplacian of
-$G_n$.  Our view is that spectral or diffusion clustering on $L_n$
-attempts to uncover features of $L$.  Specifically, we view these
-procedures as estimates of $L^{-1}$.  (Here and throughout, $A^{-1}$
-denotes inverse in the space $R^V \perp 1_V$; likewise $\det A$
-denotes determinant in this space.)
 
-There are many schemes for sampling graphs, including snowball and
-traceroute sampling (TODO: add refs.). We presume a simplistic
-sampling scheme which, although not universally applicable, is at
-least amenable to theoretical analysis.  Specifically, we suppose that
-the edges we observed have been sampled independently according to the
-weights specified by $w$, which may be unknown.
+\subsection{Bayesian inference for the population Laplacian}
 
-The data generating mechanism is as follows: $n$ edges are sampled
-independently and in the same manner.  The $i$th edge, $(u_i, v_i)$ is determined by
-choosing a random edge from $E$, with probability proportional to the
-weight of the edge; i.e.
-\[
-p(u,v) = \prob\{ (u_i,v_i) = (u,v) \} \propto w(u,v) \}
-\]
-Since $\sum_{(u,v) \in E} w(u,v) = 1$, we have
-\(
-  p(u,v) = w(u,v)
-\)
+Let $G$ be a graph with vertex set $V = \{ 1, 2, \dotsc, n \}$, edge
+set $E = V \times V$ equipped with the equivalence relation
+$(u,v) = (v,u)$.  Let $\omega$ be an edge weight function, and let
+$\mathcal{L}$ be the corresponding Laplacian.  Assume without loss of
+generality that $\sum_{(u,v) \in E} \omega(u,v) = 1$.  We interpet
+$\omega$ and $\mathcal{L}$ as unobserved ``population'' quantities,
+referring to $\omega(u,v)$ as the population weight of edge $(u,v)$,
+and referring to $\mathcal{L}$ as the population Laplacian.
 
-The sample weight of edge $(u,v) \in E$ is the number of times the edge
-appeared in the $n$ sampled edges:
+Suppose we sample $m$ edges from the $E$, randomly chosen
+according to the population weight function.  That is, we see edges
+$(u_1, v_1), (u_2, v_2),  \dotsc, (u_m, v_m)$, where the edges are
+all drawn independently and identically such that the probability of
+seeing edge $(u,v)$ is
 \[
-  w_n(u,v) = \frac{1}{n} \sum_{i=1}^n 1\{ (u_i,v_i) = (u,v) \};
+  \prob_\omega\{ (u_1, v_1) = (u,v) \} = \omega(u,v).
 \]
-we symmetrize $w_n$ so that $w_n(u,v) = w_n(v,u)$.
-The sample degree of vertex $v$ is
-\[
-  d_n(v) = \frac{1}{n} \sum_{i = 1}^{n} 1\{ u_i = v \text{ or } v_i = v\} = \sum_u w_n(u,v).
-\]
-The sample Laplacian is
-\[
-  L_n = D_n - W_n,
-\]
-where $D_n$ is diagonal with $D_n(v,v) = d_n(v)$ and $W_n$ is
-symmetric with $W_n(u,v) = w_n(u,v)$.
+Notably, we will likely see duplicate edges, and not every edge with a
+positive weight will get sampled.
 
-Note that $\E L_n = L$.  For large $n$, we approximate the
-distribution of $L_n$ by a scaled Wishart
-matrix.  To motivate the approximation, let $s_1, \ldots, s_n$ be IID
-with $\prob\{ s_i = +1 \} = \prob\{ s_i = -1 \} = \tfrac{1}{2}$.
-Intepret $s_i$ as the orientation of edge $i$.  Given an edge,
-$(u,v) \in E$ with orientation, $s$, construct a vector, $x$, in $\reals^|V|$ by
+We construct a weight function from the sampled edges, called the
+sample weight function, $w$, defined such that
 \[
-  x(u,v,s) = s \cdot \delta_u - s \cdot \delta_v,
+  w(u,v) = \frac{1}{m} \sum_{i=1}^{m} 1\{ (u_i, v_i) = (u,v) \}.
 \]
-where $\delta_v$ is the Dirac delta.
-Set $x_i = x(u_i, v_i, s_i)$ for $i = 1, \ldots, n$ and note that
+In turn, we construct a sample Laplacian, $L$, defined such that
 \[
-  n L_n = \sum_{i=1}^{n} x_i x_i'.
+  L(u,v)
+    =
+    \begin{cases}
+      \sum_{w \neq u} w(u,w) &\text{when $u = v$,} \\
+      -w(u,v) &\text{otherwise.}
+    \end{cases}
 \]
-Moreover, the random vector $x_i$ has expectation $0$ and covariance
-matrix $L$.  The representation of $L_n$ in terms of
-outer products is standard in the spectral graph theory litterature.
-The random orientation $s_i$ assures the first moment of $x_i$ is
-zero. For the second moments, with $(u,v) \in V^2$ we have
-\begin{align*}
-  \E[x_i(u) x_i(v)]
-    &= \E\big[ - 1\big\{ (u_i, v_i)  \sim (u,v) \big\}\big] \\
-    &= - \prob\big\{ (u_i,v_i) \sim (u,v) \big\} \\
-    &= -w(u,v)
-\end{align*}
-and for $v \in V$,
-\begin{align*}
-  \E[x_i(v)^2]
-    &= \E\Big[ \sum_{u \in V} 1\big\{(u_i,v_i) \sim (u,v) \Big] \\
-    &= \sum_{u \in V} w(u,v).
-\end{align*}
+Note that $\E_\omega[w(u,v)] = \omega(u,v)$ and $\E_\omega L =
+\mathcal{L}$, where $\E_\omega$ denotes expecation with respect to
+probability law $\prob_\omega$.
 
-Since $L_n$ is an average of IID objects, the Central Limit Theorem gaurantees
-that the elements of $\sqrt{n} (L_n - L)$ converge in distribution to a multivariate
-normal.  The Lindeberg-Feller proof of this result approximates the
-distribution of the elements of $x_i x_i'$ by a multivariate normal
-distribution.  A more accurate distributional approximation replaces $x_i$ by a
-multivariate normal, $\tilde x_i$, with the same first and second
-moments, so that $x_i x_i'$ gets approximated by $\tilde x_i \tilde
-x_i'$, a Wishart matrix.
- Vector $x_i$ is random with mean $0$ and covariance matrix
-$L$.  Thus, $x_i x_i'$ is approximated by a central
-Wishart with shape $L$ and scale $1$; the scaled sample
-Laplacian $n L_n$ is then approximated by Wishart with the same shape
-but scale $n$ instead, i.e. $L_n$ is approximately $\mathcal{W}(L, n)$.
+Our goal is to estimate the pseudoinverse of the population Laplacian,
+$\mathcal{L}^{+}$, using only the sampled edges.  The obvious estimate
+is $L^{+}$, the pseudoinverse of the sample Laplacian.  We can often
+do better when we have prior information about $\mathcal{L}$.
+
+The form of our prior information comes in the form of a prior distribution
+for $\mathcal{L}$.  That is, we think of $\mathcal{L}$ as a random
+object, drawn from some prior distribution.  If we think that
+$\mathcal{L}$ comes from an ``expander-like'' graph, then our prior
+distribution for $\mathcal{L}$ will put most of its weight on
+expander-like graphs.  Correspondingly, if we think that $\mathcal{L}$
+comes from a graph that can be embedded in a low-dimensional space,
+then our prior distribution for $\mathcal{L}$ will put most if its
+weight on such graphs.
+
+Let $p(\mathcal{L})$ denote our prior for $\mathcal{L}$, assumed to be
+an arbitrary density over the space of graph Laplacians.  Likewise, let
+$p(L \mid \mathcal{L})$ denote the density for the
+distribution of $L$, conditional on $\mathcal{L}$.  Using Bayes' rule,
+the posterior destribution for $\mathcal{L}$ after having observed $L$
+is proportional to $p(L \mid \mathcal{L}) \, p(\mathcal{L})$.
+Conceptually, Bayes' rule gives us a straightforward to
+incorporate prior information into our estimate of $\mathcal{L}^+$.
+We can get an estimate of $\mathcal{L}^{+}$ be maximizing the
+posterior distribution for $\mathcal{L}$.
+
+\subsection{Approximate likelihood for the sample Laplacian}
+
+The conditional density $p(L \mid \mathcal{L})$ is defined completely
+by the edge sampling scheme we laid out above.   However, the exact
+expression for $p(L \mid \mathcal{L})$ involves an intractible
+combinatorial sum.  We appeal to a crude approximation for the conditional
+density $p(L \mid \mathcal{L})$.  The approximaton works as follows:
+\begin{enumerate}
+\item For $i = 1, \dotsc, m$, define $x_i \in \reals^n$ such that
+  \[
+    x_i(u)
+      =
+      \begin{cases}
+        +s_i &\text{when $u = u_i$,} \\
+        -s_i &\text{when $u = v_i$,} \\
+        0 &\text{otherwise,}
+      \end{cases}
+  \]
+  where $s_i \in \{ -1, +1 \}$ is chosen arbitrarily.
+\item Note that $L = \sum_{i=1}^m x_i x_i'$.
+\item Take $s_i$ to be random, equal to $+1$ or $-1$ with probability
+  $\tfrac{1}{2}$.  Approximate the distribution of $x_i$ by the
+  distribution of a multivariate normal random variable, $\tilde x_i$,
+  such that $x_i$ and $\tilde x_i$ have the same first and second
+  moments.
+\item Approximate the distribution of $L$ by the distribution of $\tilde L$, where
+  \(
+    \tilde L = \sum_{i=1}^m \tilde x_i \tilde x_i'.
+  \)
+\end{enumerate}
+
+\noindent
+The next two lemmas derive the distribution of $\tilde x_i$ and
+$\tilde L$ in terms of $\mathcal{L}$, allowing us to get an
+approximation for $p(L \mid \mathcal{L})$.
+
+\begin{lemma}
+  With $x_i$ and $\tilde x_i$ defined as above,
+  \[
+    \E_\omega[ x_i ] = \E_\omega[ \tilde x_i ] = 0,
+  \]
+  and
+  \[
+    \E_\omega[ x_i x_i' ] = \E_\omega [ \tilde x_i \tilde x_i' ] = \mathcal{L}.
+  \]
+\end{lemma}
+\begin{proof}
+  The random variable $\tilde x_i$ is defined to have the same first
+  and second moments as $x_i$.
+  The first momemnt vanishes since $s_i \overset{d}{=} -s_i$ implies
+  that $x_i \overset{d}{=} -x_i$.  For the second moments, note that
+  when $u \neq v$, 
+  \[
+    \E_\omega[x_i(u) \, x_i(v)]
+      = -s_i^2 \, \prob_\omega\{ (u_i,v_i) = (u,v) \}  = -\omega(u,v)
+      = \mathcal{L}(u,v).
+  \]
+  Likewise,
+  \[
+    \E_\omega[\{x_i(u)\}^2]
+      = \sum_{v} \prob_\omega\{ (u_i,v_i) = (u,v) \}
+      = \sum_{v} \omega(u,v)
+      = \mathcal{L}(u,u).
+  \]
+\end{proof}
+
+\begin{lemma}
+  The random matrix $\tilde L$ is distrubted as a Wishart matrix with
+  shape $\mathcal{L}$ and scale $m$.  This distribution, denoted
+  $\mathcal{W}(\mathcal{L}, m)$ is supported on the set of
+  positive-semidefinite matrices with the same nullspace as $\mathcal{L}$.  When
+  $m \geq \rank(\mathcal{L})$, the distribution has a denisty on this space
+  given by
+  \[
+    f_\mathcal{W}( \tilde L \mid \mathcal{L}, m)
+      \propto
+      \frac{|\tilde L|^{(m - n - 1)/2}
+        \exp\{-\tfrac{1}{2} \Tr(\mathcal{L}^+ \tilde L) \}}
+        {|\mathcal{L}|^{m/2}}
+  \]
+  where the constant of proportionality depends only on $m$ and $n$,
+  and where $|\cdot|$ denotes pseudodeterminant (product of nonzero
+  eigenvalues).
+\end{lemma}
+\begin{proof}
+  Since $\tilde L$ is a sum of $m$ outer products of multivariate
+  $\mathrm{Normal}(0, \mathcal{L})$, it is Wishart distributed
+  (by definition).
+  Suppose $\rank(\mathcal{L}) = r$ and
+  $U \in \reals^{n \times r}$ is a matrix whose columns are the
+    eigenvectors of $\mathcal{L}$.  Note that
+    $U' \tilde x_i \overset{d}{=} \mathrm{Normal}(0, U' \mathcal{L} U)$,
+    and that $U' \mathcal{L} U$ has full rank.  Thus,
+    \(
+      U' \tilde L U
+    \)
+    has a density over the space of $r \times r$ positive-semidefinite
+    matrices whenever $m \geq r$.  The density of $U' \tilde L U$ is
+    exactly equal to $f_\mathcal{W}(\tilde L \mid \mathcal{L}, m)$,
+    defined above.
+\end{proof}
+
+
+\subsection{Approximate posterior inference}
+
+
+
+
+\clearpage
 
 \section{Connection to covariance estimation}
 \label{S:connection-to-covariance}
