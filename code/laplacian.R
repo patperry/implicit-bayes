@@ -41,31 +41,34 @@ pagerank <- function(lap, lap.eigen = eigen(lap), penalty = 1.0, ev.tol = 1e-8) 
 }
 
 
-specclust <- function(lap, threshold = 0, ev.tol = 1e-9) {
+specclust <- function(lap, ev.tol = 1e-9) {
     eig <- eigen(lap, symm = TRUE)
     val <- eig$values
     ok <- abs(eig$values) > 1e-8
     vec <- eig$vectors
     u <- vec[,max(which(ok))]
+    threshold <- median(u)
     cl <- u > threshold
     if (!cl[1])
         cl <- !cl
     cl
 }
 
-powclust <- function(ilap, steps = 10, threshold = 0, init = rnorm(nrow(ilap))) {
+powclust <- function(ilap, steps = 10, init = rnorm(nrow(ilap))) {
     x <- init
     x <- x / as.numeric(sqrt(t(x) %*% x))
     for (i in seq_len(steps)) {
         x <- ilap %*% x
         x <- x / as.numeric(sqrt(t(x) %*% x))
     }
+    threshold <- median(x)
     cl <- x > threshold
     if (!cl[1])
         cl <- !cl
     cl
 }
 
-plotcl <- function(cl, adj) {
-    points(attr(adj, "x"), attr(adj, "y"), col = 2 + cl, pch=16)
+plotcl <- function(cl, adj, col1 = "black", col2 = "white") {
+    cols <- c(col1, col2)
+    points(attr(adj, "x"), attr(adj, "y"), col = cols[cl + 1], pch=16)
 }

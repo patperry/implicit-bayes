@@ -185,7 +185,7 @@ sample.edges <- function(n, adj) {
 }
 
 
-demo.swaps <- function(width = 25, height = 25, nswaps = 2^seq(0,10), seed = 0,
+demo1.swaps <- function(width = 25, height = 25, nswaps = 2^seq(0,10), seed = 0,
                  hist = TRUE) {
   require("RColorBrewer")
   pal <- brewer.pal(4, "OrRd")
@@ -209,3 +209,4 @@ demo.swaps <- function(width = 25, height = 25, nswaps = 2^seq(0,10), seed = 0,
   legend("bottomright", legend=c(0,nswaps), col=col, lty=1, lwd=3,
          title="Edge Swaps")
 }
+
