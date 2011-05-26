@@ -3,7 +3,7 @@
 
 pdf("plots/dirichlet.pdf", 4, 4)
 
-n <- 49
+n <- 55
 nreps <- 500
 shape <- seq(1.01, 10, len=16)
 seed <- 0
@@ -23,11 +23,11 @@ lambda.mean <- apply(lambda, c(2,3), mean)
 
 par(mfrow=c(1,1))
 
-plot(range(lambda.mean), range(shape), t='n',
-     xlab = "Order statistic",
-     ylab = expression(Shape))
+plot(range(shape), range(lambda.mean), t='n',
+     ylab = "Order statistics",
+     xlab = expression(Shape))
 for (i in seq_along(shape)) {
-    points(lambda.mean[i,], rep(shape[i], n))
+    points( rep(shape[i], n), lambda.mean[i,])
 }
 
 #plot(range(0, 1), range(shape), t='n',

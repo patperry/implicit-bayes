@@ -2,6 +2,7 @@
 \usepackage{nips11submit_e,times}
 %\RequirePackage[OT1]{fontenc}
 \RequirePackage{amsbsy,amsmath,amssymb,amsthm}
+\RequirePackage{graphicx}
 
 \newcommand{\reals}{\mathbb{R}}
 \newcommand{\trans}{\mathrm{T}}
@@ -125,11 +126,20 @@ measure called ``conductance.''
 
 Spectral clustering reduces a graph to a single vector---the smallest
 nontrivial eigenvector of the graph's Laplacian---and then clusters
-the nodes using the information in the vector.  It is possible to use
+the nodes using the information in the vector.
+It is possible to use
 more information about the graph by using more than one eigenvector
 from the Laplacian.  In particular the elements of the pseudoinverse
 of the Laplacian give local (node-specific) information about random
 walks on the graph.
+
+\begin{figure}
+    \centering
+    \makebox{\includegraphics[scale=0.8]{plots/guattery-global}}
+    \caption{Global partition from first nontrivial eigenvector of the Laplacian}
+\end{figure}
+
+
 
 Let $G$ be a graph with combinatorial Laplacian $L_G$, and let
 $L_G^+$ denote its pseudoinverse. The pseudoinverse of the Laplacian is closely
@@ -183,6 +193,17 @@ condition, if the graph is disconnected, then there exists a $K$ such
 that $u$ and $v$ are in the same connected component iff
 $v \in P_K(u)$.  We call this partitioning ``local spectral
 clustering.''
+
+\begin{figure}
+    \centering
+    \makebox{\includegraphics[scale=0.6]{plots/guattery-local}}
+    \caption{Local partitions from the pseudoinverse of the Laplacian}
+\end{figure}
+\begin{figure}
+    \centering
+    \makebox{\includegraphics[scale=0.6]{plots/guattery-pagerank}}
+    \caption{Local partitions from PageRank}
+\end{figure}
 
 [Add Guattery example here, showing benefits of local spectral.]
 
@@ -488,6 +509,13 @@ between consecutive eigenvalues of the Laplacian to be small.  For a
 network to be low-dimensional, we expect the smallest non-trivial
 eigenvalues to be well-separated from the rest of the spectrum.
 
+\begin{figure}
+    \centering
+    \makebox{\includegraphics[scale=0.6]{plots/interpolate}}
+    \caption{Interpolating from a low-dimensional graph to an expander}
+\end{figure}
+
+
 
 \subsection{Support sets}
 
@@ -557,8 +585,11 @@ priors do not correspond to standard parametric forms.
 For all three parametric forms, by varying $\eta$ we can put more or
 less prior weight on expanders or low-dimensional graphs.
 
-[Add figure interpolating between expanders and low-dimensional graphs
-by varying number of swaps]
+\begin{figure}
+    \centering
+    \makebox{\includegraphics[scale=0.6]{plots/dirichlet}}
+    \caption{Dirichlet distriubtion order statistics}
+\end{figure}
 
 \section{Empirical evaluation}
 

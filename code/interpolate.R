@@ -3,14 +3,14 @@
 
 source("code/graph.R")
 
-demo2.swaps <- function(width = 7, height = 7,
+demo2.swaps <- function(width = 7, height = 7, wrap = TRUE,
                         nswaps = unique(c(0, 1, 2, 4,
                                           round(seq(0, sqrt(2 * width * height),
                                                     length.out = 16)^2)))[-1],
                         seed = 0,
-                        nreps = 200)
+                        nreps = 500)
 {
-    adj <- grid.2d(width, height, wrap = TRUE)
+    adj <- grid.2d(width, height, wrap = wrap)
     lambda0 <- (4 - eigen(adj, TRUE, TRUE)$values[-1])
     
     lambda <- array(NA, c(nreps, length(nswaps), nrow(adj) - 1))
@@ -22,27 +22,29 @@ demo2.swaps <- function(width = 7, height = 7,
         }
     }
     lambda.mean <- apply(lambda, c(2,3), mean)
+    ilambda.mean <- apply(1/lambda, c(2,3), mean)
 
     par(mfrow=c(1,2))
-    plot(c(0, 8), sqrt(c(0, max(nswaps))), t='n',
-         xlab="Laplacian Eigenvalue",
-         ylab=expression(sqrt(Swaps)))
-    points(lambda0, rep(0, nrow(adj) - 1))
+    plot(sqrt(c(0, max(nswaps))), c(0, 8), t='n',
+         ylab="Laplacian Eigenvalues",
+         xlab=expression(sqrt(Swaps)))
+    points(rep(0, nrow(adj) - 1), lambda0)
     for (i in seq_along(nswaps)) {
-        points(lambda.mean[i,], rep(sqrt(nswaps[i]), nrow(adj) - 1))
+        points(rep(sqrt(nswaps[i]), nrow(adj) - 1), lambda.mean[i,])
     }
 
-    plot(c(1/8, 1/min(lambda.mean)), sqrt(c(0, max(nswaps))), t='n',
-           xlab="Inverse Laplacian Eigenvalue",
-           ylab=expression(sqrt(Swaps)))
-    points(1/lambda0, rep(0, nrow(adj) - 1))
+    plot(sqrt(c(0, max(nswaps))), c(0, max(1/lambda0, max(1/lambda.mean))),t='n',
+           ylab="Inverse Laplacian Eigenvalues",
+           xlab=expression(sqrt(Swaps)))
+    points(rep(0, nrow(adj) - 1), 1/lambda0)
     for (i in seq_along(nswaps)) {
-        points(1/lambda.mean[i,], rep(sqrt(nswaps[i]), nrow(adj) - 1))
+        points(rep(sqrt(nswaps[i]), nrow(adj) - 1), 1/lambda.mean[i,])
     }
 }
 
 
 pdf("plots/interpolate.pdf", 8, 4)
-demo2.swaps()
+#demo2.swaps()
+demo2.swaps(8,7,FALSE)
 dev.off()
 
