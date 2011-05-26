@@ -33,7 +33,7 @@ guattery <- function(k) {
 
 
 
-k <- 10
+k <- 4
 adj <- guattery(k)
 legs <-c(1:k, 2*k + 1:k)
 
@@ -54,7 +54,67 @@ for (r in seq_len(nreps)) {
 }
 
 
-pdf("plots/guattery.pdf", width=8, height=1.25)
+#pdf("plots/guattery.pdf", width=8, height=1.25)
+
+
+
+ramp <- (function() {
+            gamma <- 1
+            function(u) { gray((1-u)^(1/gamma)) }
+        })()
+
+ pdf("plots/guattery-global.pdf", width=2, height=1)
+par(mfrow=c(1,1), oma=rep(0,4), mar=rep(1, 4))
+u <- eigen(lap)$vectors[,4*k-1]
+u <- u - min(u)
+u <- u / max(u)
+plot(adj, axes=FALSE, xlab="", ylab="", main="", asp=1)
+points(attr(adj, "x"), attr(adj, "y"), col = ramp(u), pch=16, cex = 1.2)
+points(attr(adj, "x"), attr(adj, "y"), col = 1, pch=1, cex = 1.2)
+dev.off()
+
+
+pdf("plots/guattery-local.pdf", width=8, height=2)
+v <-  seq(1, 2 *k, by = 1)
+par(mfrow=c(2, length(v)/2), oma=rep(0, 4), mar=rep(1, 4))
+
+for (i in seq_along(v)) {
+    s0 <- rep(0, nrow(lap)); s0[v[i]] <- 1
+    u <- solve(lap + 1/nrow(lap), s0) - mean(s0)
+    u <- u - min(u)
+    u <- u / max(abs(u))
+    plot(adj, axes=FALSE, xlab="", ylab="", main="", asp=1)
+    points(attr(adj, "x"), attr(adj, "y"), col = ramp(u), pch=16, cex=2)
+    points(attr(adj, "x"), attr(adj, "y"), col = 1, pch=1, cex=2)
+}
+dev.off()
+
+
+
+pr <- (function() {
+    deg <- colSums(adj)
+    mat <- adj %*% diag(1 / deg)
+    eye <- diag(nrow(adj))
+    
+    function(s, gamma) {
+        gamma * solve(eye - (1 - gamma) * mat, s)
+    }
+})()
+
+pdf("plots/guattery-pagerank.pdf", width=8, height=2)
+par(mfrow=c(2, length(v)/2), oma=rep(0, 4), mar=rep(1, 4))
+
+for (i in seq_along(v)) {
+    s0 <- rep(0, nrow(lap)); s0[v[i]] <- 1
+    u <- pr(s0, 0.1)
+    u <- u - min(u)
+    u <- u / max(abs(u))
+    plot(adj, axes=FALSE, xlab="", ylab="", main="", asp=1)
+    points(attr(adj, "x"), attr(adj, "y"), col = ramp(u), pch=16, cex=2)
+    points(attr(adj, "x"), attr(adj, "y"), col = 1, pch=1, cex=2)
+}
+dev.off()
+
 par(mfrow=c(1,2))
 par(oma=rep(0,4), mar=rep(1,4))
 plot(adj, axes=FALSE, xlab="", ylab="", main="Global cut", asp=1.5)
@@ -62,6 +122,6 @@ plotcl(specclust(lap), adj)
 
 plot(adj, axes=FALSE, xlab="", ylab="", main="Average local cut", asp=1.5)
 plotcl(colMeans(s1) > median(colMeans(s1)), adj)
-dev.off()
+#dev.off()
 
 
