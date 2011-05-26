@@ -271,6 +271,61 @@ corresponds to a Laplace prior on the coefficent vector.
 
 \section{A statistical framework for graph estimation}
 
+Here we lay out a simple Bayesian framework for estimating a graph
+Laplacian, which allows for regularization by incorporating prior
+information.
+
+It will be helpful to keep in mind the Bayesian
+interpretations of regularized linear regression.  In that context, we
+observe $n$ predictor-response pairs in $\reals^p \times \reals$,
+denoted $(x_1, y_1), \dotsc, (x_n, y_n)$; the goal is to find a vector
+$\beta$ such that $\beta' x_i \approx y_i$.  Typically, we choose
+$\beta$ by minimizing the residual sum of squares
+$\mathrm{RSS}(\beta) = \sum_i \| y_i - \beta' x_i \|_2^2$ or a
+penalized version of it.  For ridge regression, we minimize
+$RSS(\beta) + \lambda \|\beta\|_2^2$; for LASSO regression, we minimize
+$RSS(\beta) + \lambda \|\beta\|_1$.  The additional terms in the
+optimization criteria ($\lambda \|\beta\|_2^2$ and $\lambda
+\|\beta\|_1$) are called penalty functions.
+
+The penalty functions above can be interpreted as incorporating prior
+information about $\beta$.  We model $y_1, \dotsc, y_n$ as independent
+random observations with distributions dependent on $\beta$.
+Specifically, we suppose $y_i$ is a Gaussian random variable with mean
+$\beta' x_i$ and known variance $\sigma^2$.  This induces a conditional
+density for the vector $y = (y_1, \dotsc, y_n)$:
+\[
+  p(y \mid \beta)
+    \propto
+     \exp\{ -\tfrac{1}{2 \sigma^2} RSS(\beta) \},
+\]
+where the constant of proportionality depends only on $y$ and $\sigma$.
+Next, we assume that $\beta$ itself is random, drawn from a
+distribution with density $p(\beta)$.  This distribution is called a
+prior, since it encodes prior knowledge about $\beta$.  Without loss
+of generality, the prior density can be assumed to take the form
+\[
+  p(\beta) \propto \exp\{ -F(\beta) \}.
+\]
+Since the two random variables are dependent, upon observing $y$, we
+have information about $\beta$.  This information is incoded in the
+posterior density, $p(\beta \mid y)$, computed via
+Bayes' rule as
+\[
+  p(\beta \mid y)
+    \propto p(y \mid \beta) \, p(\beta)
+    \propto \exp\{ -\tfrac{1}{2 \sigma^2} RSS(\beta) - F(\beta) \}.
+\]
+The maximum a posterior probablility (MAP) estimate of $\beta$ is the
+value that maximizes $p(\beta \mid y)$.  Equivalently, $\beta$
+minimizes $\log p(\beta \mid y)$.  We can recover the solution to
+Ridge or LASSO regression by setting
+$F(\beta) = \tfrac{\lambda}{2 \sigma^2} \| \beta \|_2^2$ or
+$F(\beta) = \tfrac{\lambda}{2 \sigma^2} \| \beta \|_1$.  Thus, Ridge
+regression can be interpeted as imposing a Gaussian prior on $\beta$,
+and LASSO regression can be interpreted as imposing a
+double-exponential prior on $\beta$.
+
 
 \subsection{Bayesian inference for the population Laplacian}
 
