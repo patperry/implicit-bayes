@@ -15,6 +15,7 @@
 
 \newcommand{\prob}{\mathbb{P}}
 \newcommand{\E}{\mathbb{E}}
+\DeclareMathOperator*{\RSS}{RSS}
 
 \theoremstyle{plain}
 \newtheorem{theorem}{Theorem}[section]
@@ -269,65 +270,165 @@ posterior (MAP) estimator.  In the same setting, $L^1$ regularization
 corresponds to a Laplace prior on the coefficent vector.
 
 
-\section{A statistical framework for graph estimation}
+\section{A statistical framework for regularized graph estimation}
 
 Here we lay out a simple Bayesian framework for estimating a graph
 Laplacian, which allows for regularization by incorporating prior
-information.
+information.  We suppose that the observed graph Laplacian, $L$, is a
+random object whose distrubution depends on a true ``population''
+Laplacian, $\mathcal{L}$.  This induces a conditional density for $L$,
+denoted $p(L \mid \mathcal{L})$.  Next, we assume prior information
+about the population Laplacian in the form of a prior density,
+$p(\mathcal{L})$.  Given the observed Laplacian, we estimate the
+population Laplacian by maximizing its posterior density,
+$p(\mathcal{L} \mid L)$.
+
+
+\subsection{Analogy with regularized linear regression}
 
 It will be helpful to keep in mind the Bayesian
-interpretations of regularized linear regression.  In that context, we
+interpretation of regularized linear regression.  In that context, we
 observe $n$ predictor-response pairs in $\reals^p \times \reals$,
 denoted $(x_1, y_1), \dotsc, (x_n, y_n)$; the goal is to find a vector
 $\beta$ such that $\beta' x_i \approx y_i$.  Typically, we choose
-$\beta$ by minimizing the residual sum of squares
-$\mathrm{RSS}(\beta) = \sum_i \| y_i - \beta' x_i \|_2^2$ or a
+$\beta$ by minimizing the residual sum of squares,
+$\RSS(\beta) = \sum_i \| y_i - \beta' x_i \|_2^2$, or a
 penalized version of it.  For ridge regression, we minimize
-$RSS(\beta) + \lambda \|\beta\|_2^2$; for LASSO regression, we minimize
-$RSS(\beta) + \lambda \|\beta\|_1$.  The additional terms in the
+$\RSS(\beta) + \lambda \|\beta\|_2^2$; for LASSO regression, we minimize
+$\RSS(\beta) + \lambda \|\beta\|_1$.  The additional terms in the
 optimization criteria ($\lambda \|\beta\|_2^2$ and $\lambda
 \|\beta\|_1$) are called penalty functions.
 
-The penalty functions above can be interpreted as incorporating prior
-information about $\beta$.  We model $y_1, \dotsc, y_n$ as independent
-random observations with distributions dependent on $\beta$.
-Specifically, we suppose $y_i$ is a Gaussian random variable with mean
-$\beta' x_i$ and known variance $\sigma^2$.  This induces a conditional
-density for the vector $y = (y_1, \dotsc, y_n)$:
-\[
+Adding a penalty function to the optimization criterion can be
+interpreted as incorporating prior information about $\beta$.  We
+model $y_1, \dotsc, y_n$ as independent random observations with
+distributions dependent on $\beta$.  Specifically, we suppose $y_i$ is
+a Gaussian random variable with mean $\beta' x_i$ and known variance
+$\sigma^2$.  This induces a conditional density for the vector
+$y = (y_1, \dotsc, y_n)$:
+\begin{equation}\label{E:regression-density}
   p(y \mid \beta)
     \propto
-     \exp\{ -\tfrac{1}{2 \sigma^2} RSS(\beta) \},
-\]
+     \exp\{ -\tfrac{1}{2 \sigma^2} \RSS(\beta) \},
+\end{equation}
 where the constant of proportionality depends only on $y$ and $\sigma$.
 Next, we assume that $\beta$ itself is random, drawn from a
 distribution with density $p(\beta)$.  This distribution is called a
 prior, since it encodes prior knowledge about $\beta$.  Without loss
 of generality, the prior density can be assumed to take the form
-\[
-  p(\beta) \propto \exp\{ -F(\beta) \}.
-\]
+\begin{equation}\label{E:regression-prior}
+  p(\beta) \propto \exp\{ -\tfrac{1}{2} F(\beta) \}.
+\end{equation}
 Since the two random variables are dependent, upon observing $y$, we
 have information about $\beta$.  This information is incoded in the
 posterior density, $p(\beta \mid y)$, computed via
 Bayes' rule as
-\[
+\begin{equation}\label{E:regression-posterior}
   p(\beta \mid y)
     \propto p(y \mid \beta) \, p(\beta)
-    \propto \exp\{ -\tfrac{1}{2 \sigma^2} RSS(\beta) - F(\beta) \}.
-\]
+    \propto \exp\{ -\tfrac{1}{2 \sigma^2} \RSS(\beta) - \tfrac{1}{2} F(\beta) \}.
+\end{equation}
 The maximum a posterior probablility (MAP) estimate of $\beta$ is the
 value that maximizes $p(\beta \mid y)$.  Equivalently, $\beta$
 minimizes $\log p(\beta \mid y)$.  We can recover the solution to
 Ridge or LASSO regression by setting
-$F(\beta) = \tfrac{\lambda}{2 \sigma^2} \| \beta \|_2^2$ or
-$F(\beta) = \tfrac{\lambda}{2 \sigma^2} \| \beta \|_1$.  Thus, Ridge
+$F(\beta) = \tfrac{\lambda}{\sigma^2} \| \beta \|_2^2$ or
+$F(\beta) = \tfrac{\lambda}{\sigma^2} \| \beta \|_1$.  Thus, Ridge
 regression can be interpeted as imposing a Gaussian prior on $\beta$,
 and LASSO regression can be interpreted as imposing a
 double-exponential prior on $\beta$.
 
 
 \subsection{Bayesian inference for the population Laplacian}
+
+Suppose $L$ is the normalized Laplacian of a connected graph with $n$
+nodes.  Take $L$ to be a random object with expectation~$\mathcal{L}$,
+where $\mathcal{L}$ is another normalized graph Laplacian.  We refer to $\mathcal{L}$ as the
+``population'' graph Laplacian, and we refer to $L$ as the ``sample''
+graph Laplacian.  In general, $\mathcal{L}$ can be distinct from $L$,
+but we require that the nodes in the population and sample graphs have
+the same degrees, given by the vector $d = \big(d(1), \dotsc,
+d(n)\big)$. Let $D = \diag\big(d(1), \dotsc, d(n)\big)$ and let
+$\mathcal{X} = \{ X : X \succeq 0, \, X D^{1/2} 1 = 0, \, \rank(X) = n - 1 \}$.  The
+population and sample Laplacians are both members of $\mathcal{X}$.
+
+
+To apply the Bayesian formalism, we need to fully specify the
+conditional density of $L$ given $\mathcal{L}$.  A convenient choice
+is to take $L$ to be a scaled Wishart matrix with expectation
+$\mathcal{L}$.  Specifically, let $m \geq n - 1$ be a scale parameter
+and suppose $L$ is distributed as a
+$\tfrac{1}{m} \mathrm{Wishart}(\mathcal{L}, m)$ random variable.
+Thus, $\E[L \mid \mathcal{L}] = \mathcal{L}$ and $L$ has conditional density
+\begin{equation}\label{E:density}
+  p(L \mid \mathcal{L})
+    \propto
+      \frac{\exp\{ -\frac{m}{2} \Tr(L \mathcal{L}^+)\}}
+           {|\mathcal{L}|^{m/2}},
+\end{equation}
+where $|\cdot|$ denotes pseudodeterminant (product of nonzero
+eigenvalues).  The constant of proportionality depends only on $L$,
+$d$, $m$, and $n$, and the density is supported on $\mathcal{X}$.
+Eq.~\eqref{E:density} is analogous to Eq.~\eqref{E:regression-density}
+in the linear regression context.
+
+Now suppose we have know that $\mathcal{L}$, is a random object drawn
+from a prior density $p(\mathcal{L})$.
+Without loss of generality,
+\begin{equation}\label{E:prior}
+  p(\mathcal{L}) \propto \exp\{ -\tfrac{1}{2} F(\mathcal{L}^+) \},
+\end{equation}
+for some function $F$, supported on a subset
+$\mathcal{S} \subseteq \mathcal{X}$.  (The space $\mathcal{X}$ is
+closed under inversion, so if $\mathcal{L}^{+} \in \mathcal{S}$, then
+$\mathcal{L} \in \mathcal{X}$.)
+Eq.~\eqref{E:prior} is analogous to Eq.~\eqref{E:regression-prior}.
+
+Upon observing $L$, the posterior distribution for $\mathcal{L}$ is
+\begin{equation}\label{E:posterior}
+  p(\mathcal{L} \mid L)
+    \propto p(L \mid \mathcal{L}) \, p (\mathcal{L})
+    \propto \exp\{ -\tfrac{m}{2} \Tr(L \mathcal{L}^+)
+                   + \tfrac{m}{2} \log |\mathcal{L}^+|
+                   - \tfrac{1}{2} F(\mathcal{L^+}) \},
+\end{equation}
+with support determined by $\mathcal{S}$.  Eq.~\eqref{E:posterior} is
+analogous to Eq.~\eqref{E:regression-posterior}.  The MAP estimator of
+$\mathcal{L}^+$ is the solution to the program
+\[
+\begin{aligned}
+  & \underset{X}{\text{minimize}}
+  & & \Tr(L X) + \tfrac{1}{m} F(X) - \log |X| \\
+  & \text{subject to}
+  & & X \in \mathcal{S}.
+\end{aligned}
+\]
+Note the similarity with Mahoney and Orecchia's relaxed SDP.
+In particular, if
+\(
+  \mathcal{S} = \{ X : \Tr(X) = 1 \} \cap \mathcal{X},
+\)
+then the two programs are identical except for the factor of
+$\log |X|$ in the optimization criterion.  More generally, if
+$\mathcal{S} = \{ X : \Tr(X) = \tau^{-1} \} \cap \mathcal{X}$,
+then the MAP estimator of
+$[\Tr(\mathcal{L}^{+})]^{-1} \mathcal{L}^{+} = \tau \mathcal{L}^+$
+is the solution to the program
+\[
+\begin{aligned}
+  & \underset{X}{\text{minimize}}
+  & & \Tr(L X) + \tfrac{\tau}{m} F(\tau^{-1} X) - \tau \log |X| \\
+  & \text{subject to}
+  & & X \succeq 0 \\
+  & & & X D^{1/2} 1 = 0 \\
+  & & & \Tr(X) = 1
+\end{aligned}
+\]
+
+
+
+
+\clearpage
 
 Let $G$ be a graph with vertex set $V = \{ 1, 2, \dotsc, n \}$, edge
 set $E = V \times V$ equipped with the equivalence relation
