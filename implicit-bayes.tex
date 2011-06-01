@@ -54,6 +54,94 @@
 \end{abstract}
 
 \section{Introduction}
+\label{sxn:intro}
+
+Approximation algorithms and heuristic approximations are commonly used to
+speed up the running time of algorithms in machine learning and data
+analysis.
+In some cases, the outputs of these approximate procedures are ``better''
+than the output of the more expensive exact algorithms, in the sense that
+they lead to more robust results or more useful results for the downstream
+practitioner.
+Recently, Mahoney and Orecchia formalized these ideas in the context of
+computing the first nontrivial eigenvector of a graph
+Laplacian~\cite{mahoney2010implementing}.
+Recall that, given a graph $G$ on $n$ nodes or equivalently its $n \times n$
+Laplacian matrix $L$, the top nontrivial eigenvector of the Laplacian
+\emph{exactly} optimizes the Rayleigh quotient, subject to the usual
+constraints.
+This optimization problem can equivalently be expressed as a vector
+optimization program with the objective function $f(x) = x^TLx$,
+where $x$ is an $n$-dimensional vector, or as a Semi-Definite Program (SDP)
+with objective function $F(X)=\mathrm{Tr}(L X)$, where $X$ is an $n \times n$
+symmertic positive semi-definite matrix.
+This first nontrivial vector is, of course, of widespread interest in
+applications due to its usefulness for graph partitioning, image
+segmentation, data clustering, semi-supervised learning, etc.
+
+In this context, Mahoney and Orecchia asked the question: do popular
+diffusion-based procedures---such as running the Heat Kernel or performing a
+lazy random walk or computing the PageRank function---to compute a quick
+\emph{approximation} to the first nontrivial eigenvector of $L$ solve some
+other regularized version of the Rayleigh quotient objective function
+\emph{exactly}.
+Understanding this algorithmic-statistical tradeoff is clearly of interest
+if one is interested in very large-scale applications, where performing
+statistical analysis to derive an objective and then calling a black box
+solver to optimize that objective exactly, might be too expensive.
+Mahoney and Orecchia answered the above question in the affirmative, with
+the interesting twist that the regularization is on the SDP formulation
+rather than the usual vector optimization problem.
+That is, these diffusion-based procedures exactly optimize the regularized
+SDP $F(X)+\lambda G(X)$, for some regularization function $G(\cdot)$ to be
+described below, subject to the usual constraints.
+
+In this paper, we extend the Mahoney-Orecchia (MO) result by providing a
+statistical interpretation of it.
+Our interpretation will be analogous to the manner in which
+$\ell_2$-regularized or $\ell_1$-regularized $\ell_2$-regression (often
+called ridge regression and LASSO regression, respectively) can be
+interperted in terms of a Gaussian prior or a Laplace prior, respectively,
+on the coefficient vector of the regression problem.
+In more detail, we will set up a sampling model, whereby the graph Laplacian
+is interpreted as an observation from a random process; we will posit the
+existence of a ``population Laplacian'' driving the random process; and we
+will then define an estimation problem: find the inverse of the population
+Laplacian.
+The maximium a posteriori probability (MAP) estimate of the inverse of the
+population Laplacian leads to a regularized SDP, where the objective
+function $F(X)=\mathrm{Tr}(L X)$ and where the role of the penalty function
+$G(\cdot)$ is to encode prior assumptions about the population Laplacian.
+In addition, we show that if $G(\cdot)$ is the log-determinant function then
+the MAP estimate leads to the MO regularized SDP corresponding to running
+the PageRank heuristic.
+Said another way, the solutions to the MO regularized SDP can be interpreted
+as regularized estimates of the pseudoinverse of the graph Laplacian; and,
+by the Mahoney and Orecchia result, the solution to this regularized SDP can
+be computed quickly---rather than solving the SDP and rather computing the
+pseudoinverse of the Laplacian, simply run the fast diffusion-based PageRank
+heuristic for computing an approximation to the first nontrivial eigenvector
+of the Laplacian $L$.
+
+The next section, Section~\ref{S:introduction}, describes the background on
+the Laplacian and its pseudoinverse in light of local and global versions of
+the basic spectral clustering applications that gave rise to this line of
+work.
+Section~\ref{snx:framework} then describes a statistical framework for graph
+estimation; and Section~\ref{sxn:priors} describes prior assumptions that
+can be made on the population Laplacian.
+These two sections will shed light on the computational implications
+associated with these prior assumptions; but more importantly they will shed
+light on the implicit prior assumptions associated with making certain
+decisions to speed up computations.
+Section~\ref{sxn:empirical} will then provide a brief empirical evaluation,
+demonstrating that approximate computation of the first nontrivial
+eigenvector of the graph Laplacian implicitly leads to statistical
+regularization, in ways that should be familiar to the reader; and
+Section~\ref{sxn:conc} will provide a brief conclusion.
+
+
+
 
 \section{Graph partitioning}
 \label{S:introduction}
@@ -284,7 +372,7 @@ population Laplacian by maximizing its posterior density,
 $p(\mathcal{L} \mid L)$.
 
 
-\subsection{Analogy with regularized linear regression}
+\subsection{Analogy with regularized linear regression}\label{S:regression}
 
 It will be helpful to keep in mind the Bayesian
 interpretation of regularized linear regression.  In that context, we
@@ -354,9 +442,22 @@ population and sample Laplacians are both members of $\mathcal{X}$.
 
 
 To apply the Bayesian formalism, we need to fully specify the
-conditional density of $L$ given $\mathcal{L}$.  A convenient choice
-is to take $L$ to be a scaled Wishart matrix with expectation
-$\mathcal{L}$.  Specifically, let $m \geq n - 1$ be a scale parameter
+conditional density of $L$ given $\mathcal{L}$.  In
+Sec.~\ref{S:regression}, in the context of linear regression, we
+assumed that the observations followed a Gaussian distrubition.  A
+graph Laplacian is not a single observation---it is a positive
+semidefinite matrix with a very specific structure.  To model $L$, we
+choose a distribution for positive semi-definite matrices analogous to
+the Gaussian distribution: a scaled Wishart matrix with expectation
+$\mathcal{L}$.  This distribution captures the trait that $L$ is
+positive semi-definite.  The distribution does not accurately model
+every feature of $L$, in particular a scaled Wishart matrix does not
+necessarily have ones along its diagonal.  However, the mode of the
+density is at $\mathcal{L}$, a Laplacian, and for large values of the
+scale parameter, most of the mass will be on matrices close to
+$\mathcal{L}$.
+
+Let $m \geq n - 1$ be a scale parameter
 and suppose $L$ is distributed as a
 $\tfrac{1}{m} \mathrm{Wishart}(\mathcal{L}, m)$ random variable.
 Thus, $\E[L \mid \mathcal{L}] = \mathcal{L}$ and $L$ has conditional density
@@ -370,7 +471,8 @@ where $|\cdot|$ denotes pseudodeterminant (product of nonzero
 eigenvalues).  The constant of proportionality depends only on $L$,
 $d$, $m$, and $n$, and the density is supported on $\mathcal{X}$.
 Eq.~\eqref{E:density} is analogous to Eq.~\eqref{E:regression-density}
-in the linear regression context.
+in the linear regression context, with $1/m$ playing the role of
+$\sigma^2$.
 
 Now suppose we have know that $\mathcal{L}$, is a random object drawn
 from a prior density $p(\mathcal{L})$.
@@ -409,41 +511,46 @@ In particular, if
   \mathcal{S} = \{ X : \Tr(X) = 1 \} \cap \mathcal{X},
 \)
 then the two programs are identical except for the factor of
-$\log |X|$ in the optimization criterion.  More generally, if
-$\mathcal{S} = \{ X : \Tr(X) = \tau^{-1} \} \cap \mathcal{X}$,
-then the MAP estimator of
-$[\Tr(\mathcal{L}^{+})]^{-1} \mathcal{L}^{+} = \tau \mathcal{L}^+$
-is the solution to the program
-\[
-\begin{aligned}
-  & \underset{X}{\text{minimize}}
-  & & \Tr(L X) + \tfrac{\tau}{m} F(\tau^{-1} X) - \tau \log |X| \\
-  & \text{subject to}
-  & & X \succeq 0 \\
-  & & & X D^{1/2} 1 = 0 \\
-  & & & \Tr(X) = 1
-\end{aligned}
-\]
+$\log |X|$ in the optimization criterion.
+
+%More generally, if 
+%$\mathcal{S} = \{ X : \Tr(X) = \tau^{-1} \} \cap \mathcal{X}$, then
+%the MAP estimator of
+%$[\Tr(\mathcal{L}^{+})]^{-1} \mathcal{L}^{+} = \tau \mathcal{L}^+$ is
+%the solution to the program
+%\[
+%\begin{aligned}
+%  & \underset{X}{\text{minimize}}
+%  & & \Tr(L X) + \tfrac{\tau}{m} F(\tau^{-1} X) - \tau \log |X| \\
+%  & \text{subject to}
+%  & & X \succeq 0 \\
+%  & & & X D^{1/2} 1 = 0 \\
+%  & & & \Tr(X) = 1
+%\end{aligned}
+%\]
 
 
+\subsection{Heuristic justification for the Wishart density}
 
-
-\clearpage
+\textbf{[Note: this is roughly correct, but needs to be revised (see
+  comment before Lemma 3.1)]}
 
 Let $G$ be a graph with vertex set $V = \{ 1, 2, \dotsc, n \}$, edge
 set $E = V \times V$ equipped with the equivalence relation
 $(u,v) = (v,u)$.  Let $\omega$ be an edge weight function, and let
-$\mathcal{L}$ be the corresponding Laplacian.  Assume without loss of
-generality that $\sum_{(u,v) \in E} \omega(u,v) = 1$.  We interpet
-$\omega$ and $\mathcal{L}$ as unobserved ``population'' quantities,
-referring to $\omega(u,v)$ as the population weight of edge $(u,v)$,
-and referring to $\mathcal{L}$ as the population Laplacian.
+$\mathcal{L}$ and $\mathcal{L}_0$ be the corresponding normalized and
+combinatorial Laplacians.  Let $\Delta$ be a diagonal matrix with
+$\Delta(u,u) = \sum_{v} \omega(u,v)$, so that
+$\mathcal{L} = \Delta^{-1/2} \mathcal{L}_0 \Delta^{-1/2}$.  Suppose
+the weights are scaled such that $\sum_{(u,v) \in E} \omega(u,v) = 1$,
+and suppose further that $\Delta(u,u) > 0$.
+We refer to $\omega(u,v)$ as the population weight of edge $(u,v)$.
 
-Suppose we sample $m$ edges from the $E$, randomly chosen
-according to the population weight function.  That is, we see edges
-$(u_1, v_1), (u_2, v_2),  \dotsc, (u_m, v_m)$, where the edges are
-all drawn independently and identically such that the probability of
-seeing edge $(u,v)$ is
+A simple model for the sample graph is as follows: we sample $m$ edges
+from $E$, randomly chosen according to the population weight function.
+That is, we see edges $(u_1, v_1), (u_2, v_2), \dotsc, (u_m, v_m)$,
+where the edges are all drawn independently and identically such that
+the probability of seeing edge $(u,v)$ is determined by $\omega$:
 \[
   \prob_\omega\{ (u_1, v_1) = (u,v) \} = \omega(u,v).
 \]
@@ -455,52 +562,34 @@ sample weight function, $w$, defined such that
 \[
   w(u,v) = \frac{1}{m} \sum_{i=1}^{m} 1\{ (u_i, v_i) = (u,v) \}.
 \]
-In turn, we construct a sample Laplacian, $L$, defined such that
+In turn, we construct a sample compbinatorial Laplacian, $L_0$,
+defined such that
 \[
-  L(u,v)
+  L_0(u,v)
     =
     \begin{cases}
-      \sum_{w \neq u} w(u,w) &\text{when $u = v$,} \\
+      \sum_{w} w(u,w) &\text{when $u = v$,} \\
       -w(u,v) &\text{otherwise.}
     \end{cases}
 \]
-Note that $\E_\omega[w(u,v)] = \omega(u,v)$ and $\E_\omega L =
-\mathcal{L}$, where $\E_\omega$ denotes expecation with respect to
-probability law $\prob_\omega$.
+Let $D$ be a diagonal matrix such that
+$D(u,u) = \sum_{v} w(u,v)$, and define $L = D^{-1/2} L_0 D^{-1/2}$.
+Letting $\E_\omega$ denote expectration with respect to probability
+law $\prob_\omega$, note that $\E_\omega[w(u,v)] = \omega(u,v)$,
+that $\E_\omega L_0 = \mathcal{L}_0$ and that $\E_\omega D = \Delta$,
+Moreover, the strong law of large numbers gaurantees that as $m$ increases,
+these three quantities converge almost surely to their expectations.
+Further, Slutzky's theorem gaurantees that $\sqrt{m} (L - \mathcal{L})$ and
+$\sqrt{m} \Delta^{-1/2} (L_0 - \mathcal{L}_0) \Delta^{-1/2}$ converge in
+distribution to the same limit.  We use this large-sample behavior to
+approximate the the distrubition of $L$ by the distribution of
+$\Delta^{-1/2} L_0 \Delta^{-1/2}$.  Put simply, we treat the degrees as known.
 
-Our goal is to estimate the pseudoinverse of the population Laplacian,
-$\mathcal{L}^{+}$, using only the sampled edges.  The obvious estimate
-is $L^{+}$, the pseudoinverse of the sample Laplacian.  We can often
-do better when we have prior information about $\mathcal{L}$.
-
-The form of our prior information comes in the form of a prior distribution
-for $\mathcal{L}$.  That is, we think of $\mathcal{L}$ as a random
-object, drawn from some prior distribution.  If we think that
-$\mathcal{L}$ comes from an ``expander-like'' graph, then our prior
-distribution for $\mathcal{L}$ will put most of its weight on
-expander-like graphs.  Correspondingly, if we think that $\mathcal{L}$
-comes from a graph that can be embedded in a low-dimensional space,
-then our prior distribution for $\mathcal{L}$ will put most if its
-weight on such graphs.
-
-Let $p(\mathcal{L})$ denote our prior for $\mathcal{L}$, assumed to be
-an arbitrary density over the space of graph Laplacians.  Likewise, let
-$p(L \mid \mathcal{L})$ denote the density for the
-distribution of $L$, conditional on $\mathcal{L}$.  Using Bayes' rule,
-the posterior destribution for $\mathcal{L}$ after having observed $L$
-is proportional to $p(L \mid \mathcal{L}) \, p(\mathcal{L})$.
-Conceptually, Bayes' rule gives us a straightforward to
-incorporate prior information into our estimate of $\mathcal{L}^+$.
-We can get an estimate of $\mathcal{L}^{+}$ be maximizing the
-posterior distribution for $\mathcal{L}$.
-
-\subsection{Approximate likelihood for the sample Laplacian}
-
-The conditional density $p(L \mid \mathcal{L})$ is defined completely
-by the edge sampling scheme we laid out above.   However, the exact
-expression for $p(L \mid \mathcal{L})$ involves an intractible
-combinatorial sum.  We appeal to a crude approximation for the conditional
-density $p(L \mid \mathcal{L})$.  The approximaton works as follows:
+The distribution of $L_0$ is completely determined by the edge
+sampling scheme laid out above.  However, the exact form for the
+density involves an intractible combinatorial sum.  We appeal to a
+crude approximation for the conditional density.
+The approximaton works as follows:
 \begin{enumerate}
 \item For $i = 1, \dotsc, m$, define $x_i \in \reals^n$ such that
   \[
@@ -513,21 +602,28 @@ density $p(L \mid \mathcal{L})$.  The approximaton works as follows:
       \end{cases}
   \]
   where $s_i \in \{ -1, +1 \}$ is chosen arbitrarily.
-\item Note that $L = \sum_{i=1}^m x_i x_i'$.
+\item Note that $L_0 = \sum_{i=1}^m x_i x_i'$.
 \item Take $s_i$ to be random, equal to $+1$ or $-1$ with probability
   $\tfrac{1}{2}$.  Approximate the distribution of $x_i$ by the
   distribution of a multivariate normal random variable, $\tilde x_i$,
   such that $x_i$ and $\tilde x_i$ have the same first and second
   moments.
-\item Approximate the distribution of $L$ by the distribution of $\tilde L$, where
+\item Approximate the distribution of $L_0$ by the distribution of $\tilde L_0$, where
   \(
-    \tilde L = \sum_{i=1}^m \tilde x_i \tilde x_i'.
+  \tilde L_0 = \sum_{i=1}^m \tilde x_i \tilde x_i'.
   \)
+  \item Use the asymptotic expansion above to approximate the
+    distribution of $L$ by the distribution of
+    $\Delta^{-1/2} \tilde L_0 \Delta^{-1/2}$.
 \end{enumerate}
+
+\textbf{[The stuff below is inconsistent with the development to this point;
+the notation needs to be redone to use the normalized and
+combinatorial Laplacians where appropriate]}
 
 \noindent
 The next two lemmas derive the distribution of $\tilde x_i$ and
-$\tilde L$ in terms of $\mathcal{L}$, allowing us to get an
+$\tilde L_0$ in terms of $\mathcal{L}$, allowing us to get an
 approximation for $p(L \mid \mathcal{L})$.
 
 \begin{lemma}
@@ -541,40 +637,40 @@ approximation for $p(L \mid \mathcal{L})$.
   \]
 \end{lemma}
 \begin{proof}
-  The random variable $\tilde x_i$ is defined to have the same first
-  and second moments as $x_i$.
-  The first momemnt vanishes since $s_i \overset{d}{=} -s_i$ implies
-  that $x_i \overset{d}{=} -x_i$.  For the second moments, note that
-  when $u \neq v$, 
-  \[
-    \E_\omega[x_i(u) \, x_i(v)]
-      = -s_i^2 \, \prob_\omega\{ (u_i,v_i) = (u,v) \}  = -\omega(u,v)
-      = \mathcal{L}(u,v).
-  \]
-  Likewise,
-  \[
-    \E_\omega[\{x_i(u)\}^2]
+The random variable $\tilde x_i$ is defined to have the same first
+and second moments as $x_i$.
+The first momemnt vanishes since $s_i \overset{d}{=} -s_i$ implies
+that $x_i \overset{d}{=} -x_i$.  For the second moments, note that
+when $u \neq v$, 
+\[
+  \E_\omega[x_i(u) \, x_i(v)]
+  = -s_i^2 \, \prob_\omega\{ (u_i,v_i) = (u,v) \}  = -\omega(u,v)
+  = \mathcal{L}(u,v).
+\]
+Likewise,
+\[
+  \E_\omega[\{x_i(u)\}^2]
       = \sum_{v} \prob_\omega\{ (u_i,v_i) = (u,v) \}
       = \sum_{v} \omega(u,v)
       = \mathcal{L}(u,u).
-  \]
+\]
 \end{proof}
 
 \begin{lemma}\label{L:approx-wishart}
   The random matrix $\tilde L$ is distrubted as a Wishart matrix with
   shape $\mathcal{L}$ and scale $m$.  This distribution, denoted
   $\mathcal{W}(\mathcal{L}, m)$ is supported on the set of
-  positive-semidefinite matrices with the same nullspace as $\mathcal{L}$.  When
+  positive-semidefinite matrices with the same nullspace as $\mathcal{L}$.  Whe
   $m \geq \rank(\mathcal{L})$, the distribution has a denisty on this space
   given by
   \begin{equation}\label{E:wishart-density}
-    f_\mathcal{W}( \tilde L \mid \mathcal{L}, m)
+   f_\mathcal{W}( \tilde L \mid \mathcal{L}, m)
       \propto
       \frac{|\tilde L|^{(m - \rank(\mathcal{L}) - 1)/2}
         \exp\{-\tfrac{1}{2} \Tr(\tilde L \mathcal{L}^+) \}}
         {|\mathcal{L}|^{m/2}}
   \end{equation}
-  where the constant of proportionality depends only on $m$ and $\rank(\mathcal{L})$,
+  where the constant of proportionality depends only on $m$ and $n$
   and where $|\cdot|$ denotes pseudodeterminant (product of nonzero
   eigenvalues).
 \end{lemma}
@@ -596,58 +692,6 @@ approximation for $p(L \mid \mathcal{L})$.
     defined above.
 \end{proof}
 
-
-\subsection{Approximate posterior inference}
-
-Lemma~\ref{L:approx-wishart} gives us an approximation for
-$p(L \mid \mathcal{L})$.  Namely, we can approximate
-$p(L \mid \mathcal{L})$ by
-$\tilde p(L \mid \mathcal{L}) = f_\mathcal{W}(L \mid \mathcal{L}, m)$,
-where $f_\mathcal{W}$ is as defined in Eq.~\eqref{E:wishart-density}.
-With a specification for the prior density $p(\mathcal{L})$, we can
-get an approximation to the posterior denisty:
-\[
-  p(\mathcal{L} \mid L)
-  \approx
-  \tilde p(\mathcal{L} \mid L)
-    \propto \tilde p(L \mid \mathcal{L}) \, p(\mathcal{L}).
-\]
-We can then estimate $\mathcal{L}$ by maximizing
-$\tilde p(\mathcal{L} \mid L)$.
-
-Suppose the prior takes the form
-\[
-  p(\mathcal{L}) \propto \exp\{ -\tfrac{1}{2} F(\mathcal{L^+}) \}
-\]
-for some function, $F$, supported on a subset, $\mathcal{S}$, of all
-positive-semidefinite matrices.  An approximation to the
-maximum a posteriori probability estimate of $\mathcal{L}$ maximizes
-$\tilde p(\mathcal{L} \mid L)$.  Suppose that the
-matrices in $\mathcal{S}$ have the same rank, which is less than or
-equal to $m$.
-Up to a constant, twice the negative logarithm of the optimization criterion is
-\begin{align*}
-  -2 \log \tilde p(\mathcal{L} \mid L)
-   &= - 2 \log \tilde p(L \mid \mathcal{L}) - 2 \log p(\mathcal{L}) \\
-   &= \Tr(L \mathcal{L}^+) + F(\mathcal{L^+}) - m \log | \mathcal{L}^+ |
-\end{align*}
-The approximate MAP for $\mathcal{L}^+$ is the solution to the program
-\[
-\begin{aligned}
-  & \underset{X}{\text{minimize}}
-  & & \Tr(L X) + F(X) - m \log |X| \\
-  & \text{subject to}
-  & & X^+ \in \mathcal{S}.
-\end{aligned}
-\]
-Note the similarity with Mahoney and Orecchia's relaxed SDP.
-In particular, if
-\(
-  \mathcal{S} = \{ \mathcal{L} : \mathcal{L} \succeq 0,
-  \Tr(\mathcal{L} J) = 0, \Tr(\mathcal{L}^{+} J) = 1 \},
-\)
-then the two programs are identical except for the factor
-$-m \log |X|$ in the optimization criterion.
 
 
 \section{Prior specification}
@@ -673,23 +717,21 @@ eigenvalues to be well-separated from the rest of the spectrum.
 
 
 
-\subsection{Support sets}
-
-The support sets of the priors are subsets of the
-positive-semidefinite matrices.  Take $\mathcal{S}$ to be a typical
-support set.  Firstly, since every combinatorial Laplacian
-$\mathcal{L}$ satisfies $\mathcal{L} 1 = 0$, we will generally require
-this property of all matrices in $\mathcal{S}$.  Secondly, since the
-scale of the Laplacian cannot be identified in our samply scheme
-(i.e., the distribution of $L$ remains unchanged if $\mathcal{L}$ is
-replaced by $c \cdot \mathcal{L}$ for any positive constant $c$), we
-fix a scale for the matrices in $\mathcal{S}$.  A convenient way of
-fixing the scale is to specify that $\Tr(\mathcal{L}^+) = 1$ for
-all $\mathcal{L}$ in $\mathcal{S}$.  Finally to avoid undue technical
-complications, we require that all matrices in $\mathcal{S}$ have rank
-$n-1$.
-
-
+%\subsection{Support sets}
+%
+%The support sets of the priors are subsets of the
+%positive-semidefinite matrices.  Take $\mathcal{S}$ to be a typical
+%support set.  Firstly, since every combinatorial Laplacian
+%$\mathcal{L}$ satisfies $\mathcal{L} 1 = 0$, we will generally require
+%this property of all matrices in $\mathcal{S}$.  Secondly, since the
+%scale of the Laplacian cannot be identified in our sampling scheme
+%(i.e., the distribution of $L$ remains unchanged if $\mathcal{L}$ is
+%replaced by $c \cdot \mathcal{L}$ for any positive constant $c$), we
+%fix a scale for the matrices in $\mathcal{S}$.  A convenient way of
+%fixing the scale is to specify that $\Tr(\mathcal{L}^+) = 1$ for
+%all $\mathcal{L}$ in $\mathcal{S}$.  Finally to avoid undue technical
+%complications, we require that all matrices in $\mathcal{S}$ have rank
+%$n-1$.
 
 \subsection{Densities}
 
@@ -748,6 +790,33 @@ less prior weight on expanders or low-dimensional graphs.
 \end{figure}
 
 \section{Empirical evaluation}
+
+Here, we evaluate the performance of the regularized Laplacian
+estimator compared to the unregularized estimator.
+
+First, we evaluate the prior.  In our setup, we
+have a two-dimensional grid of points, where each point in the
+interior is connected to its four nearest neighbors; points on the
+boundary of the grid are connected to their three nearest neighbors;
+corners are connected to two other nodes.  We then perform
+$n_\text{swaps}$ edge-swaps: for each swap, we choose two edges
+uniformly at random and then we swap the endpoints.  For example, if
+we sample $i_1 \sim j_1$ and $i_2 \sim j_2$, then we replace these
+edges with $i_1 \sim j_2$ and $i_2 \sim i_1$.  By varying the number
+of swaps, we interpolate between a low-dimensional graph and an expander.
+
+
+
+\begin{figure}
+    \centering
+    \makebox{\includegraphics[scale=0.6]{plots/empirical}}
+    \caption{Performance versus regularization parameter for 2D grid}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \caption{Optimal regularization plotted as a function of number of swaps}
+\end{figure}
 
 \section{Concluding remarks}
 

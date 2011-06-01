@@ -8,43 +8,52 @@ demo2.swaps <- function(width = 7, height = 7, wrap = TRUE,
                                           round(seq(0, sqrt(2 * width * height),
                                                     length.out = 16)^2)))[-1],
                         seed = 0,
-                        nreps = 500)
+                        nreps = 1000)
 {
     adj <- grid.2d(width, height, wrap = wrap)
-    lambda0 <- (4 - eigen(adj, TRUE, TRUE)$values[-1])
+    n <- nrow(adj)
+    deg <- colSums(adj)
+    tot <- sum(deg) / 2
+    lap <- diag(n) - diag(sqrt(1/deg)) %*% adj %*% diag(sqrt(1/deg))
+    lambda0 <- eigen(lap, TRUE, TRUE)$values[-n]
+    ilambda0 <- (1/lambda0) / sum(1/lambda0)
     
     lambda <- array(NA, c(nreps, length(nswaps), nrow(adj) - 1))
     for (i in seq_along(nswaps)) {
         set.seed(seed)
         for (r in seq_len(nreps)) {
             adj1 <- shuffle.edges(adj, nswaps[i])
-            lambda[r,i,] <- (4 - eigen(adj1, TRUE, TRUE)$values[-1])
+            deg1 <- colSums(adj1)
+            lap1 <- diag(n) - diag(sqrt(1/deg1)) %*% adj1 %*% diag(sqrt(1/deg1))
+            lambda[r,i,] <- eigen(lap1, TRUE, TRUE)$values[-n]
         }
     }
+    ilambda <- 1/lambda
+    scale <- apply(ilambda, c(1,2), sum)
+    ilambda.scale <- ilambda / rep(scale, n - 1)
+    ilambda.mean <- apply(ilambda.scale, c(2, 3), mean)
     lambda.mean <- apply(lambda, c(2,3), mean)
-    ilambda.mean <- apply(1/lambda, c(2,3), mean)
 
-    par(mfrow=c(1,2))
-    plot(sqrt(c(0, max(nswaps))), c(0, 8), t='n',
-         ylab="Laplacian Eigenvalues",
-         xlab=expression(sqrt(Swaps)))
-    points(rep(0, nrow(adj) - 1), lambda0)
-    for (i in seq_along(nswaps)) {
-        points(rep(sqrt(nswaps[i]), nrow(adj) - 1), lambda.mean[i,])
-    }
+    #par(mfrow=c(1,2))
+    #plot(sqrt(c(0, max(nswaps))), c(0, 8), t='n',
+    #     ylab="Laplacian Eigenvalues",
+    #     xlab=expression(sqrt(Swaps)))
+    #points(rep(0, nrow(adj) - 1), lambda0)
+    #for (i in seq_along(nswaps)) {
+    #    points(rep(sqrt(nswaps[i]), nrow(adj) - 1), lambda.mean[i,])
+    #}
 
-    plot(sqrt(c(0, max(nswaps))), c(0, max(1/lambda0, max(1/lambda.mean))),t='n',
+    plot(sqrt(c(0, max(nswaps)) / tot), c(0, max(ilambda0, max(ilambda.mean))),t='n',
            ylab="Inverse Laplacian Eigenvalues",
-           xlab=expression(sqrt(Swaps)))
-    points(rep(0, nrow(adj) - 1), 1/lambda0)
+           xlab=expression(sqrt(Swaps / Edges)))
+    points(rep(0, nrow(adj) - 1), ilambda0)
     for (i in seq_along(nswaps)) {
-        points(rep(sqrt(nswaps[i]), nrow(adj) - 1), 1/lambda.mean[i,])
+        points(rep(sqrt(nswaps[i] / tot), nrow(adj) - 1), ilambda.mean[i,])
     }
 }
 
 
-pdf("plots/interpolate.pdf", 8, 4)
-#demo2.swaps()
-demo2.swaps(8,7,FALSE)
+pdf("plots/interpolate.pdf", 4, 4)
+demo2.swaps(7,6,FALSE)
 dev.off()
 

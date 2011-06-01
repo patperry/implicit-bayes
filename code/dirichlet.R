@@ -3,7 +3,7 @@
 
 pdf("plots/dirichlet.pdf", 4, 4)
 
-n <- 55
+n <- 35
 nreps <- 500
 shape <- seq(1.01, 10, len=16)
 seed <- 0

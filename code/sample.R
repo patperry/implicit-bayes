@@ -40,12 +40,12 @@ mle <- function(lap) {
 }
 
 
-demo <- function(width = 10, height = 5, nswaps = 0, psamp = 0.99,
+demo <- function(width = 6, height = 7, wrap = FALSE, nswaps = 0, psamp = 0.99,
                  penalty = seq(0.1, 50, length.out = 100), seed = 0, ev.tol = 1e-8) {
     set.seed(seed)
 
     # generate population graph and laplacian
-    adj0 <- grid.2d(width, height)
+    adj0 <- grid.2d(width, height, wrap = wrap)
     adj <- shuffle.edges(adj0, nswaps)
     nedge <- sum(adj > 0) / 2
     lap <- laplacian(adj)
