@@ -3,6 +3,7 @@
 %\RequirePackage[OT1]{fontenc}
 \RequirePackage{amsbsy,amsmath,amssymb,amsthm}
 \RequirePackage{graphicx}
+\RequirePackage{subfigure}
 
 \newcommand{\reals}{\mathbb{R}}
 \newcommand{\trans}{\mathrm{T}}
@@ -359,6 +360,7 @@ corresponds to a Laplace prior on the coefficent vector.
 
 
 \section{A statistical framework for regularized graph estimation}
+\label{snx:framework}
 
 Here we lay out a simple Bayesian framework for estimating a graph
 Laplacian, which allows for regularization by incorporating prior
@@ -428,6 +430,7 @@ double-exponential prior on $\beta$.
 
 
 \subsection{Bayesian inference for the population Laplacian}
+\label{S:bayesian-laplacian}
 
 Suppose $L$ is the normalized Laplacian of a connected graph with $n$
 nodes.  Take $L$ to be a random object with expectation~$\mathcal{L}$,
@@ -694,123 +697,190 @@ Likewise,
 
 
 
-\section{Prior specification}
+\section{Prior}
 
 To successfully leverage the results in the preceding section, we need
 to choose densities $p(\mathcal{L})$ that encode our prior beliefs in
-particular application regimes.  In this section, we present three
-parametric forms for the prior that allow us to interpolate between
-``expander-like'' graphs and ``low-dimensional'' graphs.
-
-We encode information about the
-``low-dimensionality'' or ``expanderness'' of a network through its
-spectrum.  For a network to be expander-like, we expect the gaps
-between consecutive eigenvalues of the Laplacian to be small.  For a
-network to be low-dimensional, we expect the smallest non-trivial
-eigenvalues to be well-separated from the rest of the spectrum.
-
-\begin{figure}
-    \centering
-    \makebox{\includegraphics[scale=0.6]{plots/interpolate}}
-    \caption{Interpolating from a low-dimensional graph to an expander}
-\end{figure}
+particular application regimes.  In this section, we present a
+parametric form for the prior that allows us to interpolate between
+``expander-like'' graphs and ``low-dimensional'' graphs.  For a
+network to be expander-like, we expect the gaps between consecutive
+eigenvalues of the Laplacian to be small.  For a network to be
+low-dimensional, we expect the smallest non-trivial eigenvalues to be
+well-separated from the rest of the spectrum (simulations in
+Sec.~\ref{sxn:empirical} formalize this intuition).
+Secs.~\ref{S:prior-support}--\ref{S:prior-density} define a
+parametric family of priors for $\mathcal{L}$, and
+Sec.~\ref{S:posterior-density} develops the corresponding posterior
+density for $\mathcal{L}$ and its maximizer.
 
 
+\subsection{Prior support set}
+\label{S:prior-support}
 
-%\subsection{Support sets}
-%
-%The support sets of the priors are subsets of the
-%positive-semidefinite matrices.  Take $\mathcal{S}$ to be a typical
-%support set.  Firstly, since every combinatorial Laplacian
-%$\mathcal{L}$ satisfies $\mathcal{L} 1 = 0$, we will generally require
-%this property of all matrices in $\mathcal{S}$.  Secondly, since the
-%scale of the Laplacian cannot be identified in our sampling scheme
-%(i.e., the distribution of $L$ remains unchanged if $\mathcal{L}$ is
-%replaced by $c \cdot \mathcal{L}$ for any positive constant $c$), we
-%fix a scale for the matrices in $\mathcal{S}$.  A convenient way of
-%fixing the scale is to specify that $\Tr(\mathcal{L}^+) = 1$ for
-%all $\mathcal{L}$ in $\mathcal{S}$.  Finally to avoid undue technical
-%complications, we require that all matrices in $\mathcal{S}$ have rank
-%$n-1$.
+The prior is supported on a subset of positive-semidefinite
+matrices.  The support set is $\mathcal{X}$, the same support set, as
+for the conditional density defined in
+Sec.~\ref{S:bayesian-laplacian}, so that every matrix in the support
+set is positive semi-definite, has rank $n - 1$, and satisfies
+$X D^{1/2} 1 = 0$.
 
-\subsection{Densities}
 
-The priors we specify only depend on the eigenvalues of the Laplacian.
-Equivalently, they depend on the eigenvalues of the pseudoinverse of
-the Laplacian.  If $\mathcal{L}^+ = U \Lambda U'$ is the spectral
-decomposition of the pseudoinverse of Laplacian $\mathcal{L}$, where
-$U \in \reals^{n \times n -1}$ and
-$\Lambda = \diag\big(\lambda(1), \dotsc, \lambda({n-1})\big)$, then the prior
-weight on $\mathcal{L}$ only depends on $\Lambda$.  The implication is
-that $U$ is uniformly distributed over the space of orthogonal
-matrices satisfying $(n-1) U U' \in \mathcal{S}$, where $\mathcal{S}$ is the
-support set of the prior.  This follows since $U'1 = 0$ and $\Tr([(n-1) U U']^+) =
-\Tr((n-1)^{-1} U U') = 1$.
+\subsection{Prior density}
+\label{S:prior-density}
 
-The priors below all take the form $p(\mathcal{L}) \propto
-\exp\{-\tfrac{1}{2} F(\mathcal{L}^{+})\}$, where $F(\mathcal{L}^{+})$
-depends only on $\Lambda = \diag(\lambda_1, \dotsc, \lambda_{n-1})$, the nonzero
-eigenvalues of $\mathcal{L}^{+}$.  They all depend on a
-meta-parameter, $\eta$:
+The prior we specify depends only on the eigenvalues of the normalized
+Laplacian.  Equivalently, it depends only on the eigenvalues of the pseudoinverse of
+the Laplacian.  If $\mathcal{L}^+ = \tau \, U \Lambda U'$ is the spectral
+decomposition of the pseudoinverse of normalized Laplacian
+$\mathcal{L}$, where $\tau \geq 0$,
+$U \in \reals^{n \times n -1}$, 
+$\Lambda = \diag\big(\lambda(1), \dotsc, \lambda({n-1})\big)$, and
+$\sum_v \lambda(v) = 1$,  then the prior
+weight on $\mathcal{L}$ only depends on $\Lambda$.  Note that the
+values $\lambda(1), \dotsc, \lambda(n-1)$ are unordered.
 
-\begin{description}
-  \item[Generalized entropy]
-    \[
-      F_H(\mathcal{L}^+) = \tfrac{1}{\eta}[ \Tr( \Lambda \log \Lambda)
-      - \Tr(\Lambda)];
-    \]
-  \item[Log-determinant]
-    \[
-      F_D(\mathcal{L}^{+}) = - \tfrac{1}{\eta} \log |\Lambda|;
-    \]
-  \item[Standard $k$-norm]
-    \[
-      F_k(\mathcal{L}^+)
-        = \frac{1}{k \, \eta} \Tr(\Lambda^k).
-  \]
-\end{description}
- 
-For the log-determinant prior, we have
-\[
+The implications of the prior depending only on $\Lambda$ are that it
+is scale invariant ($p(\sigma \mathcal{L}) = p(\mathcal{L})$ for all
+positive $\sigma$) and it is nearly rotationally invariant
+($p(O \mathcal{L} O') = p(\mathcal{L})$ for any rank-$(n-1)$
+projection matrix $O$ satisfying $O' D^{1/2} 1 = 0$).
+
+The vector $\lambda = \big(\lambda(1), \dotsc, \lambda(n-1)\big)$ lies
+in the unit simplex.  If we require that the
+distribution for $\lambda$ be exchangeable (invariant under
+permutations) and neutral ($\lambda(v)$ independent of the vector
+$\big(\lambda(u) / (1 - \lambda(v)) : u \neq v\big)$ for all $v$),
+then the only non-degenerate possibility is that $\lambda$ is
+Dirichlet-distributed with parameter vector $(\alpha, \ldots, \alpha)$
+\cite{fabius1973two}.  The parameter $\alpha$, which we refer to as
+the ``shape'' parameter, must satisfy $\alpha > 0$ for the density to
+be defined.  In this case,
+\begin{equation}\label{E:dirichlet-prior}
   p(\mathcal{L})
-    \propto \prod_{v=1}^{n-1} \lambda(v)^{1/2 \eta},
-\]
-i.e. the nonzero eigenvalues of $\mathcal{L}^{+}$ are
-Dirichlet-distributed over the simplex with parameters $\alpha(1) =
-\alpha(2) = \dotsb = \alpha(n-1) = 1 + \tfrac{1}{2\eta}$.  The other
-priors do not correspond to standard parametric forms.
+   \propto \prod_{v=1}^{n-1} \lambda(v)^{\alpha - 1}.
+\end{equation}
 
-For all three parametric forms, by varying $\eta$ we can put more or
-less prior weight on expanders or low-dimensional graphs.
+In Fig~\ref{F:dirichlet}, we display the behavior of the order
+statistics of $\lambda$ as $\alpha$ varies.  We fix the value $n = 42$
+and then let $\alpha$ vary between $0.2$ and and $2$.  For each value
+of the shape $\alpha$, we generate a random $(n-1)$-dimensional Dirichlet
+vector, $\lambda$, with parameter vector $(\alpha, \dotsc, \alpha)$.
+We compute the $n-1$ order statistics of $\lambda$ by sorting its
+components.  We repeat the procedure for $500$ replicates and then
+average the values.  For small values of $\alpha$, we observe that the
+first few order-statistics are well-separated from the rest.  As
+$\alpha$ increases, the order statistics become concentrated
+around $1/(n-1)$.
 
 \begin{figure}
     \centering
-    \makebox{\includegraphics[scale=0.6]{plots/dirichlet}}
-    \caption{Dirichlet distriubtion order statistics}
+    \subfigure[Dirichlet distriubtion order statistics]{
+      \makebox{\label{F:dirichlet}\includegraphics[scale=0.6]{plots/dirichlet}}
+    }
+    \subfigure[Interpolating from a low-dimensional graph to an expander]{
+      \makebox{\label{F:interpolate}\includegraphics[scale=0.6]{plots/interpolate}}
+    }
+    \caption{Analytical and emprical priors}
 \end{figure}
+
+
+
+\subsection{Posterior density}
+\label{S:posterior-density}
+
+In the form given of Eq.~\eqref{E:prior}, the function $F$ is given by
+\begin{equation}\label{E:prior-F}
+  F(X) = -2 \log |\tfrac{1}{\Tr(X)} X |^{\alpha - 1}
+       = -2(\alpha - 1) [\log |X| - (n-1)\Tr(X)],
+\end{equation}
+where as before, $|\cdot|$ denotes pseudodeterminant.
+Combining \eqref{E:posterior} with \eqref{E:prior-F}, the posterior
+density for $\mathcal{L}$ given $L$ is
+\[
+  p(\mathcal{L} \mid L)
+    \propto
+      \exp\{
+        -\tfrac{m}{2} \Tr(L \mathcal{L}^+)
+        + \tfrac{m + 2(\alpha - 1)}{2} \log |\mathcal{L}^+ |
+        - \log \Tr(\mathcal{L}^+)
+        \}.
+\]
+\textbf{[Note: still need to finesse the issue of the constraint
+  $\Tr(X) = 1$ in the SDP]}
+
+Up to a scale factor, the MAP estimator of $\mathcal{L}^{+}$ solves
+the SDP~XXXXXX specified by Mahoney and Orecchia.  They showed that
+the solution is closely related to the PageRank matrix, $R_\gamma$.
+Specifically, letting $\mathcal{\hat L}^{+}$ denote the MAP estimate,
+we can apply their result to get that
+\(
+  \mathcal{\hat L}^+
+    \propto D^{-1/2} R_\gamma D^{1/2};
+\)
+equivalently,
+\[
+  R_\gamma
+    \propto
+      D^{1/2} \mathcal{\hat L}^+ D^{-1/2}
+    =
+      \mathcal{\hat L}_0^+ D^{-1},
+\]
+where $\mathcal{\hat L}_0^+$ is the MAP estimate of the pseudoinverse
+of the population combinatorial Laplacian.  Thus, the PageRank matrix
+can be viewed as a degree-scaled regularized estimate of the
+pseudoinverse of the combinatorial Laplacian.
+
 
 \section{Empirical evaluation}
+\label{sxn:empirical}
 
 Here, we evaluate the performance of the regularized Laplacian
 estimator compared to the unregularized estimator.
 
-First, we evaluate the prior.  In our setup, we
-have a two-dimensional grid of points, where each point in the
+\subsection{Prior evaluation}\label{S:prior-evaluation}
+
+First, we evaluate the prior.  In our setup, we fix width $w = 7$ and
+height $h = 6$.  We have a two-dimensional grid with $n = w h$ points,
+having width $7$ and height $6$.  Each point in the
 interior is connected to its four nearest neighbors; points on the
 boundary of the grid are connected to their three nearest neighbors;
 corners are connected to two other nodes.  We then perform
-$n_\text{swaps}$ edge-swaps: for each swap, we choose two edges
-uniformly at random and then we swap the endpoints.  For example, if
+$s$ edge-swaps: for each swap, we choose two edges
+uniformly at random and then we swap the endpoints.  (For example, if
 we sample $i_1 \sim j_1$ and $i_2 \sim j_2$, then we replace these
-edges with $i_1 \sim j_2$ and $i_2 \sim i_1$.  By varying the number
+edges with $i_1 \sim j_2$ and $i_2 \sim i_1$.)  By varying the number
 of swaps, we interpolate between a low-dimensional graph and an expander.
 
+For each value of $s$, we generate the normalized Laplacian, $\mathcal{L}$,
+corresponding to the random $s$-swapped grid.  We compute the $n-1$ nonzero
+eigenvalues of $[\Tr(\mathcal{L}^{+})]^{-1} \mathcal{L}^{+}$.
+Finally, we perform $1000$ replicates of the procedure and average the
+resulting eigenvalues.  Fig.~\ref{F:interpolate} shows the results of
+the simulation.  We can see that when $s = 0$, the top two eigenvalues
+(corresponding to the $x$ and $y$ coordinates of the points on the grid)
+are well separated from the bulk.  As we increase $s$, the top eigenvalues
+merge into the bulk; eventually, as $s$ goes to infinity, the
+distribution will be very close that that of a uniformly chosen
+$4$-regular graph.
+
+
+\subsection{Estimation performance}
+
+Next, we evaluate the estimation performance of $\mathcal{\hat L}^{+}$
+as compared with $L^+$, and investigate how this performance depends
+on the sampling procedure and the regularization parameter.  We
+generate a population graph as in Sec.~\ref{S:prior-evaluation}.
+Then, we generate a sample graph by choosing a subset of $m$ edges,
+drawn uniformly from the population graph.  We compute the normalized
+Laplacian of the sample graph, and call it $L$.
 
 
 \begin{figure}
     \centering
     \makebox{\includegraphics[scale=0.6]{plots/empirical}}
-    \caption{Performance versus regularization parameter for 2D grid}
+    \caption{Performance versus regularization parameter for 2D
+      grid[\textbf{[Note: this will get replaced with something more polished]}}
 \end{figure}
 
 \begin{figure}

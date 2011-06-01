@@ -3,9 +3,9 @@
 
 pdf("plots/dirichlet.pdf", 4, 4)
 
-n <- 35
+n <- 41
 nreps <- 500
-shape <- seq(1.01, 10, len=16)
+shape <- seq(0.2, 2, len=16)
 seed <- 0
 
 lambda <- array(NA, c(nreps, length(shape), n))

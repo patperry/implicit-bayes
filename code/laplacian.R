@@ -3,13 +3,14 @@
 
 source("code/graph.R")
 
-laplacian <- function(adj, ...) {
+laplacian <- function(adj, normalized = FALSE, ...) {
   d <- degrees(adj)
   lap <- -adj
   diag(lap) <- diag(lap) + d
+  if (normalized)
+      lap <- diag(1/sqrt(d)) %*% lap %*% diag(1/sqrt(d))
   lap
 }
-
 
 pseudoinv <- function(a, tol = 1e-8, scale = FALSE) {
     udv <- svd(a)

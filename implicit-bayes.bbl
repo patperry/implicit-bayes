@@ -18,6 +18,11 @@ P.~Yu Chebotarev and E.~V. Shamis.
 \newblock On proximity measures for graph vertices.
 \newblock {\em Automation and Remote Control}, 59(10):1443--1459, 1998.
 
+\bibitem{fabius1973two}
+J.~Fabius.
+\newblock Two characterizations of the {D}irichlet distribution.
+\newblock {\em Ann. Statist.}, 1:583--587, 1973.
+
 \bibitem{mahoney2010implementing}
 M.~W. Mahoney and L.~Orecchia.
 \newblock Implementing regularization implicitly via approximate eigenvector
