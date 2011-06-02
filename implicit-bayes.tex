@@ -867,13 +867,19 @@ optimal choice of $\eta$ depends on properties of the population and
 sample Laplacians.  We recover a result in direct agreement with
 ~\eqref{E:eta}.
 
-Given a population Laplacian $\mathcal{L}$, we define
+We compute the regularized estimate $\mathcal{\hat L}_\eta$ up to a
+constant of proportionality by solving the Mahoney-Orecchia
+SDP~\eqref{eqn:mo-reg-sdp} with $G(X) = -\log|X|$.  We define the
+unregularized estimate $\hat L$ to be equal to the observed Laplacian,
+$L$.  Given a population Laplacian $\mathcal{L}$, we define
 $\tau = \tau(\mathcal{L}) = \Tr(\mathcal{L}^+)$ and
-$\Theta = \Theta(\mathcal{L}) = \tau^{-1} \mathcal{L}^+$. For
-regularized estimate $\mathcal{\hat L}_eta$ we define $\hat \tau_\eta$ and
-$\hat \Theta_\eta$ similarly.  For sample Laplacian $L$ we define
-unregularized estimates $\hat \tau = \hat \tau(L) = \Tr(L^+)$ and
-$\hat \Theta = \hat \Theta(L) = t^{-1} L^+$.
+$\Theta = \Theta(\mathcal{L}) = \tau^{-1} \mathcal{L}^+$. We define
+$\hat \tau_\eta$, $\hat \tau$, $\hat \Theta_\eta$, and $\hat \Theta$
+similarly to to the population quantities.  Our performance
+criterion is relative Frobenius error
+$\|\Theta - \hat \Theta_\eta\|_\mathrm{F} / \|\Theta - \hat \Theta
+\|_\mathrm{F}$, where $\|\cdot\|_\mathrm{F}$ denotes Frobenius norm
+($\|A\|_\mathrm{F} = [\Tr(A' A)]^{1/2}$).
 
 
 \subsection{Ground truth generation and prior evaluation}\label{S:prior-evaluation}
@@ -915,51 +921,43 @@ shape parameter $\alpha$ increases.
 
 Next, we evaluate the estimation performance of a regularized
 estimator of the graph Laplacian as compared to an unregularized
-estimate.
+estimate.  We construct the population graph $\mathcal{G}$ and its
+Laplacian $\mathcal{L}$ as in Sec.~\ref{S:prior-evaluation}.  The
+sampling procedure used to generate the observed graph $G$ and its
+Laplacian $L$ is parameterized by $m$, the sample size.  This
+parameter is analogous to the Wishart scale parameter
+in~\eqref{E:density}, but importantly, we are sampling from a
+different distribution.
 
-To construct such a pair, we generate population graph
-$\mathcal{G}$ with Laplacian $\mathcal{L}$ as in
-Sec.~\ref{S:prior-evaluation}, using width $w = 7$, height $h = 6$,
-and edge-swaps $s = 4$.  This will be the ground truth.  We define
-$\tau = \Tr(\mathcal{L}^+)$ and $\Theta = \tau^{-1} \mathcal{L}^+$;
-the goal will be to estimate $\Theta$.  As above, we let $n = w h$,
-the number of nodes in the graph.
+We randomly choose $m$ edges with replacement from $\mathcal{G}$.  We
+define sample graph $G$ and corresponding Laplacian by setting the
+weight of $i \sim j$ to the number of times we sampled that edge.  The
+sample graph $G$ overcounts some edges in $\mathcal{G}$ and misses
+others.
 
-Next, we generate a noisy observation.  We randomly choose $m$ edges
-with replacement from $\mathcal{G}$.  We define sample graph $G$
-and corresponding Laplacian by setting the weight of $i \sim j$
-to the number of times we sampled that edge.  Finally we set
-$t = \Tr(L^+)$ and $O = t^{-1} L^+$.  The matrix $O$ is the
-unregularized estimate of $\Theta$.  In our experiment, we set $m = n$.
+Fig~\ref{F:estimation-frob} shows how the Frobenius error behaves when
+$s = 4$ and $m$ is chosen such that $G$ and $\mathcal{G}$ have the
+same number of edges (counting multiplicity).  The plot shows the mean
+error and one standard deviation around it are plotted as a function
+of $\eta/\bar \tau$, as computed from 100 replicates.  Here,
+$\bar \tau$ is the mean value of $\tau$ over all replicates.We can see
+that regularization improves the performance of the estimator for a
+large range of $\eta$ values.  The supplementary materials, contain
+plots for other values of $s$ and $m$ (performance is
+similar).
 
-For a given value of the regularization parameter, $\eta$, we compute
-$\hat \Theta_\eta$, an estimate of $\Theta$, by solving the
-Mahoney-Orecchia SDP with $G(X) = -\log|X|$.  Our performance measure
-is relative Frobenius error, $\| \hat \Theta_\eta - \Theta \|_\mathrm{F} / \| O - \Theta
-\|_\mathrm{F}$, where $\| \cdot \|_\mathrm{F}$ denotes Frobenius norm
-($\|A\|_\mathrm{F}^2 = \Tr(A' A)$).  In the supplementary materials,
-we also look at relative spectral error, replacing Frobenius norm with
-spectral norm; the results are qualitatively similar.
-
-
-In Fig.~\ref{F:estimation-frob}, we generate $100$
-ground-truth/noisy-observation pairs according to the procedure just described.  For each
-replicate, we sweep over values of $\eta$ and evaluate the relative
-Frobenius error.  The figure shows mean relative Frobenius error and
-one standard devation around it plotted as a function of
-$\eta / \bar \tau$, where $\bar \tau$ is the mean value of $\tau$
-(compare with \eqref{E:eta}).  Regularization shows an improvement
-over the naive estimate of $\Theta$ for many values of $\eta$.  In the
-supplementary materials, we show that this behavior persists as we
-vary $m$, with smaller values of $m$ corresponding to larger benefits
-from regularization.
 
 \subsection{Optimal regularization behavior}\label{S:optimal}
 
 The optimal amount of regularization depends on the population graph
 and the sampling procedure.  Continuing with the simulation of
-Sec.~\ref{S:estimation}, we investigate how the optimal value of
-$\eta$ varies with $s$ and $m$.
+Sec.~\ref{S:estimation}, Fig.~\ref{F:optimal-frob} shows investigate
+how $\eta^\ast$, the optimal value of $\eta$, depends with $s$ and
+$m$.  We can see that as the sample size $m$ increases, $\eta^\ast$ converges
+monotonically to $\bar \tau$.  Further, higher values of $s$ (more
+expander-like graphs) correspond to higher values of $\eta^\ast$.
+This behavior is consistent with \eqref{E:eta}.
+
 
 
 \begin{figure}
@@ -967,7 +965,7 @@ $\eta$ varies with $s$ and $m$.
     \subfigure[Relative Frobenius error versus $\eta / \bar \tau$]{
       \makebox{\label{F:estimation-frob}\includegraphics[scale=0.6]{plots/estimation-frob-p100}}
     }
-    \subfigure[Scaled optimal regularization parameter $\eta / \bar \tau$ plotted against $m$
+    \subfigure[Scaled optimal regularization parameter $\eta^\ast / \bar \tau$ plotted against $m$
     and $s$]{
       \makebox{\label{F:optimal-frob}\includegraphics[scale=0.48]{plots/optimal}}
     }
