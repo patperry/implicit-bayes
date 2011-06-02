@@ -792,12 +792,12 @@ posterior likelihood.  Define $\hat \tau = \Tr(\mathcal{\hat L}^+)$
 and $\hat \Theta = [\hat \tau]^{-1} \mathcal{\hat L}^{+}$.
 In this case, $\hat \Theta$ must minimize the quantity
 \(
-  \Tr(L \hat \Theta) - \eta \log |\hat \Theta|,
+  \Tr(L \hat \Theta) - \tfrac{1}{\eta} \log |\hat \Theta|,
 \)
 where
 \begin{equation}\label{E:eta}
   \eta
-    = \frac{m + 2(\alpha - 1)}{\hat \tau m}.
+    = \frac{m \hat \tau}{m + 2(\alpha - 1)}.
 \end{equation}
 Thus $\hat \Theta$ solves \eqref{eqn:mo-reg-sdp} with $G(X) = - \log |X|$.
 \end{proof}
@@ -830,17 +830,15 @@ estimator compared to the unregularized estimator.
 
 \subsection{Prior evaluation}\label{S:prior-evaluation}
 
-First, we evaluate the prior.  In our setup, we fix width $w = 7$ and
-height $h = 6$.  We have a two-dimensional grid with $n = w h$ points,
-having width $7$ and height $6$.  Each point in the
-interior is connected to its four nearest neighbors; points on the
-boundary of the grid are connected to their three nearest neighbors;
-corners are connected to two other nodes.  We then perform
-$s$ edge-swaps: for each swap, we choose two edges
-uniformly at random and then we swap the endpoints.  (For example, if
-we sample $i_1 \sim j_1$ and $i_2 \sim j_2$, then we replace these
-edges with $i_1 \sim j_2$ and $i_2 \sim j_1$.)  By varying the number
-of swaps, we interpolate between a low-dimensional graph and an expander.
+First, we evaluate the prior.  In our setup, we start two-dimensional
+lattice with width $w$ and height $h$, and $n = w h$ nodes.  Points in
+the lattice are connected to their four nearest neighbors, except on
+the boundary.  We then perform $s$ edge-swaps: for each swap, we
+choose two edges uniformly at random and then we swap the endpoints.
+(For example, if we sample $i_1 \sim j_1$ and $i_2 \sim j_2$, then we
+replace these edges with $i_1 \sim j_2$ and $i_2 \sim j_1$.)  By
+varying the number of swaps, we interpolate between a low-dimensional
+graph and an expander.
 
 For each value of $s$, we generate the normalized Laplacian, $\mathcal{L}$,
 corresponding to the random $s$-swapped grid.  We compute the $n-1$ nonzero
@@ -848,7 +846,7 @@ eigenvalues of $[\Tr(\mathcal{L}^{+})]^{-1} \mathcal{L}^{+}$.
 Finally, we perform $1000$ replicates of the procedure and average the
 resulting eigenvalues.  Fig.~\ref{F:interpolate} shows the results of
 the simulation.  We can see that when $s = 0$, the top two eigenvalues
-(corresponding to the $x$ and $y$ coordinates of the points on the grid)
+(corresponding to the width-wise and height-wise coordinates on the grid)
 are well separated from the bulk.  As we increase $s$, the top eigenvalues
 merge into the bulk; eventually, as $s$ goes to infinity, the
 distribution will be very close that that of a uniformly chosen
@@ -892,7 +890,7 @@ observation pairs according to the procedure just described.  For each
 replicate, we sweep over values of $\eta$ and evaluate the relative
 Frobenius error.  The figure shows mean relative Frobenius error and
 one standard devation around it plotted as a function of
-$\bar \tau \, \eta$, where $\bar \tau$ is the mean value of $\tau$
+$\eta / \bar \tau$, where $\bar \tau$ is the mean value of $\tau$
 (compare with \eqref{E:eta}).  Regularization shows an improvement
 over the naive estimate of $\Theta$ for many values of $\eta$.  In the
 supplementary materials, we show that this behavior persists as we
@@ -911,11 +909,12 @@ $\eta$ varies with $s$ and $m$.
 
 \begin{figure}
     \centering
-    \subfigure[Relative Frobenius error versus $\bar \tau \eta$]{
+    \subfigure[Relative Frobenius error versus $\eta / \bar \tau$]{
       \makebox{\label{F:estimation-frob}\includegraphics[scale=0.6]{plots/estimation-frob-p100}}
     }
-    \subfigure[Optimal regularization parameter (PLACEHOLDER)]{
-      \makebox{\label{F:optimal-frob}\includegraphics[scale=0.6]{plots/estimation-spec-p100}}
+    \subfigure[Scaled optimal regularization parameter $\eta / \bar \tau$ plotted against $m$
+    and $s$]{
+      \makebox{\label{F:optimal-frob}\includegraphics[scale=0.48]{plots/optimal}}
     }
     %\caption{Analytical and emprical priors}
 \end{figure}

@@ -117,7 +117,7 @@ demo <- function(width = 6, height = 7, wrap = FALSE, nswaps = 0, psamp = 0.99,
     invisible(res)
 }
 
-repdemo <- function(nreps = 200,  penalty = seq(0.1, 100, length.out = 100),
+repdemo <- function(nreps = 10,  penalty = seq(0.1, 100, length.out = 100),
                     type=c("frobenius", "spectral"), quiet = FALSE, ...)
 {
     type <- match.arg(type)
