@@ -905,7 +905,9 @@ results are qualitatively similar for values.
     \subfigure[Spectrum of $\Theta$ for grid and expander graphs]{
       \makebox{\label{F:interpolate}\includegraphics[scale=0.6]{plots/interpolate}}
     }
+    \vspace{-0.5em}
     \caption{Analytical and empirical priors}
+    \vspace{-1em}
 \end{figure}
 
 We evaluate the prior~\eqref{E:dirichlet-prior} by visually comparing
@@ -949,15 +951,16 @@ shape parameter $\alpha$ increases.
     \subfigure[Optimal regularization parameter $\eta^\ast / \bar \tau$]{
       \makebox{\label{F:optimal-frob}\includegraphics[scale=0.5]{plots/optimal}}
     }
+    \vspace{-0.5em}
     \caption{Regularization performance}
+    \vspace{-1em}
 \end{figure}
-\vspace{-1em}
-
 
 Next, we evaluate the estimation performance of a regularized
 estimator of the graph Laplacian as compared to an unregularized
 estimate.  We construct the population graph $\mathcal{G}$ and its
-Laplacian $\mathcal{L}$ as in Sec.~\ref{S:prior-evaluation}.  The
+Laplacian $\mathcal{L}$ as in Sec.~\ref{S:prior-evaluation}.  Let
+$\mu$ be the number of edges in $\mathcal{G}$. The
 sampling procedure used to generate the observed graph $G$ and its
 Laplacian $L$ is parameterized by $m$, the sample size.  This
 parameter is analogous to the Wishart scale parameter
@@ -985,9 +988,10 @@ values of $s$ and $m$ (see supplementary appendix~B).
 
 The optimal amount of regularization depends on the population graph
 and the sampling procedure.  Continuing with the simulation of
-Sec.~\ref{S:estimation}, Fig.~\ref{F:optimal-frob} shows investigate
-how $\eta^\ast$, the optimal value of $\eta$, depends with $s$ and
-$m$.  We can see that as the sample size $m$ increases, $\eta^\ast$ converges
+Sec.~\ref{S:estimation}, Fig.~\ref{F:optimal-frob} shows
+how $\eta^\ast$, the optimal value of $\eta$, depends on the sampling
+proportion $m / \mu$ and the swaps per edges $s / \mu$.
+We can see that as the sample size $m$ increases, $\eta^\ast$ converges
 monotonically to $\bar \tau$.  Further, higher values of $s$ (more
 expander-like graphs) correspond to higher values of $\eta^\ast$.
 This behavior is consistent with \eqref{E:eta}.

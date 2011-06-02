@@ -92,7 +92,7 @@ sample weight function, $w$, defined such that
 \[
   w(u,v) = \frac{1}{m} \sum_{i=1}^{m} 1\{ (u_i, v_i) = (u,v) \}.
 \]
-In turn, we construct a sample compbinatorial Laplacian, $L_0$,
+In turn, we construct a sample combinatorial Laplacian, $L_0$,
 defined such that
 \[
   L_0(u,v)
@@ -104,22 +104,22 @@ defined such that
 \]
 Let $D$ be a diagonal matrix such that
 $D(u,u) = \sum_{v} w(u,v)$, and define $L = D^{-1/2} L_0 D^{-1/2}$.
-Letting $\E_\omega$ denote expectration with respect to probability
+Letting $\E_\omega$ denote expectation with respect to probability
 law $\prob_\omega$, note that $\E_\omega[w(u,v)] = \omega(u,v)$,
 that $\E_\omega L_0 = \mathcal{L}_0$ and that $\E_\omega D = \Delta$,
-Moreover, the strong law of large numbers gaurantees that as $m$ increases,
+Moreover, the strong law of large numbers guarantees that as $m$ increases,
 these three quantities converge almost surely to their expectations.
-Further, Slutzky's theorem gaurantees that $\sqrt{m} (L - \mathcal{L})$ and
+Further, Slutzky's theorem guarantees that $\sqrt{m} (L - \mathcal{L})$ and
 $\sqrt{m} \Delta^{-1/2} (L_0 - \mathcal{L}_0) \Delta^{-1/2}$ converge in
 distribution to the same limit.  We use this large-sample behavior to
-approximate the the distrubition of $L$ by the distribution of
+approximate the the distribution of $L$ by the distribution of
 $\Delta^{-1/2} L_0 \Delta^{-1/2}$.  Put simply, we treat the degrees as known.
 
 The distribution of $L_0$ is completely determined by the edge
 sampling scheme laid out above.  However, the exact form for the
-density involves an intractible combinatorial sum.  We appeal to a
+density involves an intractable combinatorial sum.  We appeal to a
 crude approximation for the conditional density.
-The approximaton works as follows:
+The approximation works as follows:
 \begin{enumerate}
 \item For $i = 1, \dotsc, m$, define $x_i \in \reals^n$ such that
   \[
@@ -165,7 +165,7 @@ approximation for $p(L \mid \mathcal{L})$.
 \begin{proof}
 The random variable $\tilde x_i$ is defined to have the same first
 and second moments as $x_i$.
-The first momemnt vanishes since $s_i \overset{d}{=} -s_i$ implies
+The first moment vanishes since $s_i \overset{d}{=} -s_i$ implies
 that $x_i \overset{d}{=} -x_i$.  For the second moments, note that
 when $u \neq v$, 
 \[
@@ -183,11 +183,11 @@ Likewise,
 \end{proof}
 
 \begin{lemma}\label{L:approx-wishart}
-  The random matrix $\tilde L_0$ is distrubted as $\tfrac{1}{m}
+  The random matrix $\tilde L_0$ is distributed as $\tfrac{1}{m}
   \mathrm{Wishart }(\mathcal{L}_0, m)$ random variable.
   This distribution is supported on the set of
   positive-semidefinite matrices with the same nullspace as $\mathcal{L}_0$.  When
-  $m \geq \rank(\mathcal{L}_0)$, the distribution has a denisty on this space
+  $m \geq \rank(\mathcal{L}_0)$, the distribution has a density on this space
   given by
   \begin{equation}\label{E:wishart-density}
    f( \tilde L_0 \mid \mathcal{L}_0, m)
