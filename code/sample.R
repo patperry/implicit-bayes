@@ -129,7 +129,7 @@ repdemo <- function(nreps = 200,  penalty = seq(0.1, 100, length.out = 100),
     loss.spectral.mle <- array(NA, c(nreps))
     loss.frobenius.mle <- array(NA, c(nreps))
     penalty.mle <- array(NA, c(nreps))
-    tau <- rep(NA, npenalty)
+    tau <- rep(NA, nreps)
 
     d <- NULL    
     for (r in seq_len(nreps)) {
@@ -156,7 +156,10 @@ repdemo <- function(nreps = 200,  penalty = seq(0.1, 100, length.out = 100),
     #loss.frobenius.mle.sd <- sd(loss.frobenius.mle)
     #penalty.mle.sd <- sd(penalty.mle)
 
-    res <- NULL
+    res <- rep(NA, length(type))
+    res[type == "spectral"] <- penalty[which.min(loss.spectral.mean)]
+    res[type == "frobenius"] <- penalty[which.min(loss.frobenius.mean)]
+    
     if (quiet)
         return(res)
     
