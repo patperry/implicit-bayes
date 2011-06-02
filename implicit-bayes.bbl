@@ -1,4 +1,16 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
+
+\bibitem{andersen06local}
+R.~Andersen, F.R.K. Chung, and K.~Lang.
+\newblock Local graph partitioning using {PageRank} vectors.
+\newblock In {\em FOCS '06: Proceedings of the 47th Annual IEEE Symposium on
+  Foundations of Computer Science}, pages 475--486, 2006.
+
+\bibitem{BN03}
+M.~Belkin and P.~Niyogi.
+\newblock {L}aplacian eigenmaps for dimensionality reduction and data
+  representation.
+\newblock {\em Neural Computation}, 15(6):1373--1396, 2003.
 
 \bibitem{chandra1989electrical}
 A.~K. Chandra, P.~Raghavan, W.~L. Ruzzo, R.~Smolensky, and P.~Tiwari.
@@ -12,15 +24,84 @@ P.~Yu Chebotarev and E.~V. Shamis.
 \newblock On proximity measures for graph vertices.
 \newblock {\em Automation and Remote Control}, 59(10):1443--1459, 1998.
 
+\bibitem{Chung07_heatkernelPNAS}
+F.R.K. Chung.
+\newblock The heat kernel as the pagerank of a graph.
+\newblock {\em Proceedings of the National Academy of Sciences of the United
+  States of America}, 104(50):19735--19740, 2007.
+
+\bibitem{Donath:1973}
+W.E. Donath and A.J. Hoffman.
+\newblock Lower bounds for the partitioning of graphs.
+\newblock {\em IBM Journal of Research and Development}, 17:420--425, 1973.
+
 \bibitem{fabius1973two}
 J.~Fabius.
 \newblock Two characterizations of the {D}irichlet distribution.
 \newblock {\em Ann. Statist.}, 1:583--587, 1973.
+
+\bibitem{fiedler75B}
+M.~Fiedler.
+\newblock A property of eigenvectors of nonnegative symmetric matrices and its
+  application to graph theory.
+\newblock {\em Czechoslovak Mathematical Journal}, 25(100):619--633, 1975.
+
+\bibitem{guatterymiller98}
+S.~Guattery and G.L. Miller.
+\newblock On the quality of spectral separators.
+\newblock {\em SIAM Journal on Matrix Analysis and Applications}, 19:701--719,
+  1998.
+
+\bibitem{Joa03}
+T.~Joachims.
+\newblock Transductive learning via spectral graph partitioning.
+\newblock In {\em Proceedings of the 20th International Conference on Machine
+  Learning}, pages 290--297, 2003.
+
+\bibitem{LLDM09_communities_IM}
+J.~Leskovec, K.J. Lang, A.~Dasgupta, and M.W. Mahoney.
+\newblock Community structure in large networks: Natural cluster sizes and the
+  absence of large well-defined clusters.
+\newblock {\em Internet Mathematics}, 6(1):29--123, 2009.
+\newblock Also available at: arXiv:0810.1355.
 
 \bibitem{mahoney2010implementing}
 M.~W. Mahoney and L.~Orecchia.
 \newblock Implementing regularization implicitly via approximate eigenvector
   computation.
 \newblock arXiv:1010.0703v1 [cs.DS], 2010.
+
+\bibitem{MOV09_TRv2}
+M.~W. Mahoney, L.~Orecchia, and N.~K. Vishnoi.
+\newblock A spectral algorithm for improving graph partitions with applications
+  to exploring data graphs locally.
+\newblock Technical report.
+\newblock Preprint: arXiv:0912.0681 (2009).
+
+\bibitem{Mihail}
+M.~Mihail.
+\newblock Conductance and convergence of {M}arkov chains---a combinatorial
+  treatment of expanders.
+\newblock In {\em Proceedings of the 30th Annual IEEE Symposium on Foundations
+  of Computer Science}, pages 526--531, 1989.
+
+\bibitem{ShiMalik00_NCut}
+J.~Shi and J.~Malik.
+\newblock Normalized cuts and image segmentation.
+\newblock {\em IEEE Transcations of Pattern Analysis and Machine Intelligence},
+  22(8):888--905, 2000.
+
+\bibitem{spielman96_spectral}
+D.A. Spielman and S.-H. Teng.
+\newblock Spectral partitioning works: Planar graphs and finite element meshes.
+\newblock In {\em FOCS '96: Proceedings of the 37th Annual IEEE Symposium on
+  Foundations of Computer Science}, pages 96--107, 1996.
+
+\bibitem{Spielman:2004}
+D.A. Spielman and S.-H. Teng.
+\newblock Nearly-linear time algorithms for graph partitioning, graph
+  sparsification, and solving linear systems.
+\newblock In {\em STOC '04: Proceedings of the 36th annual ACM Symposium on
+  Theory of Computing}, pages 81--90, 2004.
 
 \end{thebibliography}
