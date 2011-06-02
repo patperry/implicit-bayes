@@ -860,41 +860,58 @@ prior~\eqref{E:dirichlet-prior} captures some of the qualitative
 features of these graphs.  In Sec.~\ref{S:estimation}, we describe a
 sampling procedure for $L$ which, superficially, has no relation to
 the scaled Wishart conditional density~\eqref{E:density}.  Despite
-this model misspecification, the MAP estimator $\hat L_{\eta}$
+this model misspecification, the regularized estimator $\hat L_{\eta}$
 outperforms $L$ for many choices of the regularization parameter
 $\eta$.  Finally, in Sec.~\ref{S:optimal}, we investigate how the
 optimal choice of $\eta$ depends on properties of the population and
 sample Laplacians.  We recover a result in direct agreement with
 ~\eqref{E:eta}.
 
+Given a population Laplacian $\mathcal{L}$, we define
+$\tau = \tau(\mathcal{L}) = \Tr(\mathcal{L}^+)$ and
+$\Theta = \Theta(\mathcal{L}) = \tau^{-1} \mathcal{L}^+$. For
+regularized estimate $\mathcal{\hat L}_eta$ we define $\hat \tau_\eta$ and
+$\hat \Theta_\eta$ similarly.  For sample Laplacian $L$ we define
+unregularized estimates $\hat \tau = \hat \tau(L) = \Tr(L^+)$ and
+$\hat \Theta = \hat \Theta(L) = t^{-1} L^+$.
 
-\subsection{Prior evaluation}\label{S:prior-evaluation}
 
-First, we evaluate the prior.  In our setup, we start two-dimensional
-lattice with width $w$ and height $h$, and $n = w h$ nodes.  Points in
-the lattice are connected to their four nearest neighbors, except on
-the boundary.  We then perform $s$ edge-swaps: for each swap, we
-choose two edges uniformly at random and then we swap the endpoints.
-(For example, if we sample $i_1 \sim j_1$ and $i_2 \sim j_2$, then we
-replace these edges with $i_1 \sim j_2$ and $i_2 \sim j_1$.)  By
-varying the number of swaps, we interpolate between a low-dimensional
-graph and an expander.
+\subsection{Ground truth generation and prior evaluation}\label{S:prior-evaluation}
 
-For each value of $s$, we generate the normalized Laplacian,
-$\mathcal{L}$, corresponding to the random $s$-swapped grid.  We
-compute the $n-1$ nonzero eigenvalues of
-$[\Tr(\mathcal{L}^{+})]^{-1} \mathcal{L}^{+}$.  Finally, we perform
-$1000$ replicates of the procedure and average the resulting
-eigenvalues.  Fig.~\ref{F:interpolate} shows the results of the
-simulation.  We can see that when $s = 0$, the top two eigenvalues
+To generate a ground truth population Laplacian, $\mathcal{L}$---equivalently, a
+population graph---we start two-dimensional lattice with width $w$ and
+height $h$, and $n = w h$ nodes.  Points in the lattice are connected
+to their four nearest neighbors, making adjustments as necessary the
+boundary.  We then perform $s$ edge-swaps: for each swap, we choose
+two edges uniformly at random and then we swap the endpoints.  For
+example, if we sample edges $i_1 \sim j_1$ and $i_2 \sim j_2$, then we
+replace these edges with $i_1 \sim j_2$ and $i_2 \sim j_1$.  When
+$s = 0$, the graph is a low-deminsional.  As $s$ increases to
+infinity, the graph becomes more and more like a uniformly chosen
+$4$-regular graph (an expander).  Indeed each edge swap is a step of
+the Metropolis algorithm towards a uniformly chosen random graph with
+a fixed degree sequence.  By varying the number of swaps,
+we interpolate between a low-dimensional graph and an expander.
+
+
+We evaluate the prior~\eqref{E:dirichlet-prior} by visually comparing
+its expected order statistics with the expected eigenvalues of
+$\Theta$.  For each value of $s$, we generate the normalized
+Laplacian, $\mathcal{L}$, corresponding to the random $s$-swapped
+grid.  We compute the $n-1$ nonzero eigenvalues of $\Theta$.  Finally,
+we perform $1000$ replicates of the procedure and average the
+resulting eigenvalues.  Fig.~\ref{F:interpolate} shows the results of
+the simulation.  We can see that when $s = 0$, the top two eigenvalues
 (corresponding to the width-wise and height-wise coordinates on the
 grid) are well separated from the bulk.  As we increase $s$, the top
 eigenvalues merge into the bulk; eventually, as $s$ goes to infinity,
 the distribution will be very close that that of a uniformly chosen
-$4$-regular graph.
+$4$-regular graph.  We observe that the behavior is qualitatively
+similar to the behavior of the Dirichlet prior order statistics as the
+shape parameter $\alpha$ increases.
 
 
-\subsection{Estimation performance}\label{S:estimation}
+\subsection{Sampling procedure and estimation performance}\label{S:estimation}
 
 Next, we evaluate the estimation performance of a regularized
 estimator of the graph Laplacian as compared to an unregularized
