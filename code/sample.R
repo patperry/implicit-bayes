@@ -162,7 +162,7 @@ repdemo <- function(nreps = 10,  penalty = seq(0.1, 100, length.out = 100),
     
     if (quiet)
         return(res)
-    
+
     par(mfrow=c(1,length(type)))
     if ("spectral" %in% type) {
         plot(range(penalty), range(loss.spectral.mean), t = 'n',
@@ -172,10 +172,10 @@ repdemo <- function(nreps = 10,  penalty = seq(0.1, 100, length.out = 100),
              ylim=range(c(0,
                           loss.spectral.mean - loss.spectral.sd,
                           loss.spectral.mean + loss.spectral.sd)))
-        abline(h = 1, lty = 2)        
-        lines(penalty, loss.spectral.mean + loss.spectral.sd)
-        lines(penalty, loss.spectral.mean - loss.spectral.sd)
-        points(penalty, loss.spectral.mean)        
+        abline(h = 1, lty = 2, col="gray")        
+        lines(penalty, loss.spectral.mean + loss.spectral.sd, col=2)
+        lines(penalty, loss.spectral.mean - loss.spectral.sd, col=2)
+        points(penalty, loss.spectral.mean, col=1)        
     }
 
     if ("frobenius" %in% type) {
@@ -186,10 +186,10 @@ repdemo <- function(nreps = 10,  penalty = seq(0.1, 100, length.out = 100),
              ylim=range(c(0,
                           loss.frobenius.mean - loss.frobenius.sd,
                           loss.frobenius.mean + loss.frobenius.sd)))
-        abline(h = 1, lty = 2)        
-        lines(penalty, loss.frobenius.mean + loss.frobenius.sd)
-        lines(penalty, loss.frobenius.mean - loss.frobenius.sd)
-        points(penalty, loss.frobenius.mean)
+        abline(h = 1, lty = 2, col = "gray")        
+        lines(penalty, loss.frobenius.mean + loss.frobenius.sd, col = 2)
+        lines(penalty, loss.frobenius.mean - loss.frobenius.sd, col = 2)
+        points(penalty, loss.frobenius.mean, col = 1)
     }
 
     invisible(res)

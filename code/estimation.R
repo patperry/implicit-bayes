@@ -1,6 +1,9 @@
 source("code/sample.R")
 
-pdf("plots/estimation-frob-p010.pdf", 4, 4)
+require(RColorBrewer)
+palette(brewer.pal(8, "Dark2"))
+
+pdf("plots/estimation-frob-p010.pdf", 5, 5)
 repdemo(width = 6, height = 7, wrap = FALSE,
         nswaps = 4,
         psamp = 0.10,
@@ -9,7 +12,7 @@ repdemo(width = 6, height = 7, wrap = FALSE,
         type="frobenius")
 dev.off()
 
-pdf("plots/estimation-frob-p020.pdf", 4, 4)
+pdf("plots/estimation-frob-p020.pdf", 5, 5)
 repdemo(width = 6, height = 7, wrap = FALSE,
         nswaps = 4,
         psamp = 0.20,
@@ -18,7 +21,7 @@ repdemo(width = 6, height = 7, wrap = FALSE,
         type="frobenius")
 dev.off()
 
-pdf("plots/estimation-frob-p050.pdf", 4, 4)
+pdf("plots/estimation-frob-p050.pdf", 5, 5)
 repdemo(width = 6, height = 7, wrap = FALSE,
         nswaps = 4,
         psamp = 0.50,
@@ -27,7 +30,7 @@ repdemo(width = 6, height = 7, wrap = FALSE,
         type="frobenius")
 dev.off()
 
-pdf("plots/estimation-frob-p100.pdf", 4, 4)
+pdf("plots/estimation-frob-p100.pdf", 5, 5)
 repdemo(width = 6, height = 7, wrap = FALSE,
         nswaps = 4,
         psamp = 1,
@@ -36,7 +39,7 @@ repdemo(width = 6, height = 7, wrap = FALSE,
         type="frobenius")
 dev.off()
 
-pdf("plots/estimation-frob-p200.pdf", 4, 4)
+pdf("plots/estimation-frob-p200.pdf", 5, 5)
 repdemo(width = 6, height = 7, wrap = FALSE,
         nswaps = 4,
         psamp = 2,
@@ -45,7 +48,7 @@ repdemo(width = 6, height = 7, wrap = FALSE,
         type="frobenius")
 dev.off()
 
-pdf("plots/estimation-frob-p500.pdf", 4, 4)
+pdf("plots/estimation-frob-p500.pdf", 5, 5)
 repdemo(width = 6, height = 7, wrap = FALSE,
         nswaps = 4,
         psamp = 5,
@@ -54,7 +57,7 @@ repdemo(width = 6, height = 7, wrap = FALSE,
         type="frobenius")
 dev.off()
 
-pdf("plots/estimation-frob-p1000.pdf", 4, 4)
+pdf("plots/estimation-frob-p1000.pdf", 5, 5)
 repdemo(width = 6, height = 7, wrap = FALSE,
         nswaps = 4,
         psamp = 10,
@@ -63,7 +66,7 @@ repdemo(width = 6, height = 7, wrap = FALSE,
         type="frobenius")
 dev.off()
 
-pdf("plots/estimation-spec-p010.pdf", 4, 4)
+pdf("plots/estimation-spec-p010.pdf", 5, 5)
 repdemo(width = 6, height = 7, wrap = FALSE,
         nswaps = 4,
         psamp = 0.10,
@@ -72,7 +75,7 @@ repdemo(width = 6, height = 7, wrap = FALSE,
         type="spectral")
 dev.off()
 
-pdf("plots/estimation-spec-p020.pdf", 4, 4)
+pdf("plots/estimation-spec-p020.pdf", 5, 5)
 repdemo(width = 6, height = 7, wrap = FALSE,
         nswaps = 4,
         psamp = 0.20,
@@ -81,7 +84,7 @@ repdemo(width = 6, height = 7, wrap = FALSE,
         type="spectral")
 dev.off()
 
-pdf("plots/estimation-spec-p050.pdf", 4, 4)
+pdf("plots/estimation-spec-p050.pdf", 5, 5)
 repdemo(width = 6, height = 7, wrap = FALSE,
         nswaps = 4,
         psamp = 0.50,
@@ -90,7 +93,7 @@ repdemo(width = 6, height = 7, wrap = FALSE,
         type="spectral")
 dev.off()
 
-pdf("plots/estimation-spec-p100.pdf", 4, 4)
+pdf("plots/estimation-spec-p100.pdf", 5, 5)
 repdemo(width = 6, height = 7, wrap = FALSE,
         nswaps = 4,
         psamp = 1,
@@ -99,7 +102,7 @@ repdemo(width = 6, height = 7, wrap = FALSE,
         type="frobenius")
 dev.off()
 
-pdf("plots/estimation-spec-p200.pdf", 4, 4)
+pdf("plots/estimation-spec-p200.pdf", 5, 5)
 repdemo(width = 6, height = 7, wrap = FALSE,
         nswaps = 4,
         psamp = 2,
@@ -108,7 +111,7 @@ repdemo(width = 6, height = 7, wrap = FALSE,
         type="spectral")
 dev.off()
 
-pdf("plots/estimation-spec-p500.pdf", 4, 4)
+pdf("plots/estimation-spec-p500.pdf", 5, 5)
 repdemo(width = 6, height = 7, wrap = FALSE,
         nswaps = 4,
         psamp = 5,
@@ -117,7 +120,7 @@ repdemo(width = 6, height = 7, wrap = FALSE,
         type="spectral")
 dev.off()
 
-pdf("plots/estimation-spec-p1000.pdf", 4, 4)
+pdf("plots/estimation-spec-p1000.pdf", 5, 5)
 repdemo(width = 6, height = 7, wrap = FALSE,
         nswaps = 4,
         psamp = 10,

@@ -24,8 +24,6 @@ optdemo <- function(psamp = c(0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0),
         }
     }
 
-    browser()
-
     adj <- grid.2d(7, 6, wrap=FALSE)
     tot <- sum(adj) / 2
 
