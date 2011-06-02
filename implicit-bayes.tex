@@ -655,170 +655,6 @@ this connection precise.
 %\]
 
 
-\subsection{Heuristic justification for the Wishart density}
-
-\textbf{[Note: this is roughly correct, but needs to be revised (see
-  comment before Lemma 3.1)]}
-
-Let $G$ be a graph with vertex set $V = \{ 1, 2, \dotsc, n \}$, edge
-set $E = V \times V$ equipped with the equivalence relation
-$(u,v) = (v,u)$.  Let $\omega$ be an edge weight function, and let
-$\mathcal{L}$ and $\mathcal{L}_0$ be the corresponding normalized and
-combinatorial Laplacians.  Let $\Delta$ be a diagonal matrix with
-$\Delta(u,u) = \sum_{v} \omega(u,v)$, so that
-$\mathcal{L} = \Delta^{-1/2} \mathcal{L}_0 \Delta^{-1/2}$.  Suppose
-the weights are scaled such that $\sum_{(u,v) \in E} \omega(u,v) = 1$,
-and suppose further that $\Delta(u,u) > 0$.
-We refer to $\omega(u,v)$ as the population weight of edge $(u,v)$.
-
-A simple model for the sample graph is as follows: we sample $m$ edges
-from $E$, randomly chosen according to the population weight function.
-That is, we see edges $(u_1, v_1), (u_2, v_2), \dotsc, (u_m, v_m)$,
-where the edges are all drawn independently and identically such that
-the probability of seeing edge $(u,v)$ is determined by $\omega$:
-\[
-  \prob_\omega\{ (u_1, v_1) = (u,v) \} = \omega(u,v).
-\]
-Notably, we will likely see duplicate edges, and not every edge with a
-positive weight will get sampled.
-
-We construct a weight function from the sampled edges, called the
-sample weight function, $w$, defined such that
-\[
-  w(u,v) = \frac{1}{m} \sum_{i=1}^{m} 1\{ (u_i, v_i) = (u,v) \}.
-\]
-In turn, we construct a sample compbinatorial Laplacian, $L_0$,
-defined such that
-\[
-  L_0(u,v)
-    =
-    \begin{cases}
-      \sum_{w} w(u,w) &\text{when $u = v$,} \\
-      -w(u,v) &\text{otherwise.}
-    \end{cases}
-\]
-Let $D$ be a diagonal matrix such that
-$D(u,u) = \sum_{v} w(u,v)$, and define $L = D^{-1/2} L_0 D^{-1/2}$.
-Letting $\E_\omega$ denote expectration with respect to probability
-law $\prob_\omega$, note that $\E_\omega[w(u,v)] = \omega(u,v)$,
-that $\E_\omega L_0 = \mathcal{L}_0$ and that $\E_\omega D = \Delta$,
-Moreover, the strong law of large numbers gaurantees that as $m$ increases,
-these three quantities converge almost surely to their expectations.
-Further, Slutzky's theorem gaurantees that $\sqrt{m} (L - \mathcal{L})$ and
-$\sqrt{m} \Delta^{-1/2} (L_0 - \mathcal{L}_0) \Delta^{-1/2}$ converge in
-distribution to the same limit.  We use this large-sample behavior to
-approximate the the distrubition of $L$ by the distribution of
-$\Delta^{-1/2} L_0 \Delta^{-1/2}$.  Put simply, we treat the degrees as known.
-
-The distribution of $L_0$ is completely determined by the edge
-sampling scheme laid out above.  However, the exact form for the
-density involves an intractible combinatorial sum.  We appeal to a
-crude approximation for the conditional density.
-The approximaton works as follows:
-\begin{enumerate}
-\item For $i = 1, \dotsc, m$, define $x_i \in \reals^n$ such that
-  \[
-    x_i(u)
-      =
-      \begin{cases}
-        +s_i &\text{when $u = u_i$,} \\
-        -s_i &\text{when $u = v_i$,} \\
-        0 &\text{otherwise,}
-      \end{cases}
-  \]
-  where $s_i \in \{ -1, +1 \}$ is chosen arbitrarily.
-\item Note that $L_0 = \sum_{i=1}^m x_i x_i'$.
-\item Take $s_i$ to be random, equal to $+1$ or $-1$ with probability
-  $\tfrac{1}{2}$.  Approximate the distribution of $x_i$ by the
-  distribution of a multivariate normal random variable, $\tilde x_i$,
-  such that $x_i$ and $\tilde x_i$ have the same first and second
-  moments.
-\item Approximate the distribution of $L_0$ by the distribution of $\tilde L_0$, where
-  \(
-  \tilde L_0 = \sum_{i=1}^m \tilde x_i \tilde x_i'.
-  \)
-  \item Use the asymptotic expansion above to approximate the
-    distribution of $L$ by the distribution of
-    $\Delta^{-1/2} \tilde L_0 \Delta^{-1/2}$.
-\end{enumerate}
-
-\textbf{[The stuff below is inconsistent with the development to this point;
-the notation needs to be redone to use the normalized and
-combinatorial Laplacians where appropriate]}
-
-\noindent
-The next two lemmas derive the distribution of $\tilde x_i$ and
-$\tilde L_0$ in terms of $\mathcal{L}$, allowing us to get an
-approximation for $p(L \mid \mathcal{L})$.
-
-\begin{lemma}
-  With $x_i$ and $\tilde x_i$ defined as above,
-  \[
-    \E_\omega[ x_i ] = \E_\omega[ \tilde x_i ] = 0,
-  \]
-  and
-  \[
-    \E_\omega[ x_i x_i' ] = \E_\omega [ \tilde x_i \tilde x_i' ] = \mathcal{L}.
-  \]
-\end{lemma}
-\begin{proof}
-The random variable $\tilde x_i$ is defined to have the same first
-and second moments as $x_i$.
-The first momemnt vanishes since $s_i \overset{d}{=} -s_i$ implies
-that $x_i \overset{d}{=} -x_i$.  For the second moments, note that
-when $u \neq v$, 
-\[
-  \E_\omega[x_i(u) \, x_i(v)]
-  = -s_i^2 \, \prob_\omega\{ (u_i,v_i) = (u,v) \}  = -\omega(u,v)
-  = \mathcal{L}(u,v).
-\]
-Likewise,
-\[
-  \E_\omega[\{x_i(u)\}^2]
-      = \sum_{v} \prob_\omega\{ (u_i,v_i) = (u,v) \}
-      = \sum_{v} \omega(u,v)
-      = \mathcal{L}(u,u).
-\]
-\end{proof}
-
-\begin{lemma}\label{L:approx-wishart}
-  The random matrix $\tilde L$ is distrubted as a Wishart matrix with
-  shape $\mathcal{L}$ and scale $m$.  This distribution, denoted
-  $\mathcal{W}(\mathcal{L}, m)$ is supported on the set of
-  positive-semidefinite matrices with the same nullspace as $\mathcal{L}$.  Whe
-  $m \geq \rank(\mathcal{L})$, the distribution has a denisty on this space
-  given by
-  \begin{equation}\label{E:wishart-density}
-   f_\mathcal{W}( \tilde L \mid \mathcal{L}, m)
-      \propto
-      \frac{|\tilde L|^{(m - \rank(\mathcal{L}) - 1)/2}
-        \exp\{-\tfrac{1}{2} \Tr(\tilde L \mathcal{L}^+) \}}
-        {|\mathcal{L}|^{m/2}}
-  \end{equation}
-  where the constant of proportionality depends only on $m$ and $n$
-  and where $|\cdot|$ denotes pseudodeterminant (product of nonzero
-  eigenvalues).
-\end{lemma}
-\begin{proof}
-  Since $\tilde L$ is a sum of $m$ outer products of multivariate
-  $\mathrm{Normal}(0, \mathcal{L})$, it is Wishart distributed
-  (by definition).
-  Suppose $\rank(\mathcal{L}) = r$ and
-  $U \in \reals^{n \times r}$ is a matrix whose columns are the
-    eigenvectors of $\mathcal{L}$.  Note that
-    $U' \tilde x_i \overset{d}{=} \mathrm{Normal}(0, U' \mathcal{L} U)$,
-    and that $U' \mathcal{L} U$ has full rank.  Thus,
-    \(
-      U' \tilde L U
-    \)
-    has a density over the space of $r \times r$ positive-semidefinite
-    matrices whenever $m \geq r$.  The density of $U' \tilde L U$ is
-    exactly equal to $f_\mathcal{W}(\tilde L \mid \mathcal{L}, m)$,
-    defined above.
-\end{proof}
-
-
-
 \section{Prior}
 \label{sxn:priors}
 
@@ -909,7 +745,7 @@ around $1/(n-1)$.
 
 
 
-\subsection{Posterior estimation}
+\subsection{Posterior estimation and connection to PageRank}
 \label{S:posterior-density}
 
 \begin{proposition}\label{P:map-sdp}
@@ -923,8 +759,9 @@ around $1/(n-1)$.
 \end{proposition}
 
 \begin{proof}
-Define $\tau = \Tr(\mathcal{L}^+)$ and $\Theta  = \tau^{-1}
-\mathcal{L}^+$, so that $\Tr(\Theta) = 1$.
+For $\mathcal{L}$ in the support set of the posterior,
+define $\tau = \Tr(\mathcal{L}^+)$ and $\Theta  = \tau^{-1}
+\mathcal{L}^+$, so that $\Tr(\Theta) = 1$.  Further, $\rank(\Theta) = n - 1$.
 Express the prior in the form of Eq.~\eqref{E:prior} with function
 $\tilde G$ given by
 \[
