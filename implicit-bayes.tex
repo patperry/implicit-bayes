@@ -122,7 +122,7 @@ Mahoney and Orecchia answered the above question in the affirmative, with
 the interesting twist that the regularization is on the SDP formulation
 rather than the usual vector optimization problem.
 That is, these diffusion-based procedures exactly optimize the regularized
-SDP $F(X)+\lambda G(X)$, for some regularization function $G(\cdot)$ to be
+SDP $F(X)+ \tfrac{1}{\eta} G(X)$, for some regularization function $G(\cdot)$ to be
 described below, subject to the usual constraints.
 
 In this paper, we extend the Mahoney-Orecchia result by providing a
@@ -601,8 +601,8 @@ its diagonal.
 However, the mode of the density is at $\mathcal{L}$, a Laplacian, and for 
 large values of the scale parameter, most of the mass will be on matrices 
 close to $\mathcal{L}$.
-See the Supplementary Material for a more detailed heuristic justification
-for the use of a Wishart distribution.
+See the supplementary appendix~\ref{sxn:justification} for a more
+detailed heuristic justification for the use of a Wishart distribution.
 
 Let $m \geq n - 1$ be a scale parameter
 and suppose $L$ is distributed as a
@@ -824,17 +824,19 @@ Combining Prop.~\ref{P:map-sdp} with their result, we get that the MAP
 estimate of $\mathcal{L}$ satisfies
 \( \mathcal{\hat L}^+ \propto D^{-1/2} R_\gamma D^{1/2}; \)
 conversely,
-\[
+\(
   R_\gamma
     \propto
       D^{1/2} \mathcal{\hat L}^+ D^{-1/2}.
-\]
-Thus, the PageRank matrix
-can be viewed as a degree-scaled regularized estimate of the
-pseudoinverse of the Laplacian.  In this sense, when we use PageRank
-for local graph partitioning, we are using a \emph{regularized}
-estimate of the pseudoinverse of the Laplacian.  
-
+\)
+Thus, the PageRank matrix can be viewed as a degree-scaled regularized
+estimate of the pseudoinverse of the Laplacian.  Moreover, prior
+assumptions about the spectrum of the graph Laplacian have direct
+implications on the optimal teleportation parameter.  Specifically
+Mahoney and Orecchia's Lemma~2 shows how $\eta$ is related to the
+teleportation parameter $\gamma$, and \eqref{E:eta} shows how the
+optimal $\eta$ is related to prior assumptions about the Laplacian.
+We investigate these connections futher in the next section.
 
 
 \section{Empirical evaluation}
@@ -869,12 +871,15 @@ similarly to to the population quantities.  Our performance
 criterion is relative Frobenius error
 $\|\Theta - \hat \Theta_\eta\|_\mathrm{F} / \|\Theta - \hat \Theta
 \|_\mathrm{F}$, where $\|\cdot\|_\mathrm{F}$ denotes Frobenius norm
-($\|A\|_\mathrm{F} = [\Tr(A' A)]^{1/2}$).
+($\|A\|_\mathrm{F} = [\Tr(A' A)]^{1/2}$).  Using the spectral norm
+instead of the Frobenius norm gives similar results (see
+supplementary appendix~\ref{S:spectral-peformance}).
 
 
 \subsection{Ground truth generation and prior evaluation}\label{S:prior-evaluation}
 
-
+The ground truth graphs we generate are motivated by the
+Watts-Strogatz ``small-world'' model~\cite{watts1998collective}.
 To generate a ground truth population Laplacian, $\mathcal{L}$---equivalently, a
 population graph---we start two-dimensional lattice with width $w$ and
 height $h$, and $n = w h$ nodes.  Points in the lattice are connected
@@ -888,35 +893,34 @@ infinity, the graph becomes more and more like a uniformly chosen
 $4$-regular graph (an expander).  Indeed each edge swap is a step of
 the Metropolis algorithm towards a uniformly chosen random graph with
 a fixed degree sequence.  By varying the number of swaps,
-we interpolate between a low-dimensional graph and an expander.
-
-
-
+we interpolate between a low-dimensional graph and an expander.  For
+the experiments presented here, $h = 7$ and $w = 6$; the
+results are qualitatively similar for values.
 
 \begin{figure}
     \centering
     \subfigure[Dirichlet distriubtion order statistics]{
       \makebox{\label{F:dirichlet}\includegraphics[scale=0.6]{plots/dirichlet}}
     }
-    \subfigure[Interpolating from a low-dimensional graph to an expander]{
+    \subfigure[Spectrum of $\Theta$ for grid and expander graphs]{
       \makebox{\label{F:interpolate}\includegraphics[scale=0.6]{plots/interpolate}}
     }
-    %\caption{Analytical and emprical priors}
+    \caption{Analytical and emprical priors}
 \end{figure}
 
 We evaluate the prior~\eqref{E:dirichlet-prior} by visually comparing
 its expected order statistics with the expected eigenvalues of
-$\Theta$.  In Fig~\ref{F:dirichlet}, we display the behavior of the order
-statistics of $\lambda$ as $\alpha$ varies.  We fix the value $n = 42$
-and then let $\alpha$ vary between $0.2$ and and $2$.  For each value
-of the shape $\alpha$, we generate a random $(n-1)$-dimensional Dirichlet
-vector, $\lambda$, with parameter vector $(\alpha, \dotsc, \alpha)$.
-We compute the $n-1$ order statistics of $\lambda$ by sorting its
-components.  We repeat the procedure for $500$ replicates and then
-average the values.  For small values of $\alpha$, we observe that the
-first few order-statistics are well-separated from the rest.  As
-$\alpha$ increases, the order statistics become concentrated
-around $1/(n-1)$.
+$\Theta$.  In Fig~\ref{F:dirichlet}, we show the behavior of the order
+statistics (sorted values) of a Dirchlet distrubition on the
+$(n-1)$-dimensional simplex with scalar shape parameter $\alpha$.  For
+each value of the shape $\alpha$, we generate a random
+$(n-1)$-dimensional Dirichlet vector, $\lambda$, with parameter vector
+$(\alpha, \dotsc, \alpha)$.  We compute the $n-1$ order statistics of
+$\lambda$ by sorting its components.  We repeat the procedure for
+$500$ replicates and then average the values.  For small values of
+$\alpha$, we observe that the first few order-statistics are
+well-separated from the rest.  As $\alpha$ increases, the order
+statistics become concentrated around $1/(n-1)$.
 
 Fig.~\ref{F:interpolate} shows a corresponding plot for the ordered
 eigenvalues of $\Theta$.
@@ -959,9 +963,8 @@ error and one standard deviation around it are plotted as a function
 of $\eta/\bar \tau$, as computed from 100 replicates.  Here,
 $\bar \tau$ is the mean value of $\tau$ over all replicates.We can see
 that regularization improves the performance of the estimator for a
-large range of $\eta$ values.  The supplementary materials, contain
-plots for other values of $s$ and $m$ (performance is
-similar).
+large range of $\eta$ values.  Performance is similar for for other
+values of $s$ and $m$ (see supplementary appendix~\ref{S:frobenius-peformance}).
 
 
 \subsection{Optimal regularization behavior}\label{S:optimal}
@@ -986,13 +989,16 @@ This behavior is consistent with \eqref{E:eta}.
     and $s$]{
       \makebox{\label{F:optimal-frob}\includegraphics[scale=0.5]{plots/optimal}}
     }
-    %\caption{Analytical and emprical priors}
+    \caption{Regularization performance}
 \end{figure}
 
 
 
-%\section{Concluding remarks}
+%\section{Conclusion}
 %\label{sxn:conc}
+%When use PageRank for local graph partitioning, we are using a \emph{regularized}
+%estimate of the pseudoinverse of the Laplacian.  Conversely we can use
+%PageRank diffusions to \emph{efficiently} find the MAP estimate of $\mathcal{L}^+$.
 
 %XXX.  BRIEF CONCLUSION HERE.  SOME PHILOSOPHY AND/OR SPECIFIC STATISTICAL LOOSE ENSD THAT WE WANT PEOPLE TO FOLLOW UP ON.
 
@@ -1168,7 +1174,7 @@ Likewise,
 \end{proof}
 
 
-Using the privious lemma, the random variable $\tilde L = \Delta^{-1/2} \tilde L_0
+Using the previous lemma, the random variable $\tilde L = \Delta^{-1/2} \tilde L_0
 \Delta^{-1/2}$ has density
 \[
   f(\tilde L \mid \mathcal{L}, m)
@@ -1212,73 +1218,95 @@ approximation is not too bad.  The biggest leap of faith is the second
 approximation.  Notably, despite their first moments being equal,
 second moments of $\tilde x_i \tilde x_i'$ and $x_i x_i'$ differ.
 
-\section{Supplementary Materials: Additional empirical evaluation}
+\clearpage
+\section{Supplementary Materials: Relative Frobenius error performance}
+\label{S:frobenius-peformance}
 
-\begin{figure}
+%\vspace{-2em}
+
+\begin{figure}[h]
   \centering
   \subfigure[$m/\mu$ = 0.2]{
-    \makebox{\includegraphics[scale=0.45]{plots/estimation-frob-s32-p020}}
+    \makebox{\includegraphics[scale=0.4]{plots/estimation-frob-s32-p020}}
   }
   \subfigure[$m/\mu = 2.0$]{
-    \makebox{\includegraphics[scale=0.45]{plots/estimation-frob-s32-p200}}
+    \makebox{\includegraphics[scale=0.4]{plots/estimation-frob-s32-p200}}
   }
+  \vspace{-1em}
   \caption{$s = 0$ edge swaps}
 \end{figure}
 
+\vspace{-2em}
 
-\begin{figure}
+\begin{figure}[h]
   \centering
   \subfigure[$m/\mu$ = 0.2]{
-    \makebox{\includegraphics[scale=0.45]{plots/estimation-frob-p020}}
+    \makebox{\includegraphics[scale=0.4]{plots/estimation-frob-p020}}
   }
   \subfigure[$m/\mu = 2.0$]{
-    \makebox{\includegraphics[scale=0.45]{plots/estimation-frob-p200}}
+    \makebox{\includegraphics[scale=0.4]{plots/estimation-frob-p200}}
   }
+  \vspace{-1em}
   \caption{$s = 4$ edge swaps}
 \end{figure}
 
-\begin{figure}
+\vspace{-2em}
+
+\begin{figure}[h]
   \centering
   \subfigure[$m/\mu$ = 0.2]{
-    \makebox{\includegraphics[scale=0.45]{plots/estimation-frob-s32-p020}}
+    \makebox{\includegraphics[scale=0.4]{plots/estimation-frob-s32-p020}}
   }
   \subfigure[$m/\mu = 2.0$]{
-    \makebox{\includegraphics[scale=0.45]{plots/estimation-frob-s32-p200}}
+    \makebox{\includegraphics[scale=0.4]{plots/estimation-frob-s32-p200}}
   }
+  \vspace{-1em}
   \caption{$s = 32$ edge swaps}
 \end{figure}
 
-\begin{figure}
+\clearpage
+\section{Supplementary Materials: Relative spectral error performance}
+\label{S:spectral-peformance}
+
+%\vspace{-2em}
+
+\begin{figure}[h]
   \centering
   \subfigure[$m/\mu$ = 0.2]{
-    \makebox{\includegraphics[scale=0.45]{plots/estimation-spec-s32-p020}}
+    \makebox{\includegraphics[scale=0.4]{plots/estimation-spec-s32-p020}}
   }
   \subfigure[$m/\mu = 2.0$]{
-    \makebox{\includegraphics[scale=0.45]{plots/estimation-spec-s32-p200}}
+    \makebox{\includegraphics[scale=0.4]{plots/estimation-spec-s32-p200}}
   }
+  \vspace{-1em}
   \caption{$s = 0$ edge swaps}
 \end{figure}
 
+\vspace{-2em}
 
-\begin{figure}
+\begin{figure}[h]
   \centering
   \subfigure[$m/\mu$ = 0.2]{
-    \makebox{\includegraphics[scale=0.45]{plots/estimation-spec-p020}}
+    \makebox{\includegraphics[scale=0.4]{plots/estimation-spec-p020}}
   }
   \subfigure[$m/\mu = 2.0$]{
-    \makebox{\includegraphics[scale=0.45]{plots/estimation-spec-p200}}
+    \makebox{\includegraphics[scale=0.4]{plots/estimation-spec-p200}}
   }
+  \vspace{-1em}
   \caption{$s = 4$ edge swaps}
 \end{figure}
 
-\begin{figure}
+\vspace{-2em}
+
+\begin{figure}[h]
   \centering
   \subfigure[$m/\mu$ = 0.2]{
-    \makebox{\includegraphics[scale=0.45]{plots/estimation-spec-s32-p020}}
+    \makebox{\includegraphics[scale=0.4]{plots/estimation-spec-s32-p020}}
   }
   \subfigure[$m/\mu = 2.0$]{
-    \makebox{\includegraphics[scale=0.45]{plots/estimation-spec-s32-p200}}
+    \makebox{\includegraphics[scale=0.4]{plots/estimation-spec-s32-p200}}
   }
+  \vspace{-1em}
   \caption{$s = 32$ edge swaps}
 \end{figure}
 
