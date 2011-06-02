@@ -44,7 +44,7 @@ optdemo <- function(psamp = c(0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0),
 
 pdf("plots/optimal.pdf", width = 5, height = 5)
 optdemo(width = 6, height = 7, wrap = FALSE,
-        nreps = 10,
+        nreps = 100,
         type="frobenius")
 dev.off()
 
