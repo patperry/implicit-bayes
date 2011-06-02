@@ -1,11 +1,5 @@
 \begin{thebibliography}{1}
 
-\bibitem{andersen2006local}
-R.~Andersen, F.~Chung, and K.~Lang.
-\newblock Local graph partitioning using {P}age{R}ank vectors.
-\newblock In {\em 47th Annual IEEE Symposium on Foundations of Computer Science
-  (FOCS'06)}, pages 475--486, 2006.
-
 \bibitem{chandra1989electrical}
 A.~K. Chandra, P.~Raghavan, W.~L. Ruzzo, R.~Smolensky, and P.~Tiwari.
 \newblock The electrical resistance of a graph captures its commute and cover

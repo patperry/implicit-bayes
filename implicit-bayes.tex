@@ -602,7 +602,7 @@ Now suppose we have know that $\mathcal{L}$, is a random object drawn
 from a prior density $p(\mathcal{L})$.
 Without loss of generality,
 \begin{equation}\label{E:prior}
-  p(\mathcal{L}) \propto \exp\{ -\tfrac{1}{2} F(\mathcal{L}^+) \},
+  p(\mathcal{L}) \propto \exp\{ -\tfrac{1}{2} \tilde G(\mathcal{L}^+) \},
 \end{equation}
 for some function $F$, supported on a subset
 $\mathcal{S} \subseteq \mathcal{X}$.  (The space $\mathcal{X}$ is
@@ -620,7 +620,7 @@ Upon observing $L$, the posterior distribution for $\mathcal{L}$ is
 \end{equation}
 with support determined by $\mathcal{S}$.  Eq.~\eqref{E:posterior} is
 analogous to Eq.~\eqref{E:regression-posterior}.  The MAP estimator of
-$\mathcal{L}^+$ is the solution to the program
+$\mathcal{L}$ is the pseudoinverse of the solution to the program
 \[
 \begin{aligned}
   & \underset{X}{\text{minimize}}
@@ -635,7 +635,8 @@ In particular, if
   \mathcal{S} = \{ X : \Tr(X) = 1 \} \cap \mathcal{X},
 \)
 then the two programs are identical except for the factor of
-$\log |X|$ in the optimization criterion.
+$\log |X|$ in the optimization criterion.  Prop~\ref{P:map-sdp} makes
+this connection precise.
 
 %More generally, if 
 %$\mathcal{S} = \{ X : \Tr(X) = \tau^{-1} \} \cap \mathcal{X}$, then
@@ -860,14 +861,12 @@ $\mathcal{L}$, where $\tau \geq 0$,
 $U \in \reals^{n \times n -1}$, 
 $\Lambda = \diag\big(\lambda(1), \dotsc, \lambda({n-1})\big)$, and
 $\sum_v \lambda(v) = 1$,  then the prior
-weight on $\mathcal{L}$ only depends on $\Lambda$.  Note that the
+weight on $\mathcal{L}$ only depends on $\tau$ and $\Lambda$.  Note that the
 values $\lambda(1), \dotsc, \lambda(n-1)$ are unordered.
 
-The implications of the prior depending only on $\Lambda$ are that it
-is scale invariant ($p(\sigma \mathcal{L}) = p(\mathcal{L})$ for all
-positive $\sigma$) and it is nearly rotationally invariant
-($p(O \mathcal{L} O') = p(\mathcal{L})$ for any rank-$(n-1)$
-projection matrix $O$ satisfying $O' D^{1/2} 1 = 0$).
+The implication is that the prior is ``nearly'' rotationally
+invariant, i.e. $p(O \mathcal{L} O') = p(\mathcal{L})$ for any rank-$(n-1)$
+projection matrix $O$ satisfying $O' D^{1/2} 1 = 0$.
 
 The vector $\lambda = \big(\lambda(1), \dotsc, \lambda(n-1)\big)$ lies
 in the unit simplex.  If we require that the
@@ -881,8 +880,9 @@ the ``shape'' parameter, must satisfy $\alpha > 0$ for the density to
 be defined.  In this case,
 \begin{equation}\label{E:dirichlet-prior}
   p(\mathcal{L})
-   \propto \prod_{v=1}^{n-1} \lambda(v)^{\alpha - 1}.
+   \propto p(\tau) \prod_{v=1}^{n-1} \lambda(v)^{\alpha - 1},
 \end{equation}
+where $p(\tau)$ is a prior for $\tau$.
 
 In Fig~\ref{F:dirichlet}, we display the behavior of the order
 statistics of $\lambda$ as $\alpha$ varies.  We fix the value $n = 42$
@@ -909,50 +909,80 @@ around $1/(n-1)$.
 
 
 
-\subsection{Posterior density}
+\subsection{Posterior estimation}
 \label{S:posterior-density}
 
-In the form given of Eq.~\eqref{E:prior}, the function $F$ is given by
-\begin{equation}\label{E:prior-F}
-  F(X) = -2 \log |\tfrac{1}{\Tr(X)} X |^{\alpha - 1}
-       = -2(\alpha - 1) [\log |X| - (n-1)\Tr(X)],
-\end{equation}
-where as before, $|\cdot|$ denotes pseudodeterminant.
-Combining \eqref{E:posterior} with \eqref{E:prior-F}, the posterior
+\begin{proposition}\label{P:map-sdp}
+  Suppose the conditional likilihood for $L$ given $\mathcal{L}$ is as
+  defined in \eqref{E:density} and the prior density for $\mathcal{L}$
+  is as defined in \eqref{E:dirichlet-prior}.  If
+  $\mathcal{\hat L}$ is the MAP estimate of $\mathcal{L}$, then
+  there exists an $\eta$ such that
+  $[\Tr(\mathcal{\hat L}^+)]^{-1} \mathcal{\hat L}^+$ solves the
+  Mahoney-Orecchia SDP \eqref{eqn:mo-reg-sdp} with $G(X) = -\log |X|$.
+\end{proposition}
+
+\begin{proof}
+Define $\tau = \Tr(\mathcal{L}^+)$ and $\Theta  = \tau^{-1}
+\mathcal{L}^+$, so that $\Tr(\Theta) = 1$.
+Express the prior in the form of Eq.~\eqref{E:prior} with function
+$\tilde G$ given by
+\[
+  \tilde G(\mathcal{L}^+)
+    = -2 \log \{ p(\tau) \, |\Theta|^{\alpha - 1} \}
+    = -2(\alpha - 1) \log |\Theta| - 2 \log p(\tau),
+\]
+where as before, $|\cdot|$ denotes pseudodeterminant.  Using
+\eqref{E:posterior} and the relation
+$|\mathcal{L}^+| = \tau^{n-1} |\Theta|$, the posterior
 density for $\mathcal{L}$ given $L$ is
 \[
   p(\mathcal{L} \mid L)
     \propto
-      \exp\{
-        -\tfrac{m}{2} \Tr(L \mathcal{L}^+)
-        + \tfrac{m + 2(\alpha - 1)}{2} \log |\mathcal{L}^+ |
-        - \log \Tr(\mathcal{L}^+)
-        \}.
+      \exp\Big\{
+        -\tfrac{m \tau}{2} \Tr(L \Theta)
+        +\tfrac{m + 2(\alpha - 1)}{2} \log | \Theta |
+        + g(\tau)\Big\},
 \]
-\textbf{[Note: still need to finesse the issue of the constraint
-  $\Tr(X) = 1$ in the SDP]}
+where
+\(
+  g(\tau)
+    = \tfrac{m (n-1)}{2} \log \tau
+        + \log p(\tau).
+\)
+Suppose $\mathcal{\hat L}$ maximizes the
+posterior likelihood.  Define $\hat \tau = \Tr(\mathcal{\hat L}^+)$
+and $\hat \Theta = [\hat \tau]^{-1} \mathcal{\hat L}^{+}$.
+In this case, $\hat \Theta$ must minimize the quantity
+\(
+  \Tr(L \hat \Theta) - \eta \log |\hat \Theta|,
+\)
+where
+\begin{equation}\label{E:eta}
+  \eta
+    = \frac{m + 2(\alpha - 1)}{\hat \tau m}.
+\end{equation}
+Thus $\hat \Theta$ solves \eqref{eqn:mo-reg-sdp} with $G(X) = - \log |X|$.
+\end{proof}
 
-Up to a scale factor, the MAP estimator of $\mathcal{L}^{+}$ solves
-the SDP~XXXXXX specified by Mahoney and Orecchia.  They showed that
-the solution is closely related to the PageRank matrix, $R_\gamma$.
-Specifically, letting $\mathcal{\hat L}^{+}$ denote the MAP estimate,
-we can apply their result to get that
+Mahoney and Orecchia showed that the solution to
+\eqref{eqn:mo-reg-sdp} with $G(X) = - \log |X|$
+is closely related to the PageRank matrix, $R_\gamma$.  Combining
+Prop.~\ref{P:map-sdp} with their result, we get that the MAP estimate
+of $\mathcal{L}$ satisfies
 \(
   \mathcal{\hat L}^+
     \propto D^{-1/2} R_\gamma D^{1/2};
 \)
-equivalently,
+conversely,
 \[
   R_\gamma
     \propto
-      D^{1/2} \mathcal{\hat L}^+ D^{-1/2}
-    =
-      \mathcal{\hat L}_0^+ D^{-1},
+      D^{1/2} \mathcal{\hat L}^+ D^{-1/2}.
 \]
-where $\mathcal{\hat L}_0^+$ is the MAP estimate of the pseudoinverse
-of the population combinatorial Laplacian.  Thus, the PageRank matrix
+Thus, the PageRank matrix
 can be viewed as a degree-scaled regularized estimate of the
-pseudoinverse of the combinatorial Laplacian.
+pseudoinverse of the Laplacian.
 
 
 \section{Empirical evaluation}
