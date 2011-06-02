@@ -7,8 +7,11 @@ laplacian <- function(adj, normalized = FALSE, ...) {
   d <- degrees(adj)
   lap <- -adj
   diag(lap) <- diag(lap) + d
-  if (normalized)
-      lap <- diag(1/sqrt(d)) %*% lap %*% diag(1/sqrt(d))
+  if (normalized) {
+      di <- 1/sqrt(d)
+      di[is.infinite(di)] <- 0
+      lap <- diag(di) %*% lap %*% diag(di)
+  }
   lap
 }
 
@@ -35,9 +38,10 @@ pagerank <- function(lap, lap.eigen = eigen(lap), penalty = 1.0, ev.tol = 1e-8) 
     f <- function(lambda) { sum(-1/(penalty*(lambda - ev$values))) - 1 }
     lower <- -1; while(is.finite(lower) && f(lower) >= 0) { lower <- lower * 10 }
     upper <- min(ev$values) - 1e-10
-    lambda <- uniroot(f, c(lower, upper))$root
+    lambda <- uniroot(f, c(lower, upper), tol = .Machine$double.eps^0.5)$root
 
     est <- ev$vectors %*% (-1/(penalty*(lambda - ev$values)) * t(ev$vectors))
+    attr(est, "lambda") <- lambda
     est
 }
 

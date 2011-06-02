@@ -740,7 +740,7 @@ around $1/(n-1)$.
     \subfigure[Interpolating from a low-dimensional graph to an expander]{
       \makebox{\label{F:interpolate}\includegraphics[scale=0.6]{plots/interpolate}}
     }
-    \caption{Analytical and emprical priors}
+    %\caption{Analytical and emprical priors}
 \end{figure}
 
 
@@ -839,7 +839,7 @@ corners are connected to two other nodes.  We then perform
 $s$ edge-swaps: for each swap, we choose two edges
 uniformly at random and then we swap the endpoints.  (For example, if
 we sample $i_1 \sim j_1$ and $i_2 \sim j_2$, then we replace these
-edges with $i_1 \sim j_2$ and $i_2 \sim i_1$.)  By varying the number
+edges with $i_1 \sim j_2$ and $i_2 \sim j_1$.)  By varying the number
 of swaps, we interpolate between a low-dimensional graph and an expander.
 
 For each value of $s$, we generate the normalized Laplacian, $\mathcal{L}$,
@@ -855,29 +855,72 @@ distribution will be very close that that of a uniformly chosen
 $4$-regular graph.
 
 
-\subsection{Estimation performance}
+\subsection{Estimation performance}\label{S:estimation}
 
-Next, we evaluate the estimation performance of $\mathcal{\hat L}^{+}$
-as compared with $L^+$, and investigate how this performance depends
-on the sampling procedure and the regularization parameter.  We
-generate a population graph as in Sec.~\ref{S:prior-evaluation}.
-Then, we generate a sample graph by choosing a subset of $m$ edges,
-drawn uniformly from the population graph.  We compute the normalized
-Laplacian of the sample graph, and call it $L$.
+Next, we evaluate the estimation performance of a regularized
+estimator of the graph Laplacian as compared to an unregularized
+estimate.
 
-\textbf{[To be continued\ldots]}
+To evaluate the performance, we need a ground truth and a noisy
+observation.  To construct such a pair, we generate population graph
+$\mathcal{G}$ with Laplacian $\mathcal{L}$ as in
+Sec.~\ref{S:prior-evaluation}, using width $w = 7$, height $h = 6$,
+and edge-swaps $s = 4$.  This will be the ground truth.  We define
+$\tau = \Tr(\mathcal{L}^+)$ and $\Theta = \tau^{-1} \mathcal{L}^+$;
+the goal will be to estimate $\Theta$.  As above, we let $n = w h$,
+the number of nodes in the graph.
+
+Next, we generate a noisy observation.  We randomly choose $m$ edges
+with replacement from $\mathcal{G}$.  We define sample graph $G$
+and corresponding Laplacian by setting the weight of $i \sim j$
+to the number of times we sampled that edge.  Finally we set
+$t = \Tr(L^+)$ and $O = t^{-1} L^+$.  The matrix $O$ is the
+unregularized estimate of $\Theta$.  In our experiment, we set $m = n$.
+
+For a given value of the regularization parameter, $\eta$, we compute
+$\hat \Theta_\eta$, an estimate of $\Theta$, by solving the
+Mahoney-Orecchia SDP with $G(X) = -\log|X|$.  Our performance measure
+is relative Frobenius error, $\| \hat \Theta_\eta - \Theta \|_\mathrm{F} / \| O - \Theta
+\|_\mathrm{F}$, where $\| \cdot \|_\mathrm{F}$ denotes Frobenius norm
+($\|A\|_\mathrm{F}^2 = \Tr(A' A)$).  In the supplementary materials,
+we also look at relative spectral error, replacing Frobenius norm with
+spectral norm; the results are qualitatively similar.
+
+
+In Fig.~\ref{F:estimation-frob}, we generate $100$ ground truth/noisy
+observation pairs according to the procedure just described.  For each
+replicate, we sweep over values of $\eta$ and evaluate the relative
+Frobenius error.  The figure shows mean relative Frobenius error and
+one standard devation around it plotted as a function of
+$\bar \tau \, \eta$, where $\bar \tau$ is the mean value of $\tau$
+(compare with \eqref{E:eta}).  Regularization shows an improvement
+over the naive estimate of $\Theta$ for many values of $\eta$.  In the
+supplementary materials, we show that this behavior persists as we
+vary $m$, with smaller values of $m$ corresponding to larger benefits
+from regularization.
+
+
+
+\subsection{Optimal regularization behavior}
+
+The optimal amount of regularization depends on the population graph
+and the sampling procedure.  Continuing with the simulation of
+Sec.~\ref{S:estimation}, we investigate how the optimal value of
+$\eta$ varies with $s$ and $m$.
+
 
 \begin{figure}
     \centering
-    \makebox{\includegraphics[scale=0.6]{plots/empirical}}
-    \caption{Performance versus regularization parameter for 2D
-      grid[\textbf{[Note: this will get replaced with something more polished]}}
+    \subfigure[Relative Frobenius error versus $\bar \tau \eta$]{
+      \makebox{\label{F:estimation-frob}\includegraphics[scale=0.6]{plots/estimation-frob-p100}}
+    }
+    \subfigure[Optimal regularization parameter (PLACEHOLDER)]{
+      \makebox{\label{F:optimal-frob}\includegraphics[scale=0.6]{plots/estimation-spec-p100}}
+    }
+    %\caption{Analytical and emprical priors}
 \end{figure}
 
-\begin{figure}
-    \centering
-    \caption{Optimal regularization plotted as a function of number of swaps}
-\end{figure}
+
 
 \section{Concluding remarks}
 \label{sxn:conc}
