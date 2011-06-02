@@ -851,7 +851,22 @@ pseudoinverse of the Laplacian.
 \label{sxn:empirical}
 
 Here, we evaluate the performance of the regularized Laplacian
-estimator compared to the unregularized estimator.
+estimator compared to the unregularized estimator.  To do so, we need
+a ground truth population Laplacian $\mathcal{L}$ and a noisily
+obserserved sample Laplacian $L$. In Sec.~\ref{S:prior-evaluation}, we
+construct a distribution for $\mathcal{L}$ able to represent both
+low-dimensional graphs and expanders.  It turns out that the
+prior~\eqref{E:dirichlet-prior} captures some of the qualitative
+features of these graphs.  In Sec.~\ref{S:estimation}, we describe a
+sampling procedure for $L$ which, superficially, has no relation to
+the scaled Wishart conditional density~\eqref{E:density}.  Despite
+this model misspecification, the MAP estimator $\hat L_{\eta}$
+outperforms $L$ for many choices of the regularization parameter
+$\eta$.  Finally, in Sec.~\ref{S:optimal}, we investigate how the
+optimal choice of $\eta$ depends on properties of the population and
+sample Laplacians.  We recover a result in direct agreement with
+~\eqref{E:eta}.
+
 
 \subsection{Prior evaluation}\label{S:prior-evaluation}
 
@@ -865,16 +880,17 @@ replace these edges with $i_1 \sim j_2$ and $i_2 \sim j_1$.)  By
 varying the number of swaps, we interpolate between a low-dimensional
 graph and an expander.
 
-For each value of $s$, we generate the normalized Laplacian, $\mathcal{L}$,
-corresponding to the random $s$-swapped grid.  We compute the $n-1$ nonzero
-eigenvalues of $[\Tr(\mathcal{L}^{+})]^{-1} \mathcal{L}^{+}$.
-Finally, we perform $1000$ replicates of the procedure and average the
-resulting eigenvalues.  Fig.~\ref{F:interpolate} shows the results of
-the simulation.  We can see that when $s = 0$, the top two eigenvalues
-(corresponding to the width-wise and height-wise coordinates on the grid)
-are well separated from the bulk.  As we increase $s$, the top eigenvalues
-merge into the bulk; eventually, as $s$ goes to infinity, the
-distribution will be very close that that of a uniformly chosen
+For each value of $s$, we generate the normalized Laplacian,
+$\mathcal{L}$, corresponding to the random $s$-swapped grid.  We
+compute the $n-1$ nonzero eigenvalues of
+$[\Tr(\mathcal{L}^{+})]^{-1} \mathcal{L}^{+}$.  Finally, we perform
+$1000$ replicates of the procedure and average the resulting
+eigenvalues.  Fig.~\ref{F:interpolate} shows the results of the
+simulation.  We can see that when $s = 0$, the top two eigenvalues
+(corresponding to the width-wise and height-wise coordinates on the
+grid) are well separated from the bulk.  As we increase $s$, the top
+eigenvalues merge into the bulk; eventually, as $s$ goes to infinity,
+the distribution will be very close that that of a uniformly chosen
 $4$-regular graph.
 
 
@@ -884,8 +900,7 @@ Next, we evaluate the estimation performance of a regularized
 estimator of the graph Laplacian as compared to an unregularized
 estimate.
 
-To evaluate the performance, we need a ground truth and a noisy
-observation.  To construct such a pair, we generate population graph
+To construct such a pair, we generate population graph
 $\mathcal{G}$ with Laplacian $\mathcal{L}$ as in
 Sec.~\ref{S:prior-evaluation}, using width $w = 7$, height $h = 6$,
 and edge-swaps $s = 4$.  This will be the ground truth.  We define
@@ -922,9 +937,7 @@ supplementary materials, we show that this behavior persists as we
 vary $m$, with smaller values of $m$ corresponding to larger benefits
 from regularization.
 
-
-
-\subsection{Optimal regularization behavior}
+\subsection{Optimal regularization behavior}\label{S:optimal}
 
 The optimal amount of regularization depends on the population graph
 and the sampling procedure.  Continuing with the simulation of
