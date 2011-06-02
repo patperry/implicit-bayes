@@ -125,7 +125,7 @@ That is, these diffusion-based procedures exactly optimize the regularized
 SDP $F(X)+\lambda G(X)$, for some regularization function $G(\cdot)$ to be
 described below, subject to the usual constraints.
 
-In this paper, we extend the Mahoney-Orecchia (MO) result by providing a
+In this paper, we extend the Mahoney-Orecchia result by providing a
 statistical interpretation of it.
 Our interpretation will be analogous to the manner in which
 $\ell_2$-regularized or $\ell_1$-regularized $\ell_2$-regression (often
@@ -142,16 +142,16 @@ population Laplacian leads to a regularized SDP, where the objective
 function $F(X)=\mathrm{Tr}(L X)$ and where the role of the penalty function
 $G(\cdot)$ is to encode prior assumptions about the population Laplacian.
 In addition, we show that if $G(\cdot)$ is the log-determinant function then
-the MAP estimate leads to the MO regularized SDP corresponding to running
-the PageRank heuristic.
-Said another way, the solutions to the MO regularized SDP can be interpreted
-as regularized estimates of the pseudoinverse of the graph Laplacian; and
-moreover, by Mahoney and Orecchia' main result, the solution to this 
-regularized SDP can be computed very quickly---rather than solving the SDP 
-with a black-box solver and rather computing explicitly the pseudoinverse 
-of the Laplacian, one can simply run the fast diffusion-based PageRank 
-heuristic for computing an approximation to the first nontrivial eigenvector 
-of the Laplacian $L$.
+the MAP estimate leads to the Mahoney-Orecchia regularized SDP 
+corresponding to running the PageRank heuristic.
+Said another way, the solutions to the Mahoney-Orecchia regularized SDP can 
+be interpreted as regularized estimates of the pseudoinverse of the graph 
+Laplacian; and moreover, by Mahoney and Orecchia' main result, the solution 
+to this regularized SDP can be computed very quickly---rather than solving 
+the SDP with a black-box solver and rather computing explicitly the 
+pseudoinverse of the Laplacian, one can simply run the fast diffusion-based 
+PageRank heuristic for computing an approximation to the first nontrivial 
+eigenvector of the Laplacian $L$.
 
 The next section, Section~\ref{S:introduction}, describes the background on
 the Laplacian and its pseudoinverse in light of local and global versions of
@@ -184,7 +184,7 @@ is assumed to be finite;
 an edge set $E_G \subset V_G \times V_G$; 
 and a weight function $w_G : E_G \to \reals_+$, where $w_G$ is assumed to 
 be symmetric in its arguments (\emph{i.e.}, $w_G(u,v) = w_G(v,u)$).  
-
+%%NIPSSUB%% 
 %%%MWM%%% I DONT THINK WE USE THE FOLLOWING PATH LENGTH DISCUSSION, BUT IT MIGHT BE GOOD TO MENTION THE NOTION OF CONNECTIVITY, BUT THAT CAN PROBABLY BE ASSUMED OF THE READER.
 %%%MWM%%% A length-$l$ path in $G$, denoted $\gamma$, is defined by a finite sequence of
 %%%MWM%%% vertices $\gamma(1), \gamma(2), \ldots, \gamma(l)$, where $\gamma(i) \in V_G$; given
@@ -198,10 +198,11 @@ be symmetric in its arguments (\emph{i.e.}, $w_G(u,v) = w_G(v,u)$).
 %%%MWM%%% equivalence relation on the vertices of a graph.  The equivalence
 %%%MWM%%% classes are called the connected components of $G$; they define a
 %%%MWM%%% natural partition of the vertices.
-
-\subsection{Global spectral partitioning}
-
-Given a weighted symmetric graph, $G$, one can construct a positive
+%%NIPSSUB%% 
+%%NIPSSUB%% \subsection{Global spectral partitioning}
+%%NIPSSUB%% 
+%%NIPSSUB%% Given a weighted symmetric graph, $G$, 
+In this case, one can construct a positive
 semidefinite matrix, $L_G \in \reals^{V_G \times V_G}$, called the 
 combinatorial Laplacian of $G$:
 \[
@@ -220,20 +221,20 @@ vector is an eigenvector of $L_G$ with eigenvalue zero, i.e. $L_G \, 1_{V_G}
 = 0$, where $1_{V_G}(v) = 1$ for all $v$; we call $1_{V_G}$ the
 trivial eigenvector of $L_G$.  
 
-If $C \subseteq V_G$ is a connected component of $G$ and 
-$1_C(v) = 1\{ v \in C \}$, then $L_G \, 1_C = 0$.  
-One can show that the multiplicity of the zero eigenvalue is equal to the
-number of connected components in $G$.
-When $G$ has exactly two connected components, say $C$ and $\bar C$,
-the combinatorial Laplacian $L_G$ has two orthogonal eigenvectors
-with eigenvalue $0$: the trivial eigenvector and
-$c \cdot 1_C - c^{-1} \cdot 1_{\bar C}$, where
-$c = \sqrt{|\bar C| / |C|}$.  
-Thus, we can recover the vertex partiton
-$V_G = C \sqcup \bar C$ by ``cutting'' along the first nontrivial
-eigenvector of $L_G$: if $L_G x = 0$ and $1' x = 0$, then up to a sign
-change in $x$, $C = \{ v : x(v) > 0 \}$ and
-$\bar C = \{ v : x(v) < 0 \}$.
+%%NIPSSUB%% If $C \subseteq V_G$ is a connected component of $G$ and 
+%%NIPSSUB%% $1_C(v) = 1\{ v \in C \}$, then $L_G \, 1_C = 0$.  
+%%NIPSSUB%% One can show that the multiplicity of the zero eigenvalue is equal to the
+%%NIPSSUB%% number of connected components in $G$.
+%%NIPSSUB%% When $G$ has exactly two connected components, say $C$ and $\bar C$,
+%%NIPSSUB%% the combinatorial Laplacian $L_G$ has two orthogonal eigenvectors
+%%NIPSSUB%% with eigenvalue $0$: the trivial eigenvector and
+%%NIPSSUB%% $c \cdot 1_C - c^{-1} \cdot 1_{\bar C}$, where
+%%NIPSSUB%% $c = \sqrt{|\bar C| / |C|}$.  
+%%NIPSSUB%% Thus, we can recover the vertex partiton
+%%NIPSSUB%% $V_G = C \sqcup \bar C$ by ``cutting'' along the first nontrivial
+%%NIPSSUB%% eigenvector of $L_G$: if $L_G x = 0$ and $1' x = 0$, then up to a sign
+%%NIPSSUB%% change in $x$, $C = \{ v : x(v) > 0 \}$ and
+%%NIPSSUB%% $\bar C = \{ v : x(v) < 0 \}$.
 
 The idea of spectral clustering is to extend this idea to approximate the 
 best partition of the vertices of a connected graph by using the nontrivial 
@@ -244,70 +245,72 @@ The simplest version of spectral clustering involves computing the first
 nontrivial eigenvector (or another vector with Rayleigh quotient close to 
 that of the first nontrivial eigenvector) of $L_G$, and ``sweeping'' over 
 that vector. 
-For example, 
-%%%MWM%%% to partition the vertices into two sets, 
-one can take that vector, call it $x$, and, for a given threshold $K$, 
-define the two sets of the partition as
-\begin{align*}
-  C(x,K)      &= \{ i : x_i >= K \}, \quad \text{and} \\
-  \bar C(x,K) &= \{ i : x_i < K \}.
-\end{align*}
-%%%MWM%%% Importantly, procedure defines a partion even when the vertices of $G$ are 
-%%%MWM%%% all connected.  
-XXX.  CITE FIRST FIG HERE, BUT PROBABLY HAVE A FIRST SUBFIG THAT GIVES THE USUAL 50-50 SPLIT AS WELL.
+%%NIPSSUB%% For example, 
+%%NIPSSUB%% %%%MWM%%% to partition the vertices into two sets, 
+%%NIPSSUB%% one can take that vector, call it $x$, and, for a given threshold $K$, 
+%%NIPSSUB%% define the two sets of the partition as
+%%NIPSSUB%% \begin{align*}
+%%NIPSSUB%%   C(x,K)      &= \{ i : x_i >= K \}, \quad \text{and} \\
+%%NIPSSUB%%   \bar C(x,K) &= \{ i : x_i < K \}.
+%%NIPSSUB%% \end{align*}
+%%NIPSSUB%% %%%MWM%%% Importantly, procedure defines a partion even when the vertices of $G$ are 
+%%NIPSSUB%% %%%MWM%%% all connected.  
+%%NIPSSUB%% XXX.  CITE FIRST FIG HERE, BUT PROBABLY HAVE A FIRST SUBFIG THAT GIVES THE USUAL 50-50 SPLIT AS WELL.
 Typically, this vector is computed by calling a black-box solver, but it 
 could also be approximated with an iteration-based method (such as the Power
 Method or Lanczos Method) or a random walk-based method (such as running a 
 diffusive procedure or PageRank-based procedure to the asymptotic state).
-Far from being a heuristic, this procedure provides a \emph{global 
+%%NIPSSUB%% Far from being a heuristic, 
+This procedure provides a \emph{global 
 partition} that (via Cheeger's inequality and for an appropriate choice of 
 $K$) satisfies provable quality-of-guarantees with respect to the 
 combinatorial problem of finding the best ``conductance'' partition in the 
 entire graph~\cite{Mihail,spielman96_spectral,guatterymiller98}.
 
-\begin{figure}
-    \centering
-    \makebox{\includegraphics[scale=0.8]{plots/guattery-global}}
-    \caption{
-             Global partition from first nontrivial eigenvector of the Laplacian.
-XXX.  MAYBE TWO SUBFIGURES, ONE FOR A GRAPH WITH A GOOD BIPARTITION WHERE SPECTRAL WORKS AND THE GUATTERY ONE WHERE IT DOESNT.
-}
-\end{figure}
+%%NIPSSUB%% \begin{figure}
+%%NIPSSUB%%     \centering
+%%NIPSSUB%%     \makebox{\includegraphics[scale=0.8]{plots/guattery-global}}
+%%NIPSSUB%%     \caption{
+%%NIPSSUB%%              Global partition from first nontrivial eigenvector of the Laplacian.
+%%NIPSSUB%% XXX.  MAYBE TWO SUBFIGURES, ONE FOR A GRAPH WITH A GOOD BIPARTITION WHERE SPECTRAL WORKS AND THE GUATTERY ONE WHERE IT DOESNT.
+%%NIPSSUB%% }
+%%NIPSSUB%% \end{figure}
+%%NIPSSUB%% 
+%%NIPSSUB%% 
+%%NIPSSUB%% \subsection{Local spectral partitioning}
 
-
-\subsection{Local spectral partitioning}
-
-If spectral clustering reduces a graph to a single vector---the smallest
-nontrivial eigenvector of the graph's Laplacian---and then clusters the 
-nodes using the information in the vector, it is possible to obtain much 
+%%NIPSSUB%% If spectral clustering reduces a graph to a single vector---the smallest
+%%NIPSSUB%% nontrivial eigenvector of the graph's Laplacian---and then clusters the 
+%%NIPSSUB%% nodes using the information in the vector, 
+It is possible to obtain much 
 more information about the graph by looking at more than one eigenvector 
 from the Laplacian.  
-In particular, the elements of the pseudoinverse of the Laplacian give 
-local (\emph{i.e.}, node-specific) information about random
+In particular, the elements of the pseudoinverse of the Laplacian, 
+$L_{G}^{+}$, give local (\emph{i.e.}, node-specific) information about random
 walks on the graph.
-The reason is that if $G$ is a graph with combinatorial Laplacian $L_G$, 
-then the pseudoinverse $L_G^+$  of the Laplacian is closely related to 
-random walks on the graph.  
-In particular, $L_{G}^{+}$ defines a proximity measure on the graph with the
-following properties:
-\begin{description}
-  \item[Symmetry]
-    $L_G^{+}(u,v) = L_G^{+}(v,u)$;
- \item[Diagonal maximality]
-    $L_G^{+}(u,u) > L_G^{+} (u,v)$ whenever $u \neq v$;
-  \item[Triangle inequality for proximities]
-    If $u$ and $v$ are in the same connected component, then
-    $L_G^{+} (u,v) + L_G^{+} (u,w) - L_G^{+} (v,w) \leq L_G^{+} (u,u)$, with strict inequality
-    holding when $v = w$ and $u \neq v$;
-  \item[Metric representability]
-   $L_G^{+} (u,u) + L_G^{+} (v,v) - L_G^{+} (u,v) - L_G^{+} (v,u)$
-    defines a metric on every connected component of $V_G$;  this is commonly called
-    \emph{resistance distance} on $G$.
- \item[Transit property]
-    if $G$ contains a path from $u$ to $v$, and each path from $u$ to
-    $v$ includes $w$, distinct from $u$ and $v$, then $L_G^{+}(u,w) >
-    L_G^{+}(u,v)$.
-\end{description}
+%%NIPSSUB%% The reason is that if $G$ is a graph with combinatorial Laplacian $L_G$, 
+%%NIPSSUB%% then the pseudoinverse $L_G^+$  of the Laplacian is closely related to 
+%%NIPSSUB%% random walks on the graph.  
+%%NIPSSUB%% In particular, $L_{G}^{+}$ defines a proximity measure on the graph with the
+%%NIPSSUB%% following properties:
+%%NIPSSUB%% \begin{description}
+%%NIPSSUB%%   \item[Symmetry]
+%%NIPSSUB%%     $L_G^{+}(u,v) = L_G^{+}(v,u)$;
+%%NIPSSUB%%  \item[Diagonal maximality]
+%%NIPSSUB%%     $L_G^{+}(u,u) > L_G^{+} (u,v)$ whenever $u \neq v$;
+%%NIPSSUB%%   \item[Triangle inequality for proximities]
+%%NIPSSUB%%     If $u$ and $v$ are in the same connected component, then
+%%NIPSSUB%%     $L_G^{+} (u,v) + L_G^{+} (u,w) - L_G^{+} (v,w) \leq L_G^{+} (u,u)$, with strict inequality
+%%NIPSSUB%%     holding when $v = w$ and $u \neq v$;
+%%NIPSSUB%%   \item[Metric representability]
+%%NIPSSUB%%    $L_G^{+} (u,u) + L_G^{+} (v,v) - L_G^{+} (u,v) - L_G^{+} (v,u)$
+%%NIPSSUB%%     defines a metric on every connected component of $V_G$;  this is commonly called
+%%NIPSSUB%%     \emph{resistance distance} on $G$.
+%%NIPSSUB%%  \item[Transit property]
+%%NIPSSUB%%     if $G$ contains a path from $u$ to $v$, and each path from $u$ to
+%%NIPSSUB%%     $v$ includes $w$, distinct from $u$ and $v$, then $L_G^{+}(u,w) >
+%%NIPSSUB%%     L_G^{+}(u,v)$.
+%%NIPSSUB%% \end{description}
 See, \emph{e.g.}~\cite{chebotarev1998proximity} for details.  
 %%%MWM%%% A full discusion of this
 %%%MWM%%% These properties follow from Chebotarev and Shamis' topological
@@ -325,7 +328,9 @@ See, \emph{e.g.}~\cite{chebotarev1998proximity} for details.
 %%%MWM%%% with $k$ edges, and $\mathcal{F}_{k}^{uv}$ comprises all rooted spanning
 %%%MWM%%% spanning forests with $k$ edges such that $u$ is a root, and $v$
 %%%MWM%%% belongs to the same tree as $u$.  
-In addition, it is known that the
+%%NIPSSUB%% In addition, 
+For example, 
+it is known that the
 %%%MWM%%% Chandra et al.\ show that the
 quantity $L_G^{+} (u,u) + L_G^{+} (v,v) - L_G^{+} (u,v) - L_G^{+} (v,u)$ is
 proportional to the length of time before a random walker started at
@@ -334,14 +339,14 @@ connected component~\cite{chandra1989electrical}.
 %%%MWM%%% It is likely that $L_G^{+}(u,v)$ has a probabalistic interpretation in terms 
 %%%MWM%%% of random walks on the graph, but we are not aware of any such 
 %%%MWM%%% interpretation.
-
+%%NIPS%% 
 From this perspective, given $L_G^{+}$ and a cutoff value, $K$, we can 
 define a \emph{local partition} around node $u$ via 
 $P_K(u) = \{ v : L_G^{+}(u,v) > K \}$.  
-(Note that if $v$ is in $P_K(u)$, then $u$ is in $P_K(v)$.  In addition, in 
-light of the disconnection condition, if the graph is disconnected, then 
-there exists a $K$ such that $u$ and $v$ are in the same connected component 
-iff $v \in P_K(u)$.)  
+%%NIPSSUB%% (Note that if $v$ is in $P_K(u)$, then $u$ is in $P_K(v)$.  In addition, in 
+%%NIPSSUB%% light of the disconnection condition, if the graph is disconnected, then 
+%%NIPSSUB%% there exists a $K$ such that $u$ and $v$ are in the same connected component 
+%%NIPSSUB%% iff $v \in P_K(u)$.)  
 We call this partitioning \emph{local spectral clustering}.
 Although the na\"{i}ve way of performing this partitioning, \emph{i.e.}, to 
 compute $L_G^{+}$ explicitly, is prohibitive for anything but very small 
@@ -351,28 +356,29 @@ vectors with which to partition;
 see~\cite{Spielman:2004,andersen06local,Chung07_heatkernelPNAS,MOV09_TRv2} 
 for details.
 
-\begin{figure}
-    \centering
-    \makebox{\includegraphics[scale=0.6]{plots/guattery-local}}
-    \caption{Local partitions from the pseudoinverse of the Laplacian}
-\end{figure}
-\begin{figure}
-    \centering
-    \makebox{\includegraphics[scale=0.6]{plots/guattery-pagerank}}
-    \caption{Local partitions from PageRank}
-\end{figure}
-
-[Add Guattery example here, showing benefits of local spectral.]
-
-
-\subsection{Approximating local and global spectral partitioning with 
-diffusion-based procedures}
-
-Of course, the pseudoinverse of the Laplacian is seldom (if ever) used to 
-partition the nodes of a graph.
-Moreover, in certain cases, one might not call a black-box solver to comptue 
-the smallest nontrivial eigenvector of Laplacian exactly.
-In both of these cases, an extension to the basic spectral clustering 
+%%NIPSSUB%% \begin{figure}
+%%NIPSSUB%%     \centering
+%%NIPSSUB%%     \makebox{\includegraphics[scale=0.6]{plots/guattery-local}}
+%%NIPSSUB%%     \caption{Local partitions from the pseudoinverse of the Laplacian}
+%%NIPSSUB%% \end{figure}
+%%NIPSSUB%% \begin{figure}
+%%NIPSSUB%%     \centering
+%%NIPSSUB%%     \makebox{\includegraphics[scale=0.6]{plots/guattery-pagerank}}
+%%NIPSSUB%%     \caption{Local partitions from PageRank}
+%%NIPSSUB%% \end{figure}
+%%NIPSSUB%% 
+%%NIPSSUB%% [Add Guattery example here, showing benefits of local spectral.]
+%%NIPSSUB%% 
+%%NIPSSUB%% 
+%%NIPSSUB%% \subsection{Approximating local and global spectral partitioning with 
+%%NIPSSUB%% diffusion-based procedures}
+%%NIPSSUB%% 
+%%NIPSSUB%% Of course, the pseudoinverse of the Laplacian is seldom (if ever) used to 
+%%NIPSSUB%% partition the nodes of a graph.
+%%NIPSSUB%% Moreover, in certain cases, one might not call a black-box solver to comptue 
+%%NIPSSUB%% the smallest nontrivial eigenvector of Laplacian exactly.
+%%NIPSSUB%% In both of these cases, 
+An extension to the basic spectral clustering 
 involves running procedures based on random walks or diffusions 
 %%%MWM%%% (started with a random vector or a deterministic vector with all 
 %%%MWM%%% of its mass localized on one or a small number of seed nodes) 
@@ -380,18 +386,17 @@ on the graph.
 These approaches assign positive and negative ``charge'' to the nodes,
 and then let the distribution of charge evolve according to dynamics
 derived from the graph structure.
-(Three variants may be found in recent work on local spectral graph 
-partitioning~\cite{Spielman:2004,andersen06local,Chung07_heatkernelPNAS}.)
 Three canonical evolution dynamics are the following.
 \begin{description}
   \item[Heat Kernel.]
     Here, the charge evolves according to the dynamics of the heat equation
     $\frac{\partial H_t}{\partial t} = - L_G H_t$.
     Thus, the vector of charges evolves as
-    \begin{equation}
-    \label{eqn:heat-kernel}
-    H_t = \exp ( -tL )  = \sum_{k=0}^{\infty} \frac{(-t)^k}{k!}L^k  ,
-    \end{equation}
+%%%NIPSSUB%%     \begin{equation}
+%%%NIPSSUB%%     \label{eqn:heat-kernel}
+%%%NIPSSUB%%     H_t = \exp ( -tL )  = \sum_{k=0}^{\infty} \frac{(-t)^k}{k!}L^k  ,
+%%%NIPSSUB%%     \end{equation}
+$     H_t = \exp ( -tL )  = \sum_{k=0}^{\infty} \frac{(-t)^k}{k!}L^k  $,
     where $t \ge 0$ is a time parameter, times an input seed distribution.
   \item[PageRank.]
     Here, the charge at a node evolves by either moving to a neighber of 
@@ -409,13 +414,16 @@ Three canonical evolution dynamics are the following.
     Here, the charge either stays at the current node or moves to a neighbor.
     Thus, if $M$ is the natural random walk transition matrix associated 
     with the graph, then the vector of charges evolves as some power of 
-    \begin{equation}
-    \label{eqn:lazy-walk}
-    W_{\alpha}= \alpha I + (1-\alpha)M ,
-    \end{equation}
+%%%NIPSSUB%%     \begin{equation}
+%%%NIPSSUB%%     \label{eqn:lazy-walk}
+%%%NIPSSUB%%     W_{\alpha}= \alpha I + (1-\alpha)M ,
+%%%NIPSSUB%%     \end{equation}
+$     W_{\alpha}= \alpha I + (1-\alpha)M $,
     where $\alpha \in (0,1)$ represents the ``holding probability,'' times 
     an input seed distribution.
 \end{description}
+(These three variants may be found in recent work on local spectral graph 
+partitioning~\cite{Spielman:2004,andersen06local,Chung07_heatkernelPNAS}.)
 In each of these cases, there is a parameter ($t$, $\gamma$, and the number 
 of steps of the lazy random walk) that controls the ``aggressiveness'' of 
 the dynamics and thus controls how quickly the diffusive process 
@@ -423,14 +431,16 @@ equilibrates; and there is an input seed distribution.
 If one is interested in global spectral partitioning, then this seed vector 
 could be a vector with entries drawn from $\{-1,+1\}$ uniformly at random, 
 while if one is interested in local spectral partitioning, then this vector 
-could be the indicator vector of a small ``seet set'' of nodes.
+could be the indicator vector of a small ``seed set'' of nodes.
 
-In either case, Mahoney and Orecchia showed that these three dynamics arise 
-as solutions to regularized SDPs of the form
+%%NIPSSUB%% In either case, 
+Mahoney and Orecchia showed that these three dynamics arise as solutions to 
+%%NIPSSUB%% regularized 
+SDPs of the~form
 \begin{equation}
 \begin{aligned}
   & \underset{X}{\text{minimize}}
-  & & \mathrm{tr}(L_G X) + \lambda G(X) \\
+  & & \mathrm{tr}(L_G X) + \tfrac{1}{\eta} G(X) \\
   & \text{subject to}
   & & X \succeq 0, \\
   & & & \mathrm{tr}(X) = 1, \\
@@ -438,21 +448,25 @@ as solutions to regularized SDPs of the form
 \end{aligned}
 \label{eqn:mo-reg-sdp}
 \end{equation}
-where $J = 1_{V_G} 1_{V_G}'$ and $G$ is a penalty function (generalized 
-entropy, log-determinant and a certain matrix-$p$-norm, 
-respectively~\cite{mahoney2010implementing}) and where $\lambda$ is a 
+where $J = 1_{V_G} 1_{V_G}'$ and $G$ is a penalty function (shown to be the 
+generalized entropy, the log-determinant and a certain matrix-$p$-norm, 
+respectively~\cite{mahoney2010implementing}) and where $\eta$ is a 
 parameter related to the aggressiveness of the diffusive 
 process~\cite{mahoney2010implementing}.  
+Conversely, solutions to the SDP of~(\ref{eqn:mo-reg-sdp}) for appropriate 
+values of $\eta$ can be computed exactly by running one of the above 
+three diffusion-based procedures.
 Notably, when $G = 0$, the solution to the SDP 
 of~(\ref{eqn:mo-reg-sdp}) is $u u'$, where $u$ is the smallest nontrivial 
 eigenvector of $L_G$.  
-More generally, in this precise sense, the heat kernel, PageRank, and lazy 
+More generally and in this precise sense, the heat kernel, PageRank, and lazy 
 random walk dynamics can be seen as ``regularized'' versions of spectral 
 clustering and Laplacian eigenvector computation.
-XXX.  MWM CHANGED REGULARIZATION FXN FROM $F$ TO $G$ TO BE CONSISTENT WITH BEFORE, WEN NEED TO BE CONSISTENT EVERYWHERE.
-Intuitively, where the function $G(\cdot)$ is acting as a penalty function, 
-in a manner analogous to the $\ell_2$ or $\ell_1$ penalty in ridge 
-regression or LASSO.
+%%NIPSSUB%% XXX.  MWM CHANGED REGULARIZATION FXN FROM $F$ TO $G$ TO BE CONSISTENT WITH BEFORE, WEN NEED TO BE CONSISTENT EVERYWHERE.
+Intuitively, the function $G(\cdot)$ is acting as a penalty function, in a 
+manner analogous to the $\ell_2$ or $\ell_1$ penalty in ridge regression or 
+LASSO, and by running one of these three dynamics one is \emph{implicitly} 
+making assumptions about the form of $G(\cdot)$.
 In this paper, we provide a statistical framework to make that intuition 
 precise.
 
@@ -469,15 +483,15 @@ precise.
 %%%MWM%%% penalty function, $F$, is to encode prior assumptions about the
 %%%MWM%%% population Laplacian.
 
-(((
-XXX.  INCORPORATE WITH SUBSXN BELOW OR REMOVE IF REDUNDANT.
-Our approach is reminiscent of the Bayesian interpretation of
-regularized linear regression.  In linear regression, an $L^2$ penalty
-corresponds to a Gaussian prior on the coefficent vector, and the
-solution to the regularized regression problem is the maximium a
-posterior (MAP) estimator.  In the same setting, $L^1$ regularization
-corresponds to a Laplace prior on the coefficent vector.
-)))
+%%%NIPSSUB%% (((
+%%%NIPSSUB%% XXX.  INCORPORATE WITH SUBSXN BELOW OR REMOVE IF REDUNDANT.
+%%%NIPSSUB%% Our approach is reminiscent of the Bayesian interpretation of
+%%%NIPSSUB%% regularized linear regression.  In linear regression, an $L^2$ penalty
+%%%NIPSSUB%% corresponds to a Gaussian prior on the coefficent vector, and the
+%%%NIPSSUB%% solution to the regularized regression problem is the maximium a
+%%%NIPSSUB%% posterior (MAP) estimator.  In the same setting, $L^1$ regularization
+%%%NIPSSUB%% corresponds to a Laplace prior on the coefficent vector.
+%%%NIPSSUB%% )))
 
 
 \section{A statistical framework for regularized graph estimation}
@@ -495,20 +509,21 @@ population Laplacian by maximizing its posterior density,
 $p(\mathcal{L} \mid L)$.
 
 
-\subsection{Analogy with regularized linear regression}\label{S:regression}
+\subsection{Analogy with regularized linear regression}
+\label{S:regression}
 
-It will be helpful to keep in mind the Bayesian
-interpretation of regularized linear regression.  In that context, we
-observe $n$ predictor-response pairs in $\reals^p \times \reals$,
-denoted $(x_1, y_1), \dotsc, (x_n, y_n)$; the goal is to find a vector
-$\beta$ such that $\beta' x_i \approx y_i$.  Typically, we choose
-$\beta$ by minimizing the residual sum of squares,
-$\RSS(\beta) = \sum_i \| y_i - \beta' x_i \|_2^2$, or a
-penalized version of it.  For ridge regression, we minimize
-$\RSS(\beta) + \lambda \|\beta\|_2^2$; for LASSO regression, we minimize
-$\RSS(\beta) + \lambda \|\beta\|_1$.  The additional terms in the
-optimization criteria ($\lambda \|\beta\|_2^2$ and $\lambda
-\|\beta\|_1$) are called penalty functions.
+It will be helpful to keep in mind the Bayesian interpretation of 
+regularized linear regression.  
+In that context, we observe $n$ predictor-response pairs in 
+$\reals^p \times \reals$, denoted $(x_1, y_1), \dotsc, (x_n, y_n)$; 
+the goal is to find a vector $\beta$ such that $\beta' x_i \approx y_i$.  
+Typically, we choose $\beta$ by minimizing the residual sum of squares,
+\emph{i.e.}, $F(\beta)=\RSS(\beta) = \sum_i \| y_i - \beta' x_i \|_2^2$, or 
+a penalized version of it.  
+For ridge regression, we minimize $F(\beta) + \lambda \|\beta\|_2^2$; while 
+for LASSO regression, we minimize $F(\beta) + \lambda \|\beta\|_1$.  
+The additional terms in the optimization criteria ($\lambda \|\beta\|_2^2$ 
+and $\lambda \|\beta\|_1$) are called penalty functions.
 
 Adding a penalty function to the optimization criterion can be
 interpreted as incorporating prior information about $\beta$.  We
@@ -520,7 +535,7 @@ $y = (y_1, \dotsc, y_n)$:
 \begin{equation}\label{E:regression-density}
   p(y \mid \beta)
     \propto
-     \exp\{ -\tfrac{1}{2 \sigma^2} \RSS(\beta) \},
+     \exp\{ -\tfrac{1}{2 \sigma^2} F(\beta) \},
 \end{equation}
 where the constant of proportionality depends only on $y$ and $\sigma$.
 Next, we assume that $\beta$ itself is random, drawn from a
@@ -528,25 +543,25 @@ distribution with density $p(\beta)$.  This distribution is called a
 prior, since it encodes prior knowledge about $\beta$.  Without loss
 of generality, the prior density can be assumed to take the form
 \begin{equation}\label{E:regression-prior}
-  p(\beta) \propto \exp\{ -\tfrac{1}{2} F(\beta) \}.
+  p(\beta) \propto \exp\{ -U(\beta) \}.
 \end{equation}
 Since the two random variables are dependent, upon observing $y$, we
-have information about $\beta$.  This information is incoded in the
-posterior density, $p(\beta \mid y)$, computed via
-Bayes' rule as
+have information about $\beta$.  This information is encoded in the
+posterior density, $p(\beta \mid y)$, computed via Bayes' rule as
 \begin{equation}\label{E:regression-posterior}
   p(\beta \mid y)
     \propto p(y \mid \beta) \, p(\beta)
-    \propto \exp\{ -\tfrac{1}{2 \sigma^2} \RSS(\beta) - \tfrac{1}{2} F(\beta) \}.
+    \propto \exp\{ -\tfrac{1}{2 \sigma^2} F(\beta) - U(\beta) \}.
 \end{equation}
-The maximum a posterior probablility (MAP) estimate of $\beta$ is the
-value that maximizes $p(\beta \mid y)$.  Equivalently, $\beta$
-minimizes $\log p(\beta \mid y)$.  We can recover the solution to
-Ridge or LASSO regression by setting
-$F(\beta) = \tfrac{\lambda}{\sigma^2} \| \beta \|_2^2$ or
-$F(\beta) = \tfrac{\lambda}{\sigma^2} \| \beta \|_1$.  Thus, Ridge
-regression can be interpeted as imposing a Gaussian prior on $\beta$,
-and LASSO regression can be interpreted as imposing a
+The maximum a posterior probablility (MAP) estimate of $\beta$ is the value 
+that maximizes $p(\beta \mid y)$.  
+Equivalently, $\beta$ minimizes $\log p(\beta \mid y)$.  
+In this framework, we can recover the solution to Ridge regression or LASSO 
+regression by setting
+$U(\beta) = \tfrac{\lambda}{2 \sigma^2} \| \beta \|_2^2$ or
+$U(\beta) = \tfrac{\lambda}{2 \sigma^2} \| \beta \|_1$, respectively.  
+Thus, Ridge regression can be interpeted as imposing a Gaussian prior on 
+$\beta$, and LASSO regression can be interpreted as imposing a 
 double-exponential prior on $\beta$.
 
 
@@ -557,7 +572,9 @@ Suppose $L$ is the normalized Laplacian of a connected graph with $n$
 nodes.  Take $L$ to be a random object with expectation~$\mathcal{L}$,
 where $\mathcal{L}$ is another normalized graph Laplacian.  We refer to $\mathcal{L}$ as the
 ``population'' graph Laplacian, and we refer to $L$ as the ``sample''
-graph Laplacian.  In general, $\mathcal{L}$ can be distinct from $L$,
+graph Laplacian.  
+%%%NIPSSUB%% XXX.  MWM NOTE: IN THE FINAL LONG VERSION, WE SHOULD MAKE SURE TO PRESENT EVERYTHING SO IT IS CLEAR WHY WE MAKE THESE VARIOUS ASSUMPTIONS AT VARIOUS PLACES.
+In general, $\mathcal{L}$ can be distinct from $L$,
 but we require that the nodes in the population and sample graphs have
 the same degrees, given by the vector $d = \big(d(1), \dotsc,
 d(n)\big)$. Let $D = \diag\big(d(1), \dotsc, d(n)\big)$ and let
@@ -565,21 +582,24 @@ $\mathcal{X} = \{ X : X \succeq 0, \, X D^{1/2} 1 = 0, \, \rank(X) = n - 1 \}$. 
 population and sample Laplacians are both members of $\mathcal{X}$.
 
 
-To apply the Bayesian formalism, we need to fully specify the
-conditional density of $L$ given $\mathcal{L}$.  In
-Sec.~\ref{S:regression}, in the context of linear regression, we
-assumed that the observations followed a Gaussian distrubition.  A
-graph Laplacian is not a single observation---it is a positive
+To apply the Bayesian formalism, we need to fully specify the conditional 
+density of $L$ given $\mathcal{L}$.  
+In Sec.~\ref{S:regression}, in the context of linear regression, we assumed 
+that the observations followed a Gaussian distrubition.  
+A graph Laplacian is not a single observation---it is a positive
 semidefinite matrix with a very specific structure.  To model $L$, we
 choose a distribution for positive semi-definite matrices analogous to
 the Gaussian distribution: a scaled Wishart matrix with expectation
-$\mathcal{L}$.  This distribution captures the trait that $L$ is
-positive semi-definite.  The distribution does not accurately model
-every feature of $L$, in particular a scaled Wishart matrix does not
-necessarily have ones along its diagonal.  However, the mode of the
-density is at $\mathcal{L}$, a Laplacian, and for large values of the
-scale parameter, most of the mass will be on matrices close to
-$\mathcal{L}$.
+$\mathcal{L}$.  
+Although this distribution captures the trait that $L$ is positive 
+semi-definite, it does not accurately model every feature of $L$, 
+\emph{e.g.}, a scaled Wishart matrix does not necessarily have ones along 
+its diagonal.  
+However, the mode of the density is at $\mathcal{L}$, a Laplacian, and for 
+large values of the scale parameter, most of the mass will be on matrices 
+close to $\mathcal{L}$.
+See the Supplementary Material for a more detailed heuristic justification
+for the use of a Wishart distribution.
 
 Let $m \geq n - 1$ be a scale parameter
 and suppose $L$ is distributed as a
@@ -598,17 +618,20 @@ Eq.~\eqref{E:density} is analogous to Eq.~\eqref{E:regression-density}
 in the linear regression context, with $1/m$ playing the role of
 $\sigma^2$.
 
-Now suppose we have know that $\mathcal{L}$, is a random object drawn
-from a prior density $p(\mathcal{L})$.
+Now suppose we have know that $\mathcal{L}$ is a random object drawn from a 
+prior density $p(\mathcal{L})$.
 Without loss of generality,
-\begin{equation}\label{E:prior}
-  p(\mathcal{L}) \propto \exp\{ -\tfrac{1}{2} \tilde G(\mathcal{L}^+) \},
+\begin{equation}
+\label{E:prior}
+  p(\mathcal{L}) \propto \exp\{ -U(\mathcal{L}) \},
 \end{equation}
-for some function $F$, supported on a subset
-$\mathcal{S} \subseteq \mathcal{X}$.  (The space $\mathcal{X}$ is
-closed under inversion, so if $\mathcal{L}^{+} \in \mathcal{S}$, then
-$\mathcal{L} \in \mathcal{X}$.)
-Eq.~\eqref{E:prior} is analogous to Eq.~\eqref{E:regression-prior}.
+for some function $U$, supported on a subset
+$\mathcal{S} \subseteq \mathcal{X}$.
+%%%POP%%% (The space $\mathcal{X}$ is
+%%%POP%%% closed under inversion, so if $\mathcal{L}^{+} \in \mathcal{S}$, then
+%%%POP%%% $\mathcal{L} \in \mathcal{X}$.)
+Eq.~\eqref{E:prior} is analogous to Eq.~\eqref{E:regression-prior} from the 
+linear regression example.
 
 Upon observing $L$, the posterior distribution for $\mathcal{L}$ is
 \begin{equation}\label{E:posterior}
@@ -616,27 +639,29 @@ Upon observing $L$, the posterior distribution for $\mathcal{L}$ is
     \propto p(L \mid \mathcal{L}) \, p (\mathcal{L})
     \propto \exp\{ -\tfrac{m}{2} \Tr(L \mathcal{L}^+)
                    + \tfrac{m}{2} \log |\mathcal{L}^+|
-                   - \tfrac{1}{2} F(\mathcal{L^+}) \},
+                   - U(\mathcal{L}) \},
 \end{equation}
-with support determined by $\mathcal{S}$.  Eq.~\eqref{E:posterior} is
-analogous to Eq.~\eqref{E:regression-posterior}.  The MAP estimator of
-$\mathcal{L}$ is the pseudoinverse of the solution to the program
+with support determined by $\mathcal{S}$.  
+Eq.~\eqref{E:posterior} is analogous to Eq.~\eqref{E:regression-posterior} 
+from the linear regression example.
+Denote by $\mathcal{\hat L}$ the MAP estimate of $\mathcal{L}$.
+It follows that $\mathcal{\hat L}^+$ is the solution to the program
 \[
 \begin{aligned}
   & \underset{X}{\text{minimize}}
-  & & \Tr(L X) + \tfrac{1}{m} F(X) - \log |X| \\
+  & & \Tr(L X) + \tfrac{2}{m} U(X^+) - \log |X| \\
   & \text{subject to}
   & & X \in \mathcal{S}.
 \end{aligned}
 \]
-Note the similarity with Mahoney and Orecchia's relaxed SDP.
+Note the similarity with Mahoney and Orecchia's relaxed SDP 
+of~(\ref{eqn:mo-reg-sdp}).
 In particular, if
 \(
   \mathcal{S} = \{ X : \Tr(X) = 1 \} \cap \mathcal{X},
 \)
 then the two programs are identical except for the factor of
-$\log |X|$ in the optimization criterion.  Prop~\ref{P:map-sdp} makes
-this connection precise.
+$\log |X|$ in the optimization criterion.
 
 %More generally, if 
 %$\mathcal{S} = \{ X : \Tr(X) = \tau^{-1} \} \cap \mathcal{X}$, then
@@ -691,18 +716,18 @@ $X D^{1/2} 1 = 0$.
 
 The prior we specify depends only on the eigenvalues of the normalized
 Laplacian.  Equivalently, it depends only on the eigenvalues of the pseudoinverse of
-the Laplacian.  If $\mathcal{L}^+ = \tau \, U \Lambda U'$ is the spectral
+the Laplacian.  If $\mathcal{L}^+ = \tau \, O \Lambda O'$ is the spectral
 decomposition of the pseudoinverse of normalized Laplacian
 $\mathcal{L}$, where $\tau \geq 0$,
-$U \in \reals^{n \times n -1}$, 
+$O \in \reals^{n \times n -1}$, 
 $\Lambda = \diag\big(\lambda(1), \dotsc, \lambda({n-1})\big)$, and
 $\sum_v \lambda(v) = 1$,  then the prior
 weight on $\mathcal{L}$ only depends on $\tau$ and $\Lambda$.  Note that the
 values $\lambda(1), \dotsc, \lambda(n-1)$ are unordered.
 
 The implication is that the prior is ``nearly'' rotationally
-invariant, i.e. $p(O \mathcal{L} O') = p(\mathcal{L})$ for any rank-$(n-1)$
-projection matrix $O$ satisfying $O' D^{1/2} 1 = 0$.
+invariant, i.e. $p(P' \mathcal{L} P) = p(\mathcal{L})$ for any rank-$(n-1)$
+projection matrix $P$ satisfying $P D^{1/2} 1 = 0$.
 
 The vector $\lambda = \big(\lambda(1), \dotsc, \lambda(n-1)\big)$ lies
 in the unit simplex.  If we require that the
@@ -763,11 +788,11 @@ For $\mathcal{L}$ in the support set of the posterior,
 define $\tau = \Tr(\mathcal{L}^+)$ and $\Theta  = \tau^{-1}
 \mathcal{L}^+$, so that $\Tr(\Theta) = 1$.  Further, $\rank(\Theta) = n - 1$.
 Express the prior in the form of Eq.~\eqref{E:prior} with function
-$\tilde G$ given by
+$U$ given by
 \[
-  \tilde G(\mathcal{L}^+)
-    = -2 \log \{ p(\tau) \, |\Theta|^{\alpha - 1} \}
-    = -2(\alpha - 1) \log |\Theta| - 2 \log p(\tau),
+  U(\mathcal{L})
+    = -\log \{ p(\tau) \, |\Theta|^{\alpha - 1} \}
+    = -(\alpha - 1) \log |\Theta| - \log p(\tau),
 \]
 where as before, $|\cdot|$ denotes pseudodeterminant.  Using
 \eqref{E:posterior} and the relation
@@ -931,5 +956,174 @@ XXX.  BRIEF CONCLUSION HERE.  SOME PHILOSOPHY AND/OR SPECIFIC STATISTICAL LOOSE 
 \bibliographystyle{plain}
 %\bibliography{refs}
 \bibliography{refs,communities,mwmbib_jrnl,mwmbib_proc,mwmbib_book,mwmbib_misc,mwmbib_drft,haribib,communities}
+
+
+\newpage
+\appendix
+
+%%NIPSSUB%% \subsection{Heuristic justification for the Wishart density}
+\section{Heuristic justification for the Wishart density}
+\label{sxn:justification}
+
+\textbf{[Note: this is roughly correct, but needs to be revised (see
+  comment before Lemma 3.1)]}
+
+Let $G$ be a graph with vertex set $V = \{ 1, 2, \dotsc, n \}$, edge
+set $E = V \times V$ equipped with the equivalence relation
+$(u,v) = (v,u)$.  Let $\omega$ be an edge weight function, and let
+$\mathcal{L}$ and $\mathcal{L}_0$ be the corresponding normalized and
+combinatorial Laplacians.  Let $\Delta$ be a diagonal matrix with
+$\Delta(u,u) = \sum_{v} \omega(u,v)$, so that
+$\mathcal{L} = \Delta^{-1/2} \mathcal{L}_0 \Delta^{-1/2}$.  Suppose
+the weights are scaled such that $\sum_{(u,v) \in E} \omega(u,v) = 1$,
+and suppose further that $\Delta(u,u) > 0$.
+We refer to $\omega(u,v)$ as the population weight of edge $(u,v)$.
+
+A simple model for the sample graph is as follows: we sample $m$ edges
+from $E$, randomly chosen according to the population weight function.
+That is, we see edges $(u_1, v_1), (u_2, v_2), \dotsc, (u_m, v_m)$,
+where the edges are all drawn independently and identically such that
+the probability of seeing edge $(u,v)$ is determined by $\omega$:
+\[
+  \prob_\omega\{ (u_1, v_1) = (u,v) \} = \omega(u,v).
+\]
+Notably, we will likely see duplicate edges, and not every edge with a
+positive weight will get sampled.
+
+We construct a weight function from the sampled edges, called the
+sample weight function, $w$, defined such that
+\[
+  w(u,v) = \frac{1}{m} \sum_{i=1}^{m} 1\{ (u_i, v_i) = (u,v) \}.
+\]
+In turn, we construct a sample compbinatorial Laplacian, $L_0$,
+defined such that
+\[
+  L_0(u,v)
+    =
+    \begin{cases}
+      \sum_{w} w(u,w) &\text{when $u = v$,} \\
+      -w(u,v) &\text{otherwise.}
+    \end{cases}
+\]
+Let $D$ be a diagonal matrix such that
+$D(u,u) = \sum_{v} w(u,v)$, and define $L = D^{-1/2} L_0 D^{-1/2}$.
+Letting $\E_\omega$ denote expectration with respect to probability
+law $\prob_\omega$, note that $\E_\omega[w(u,v)] = \omega(u,v)$,
+that $\E_\omega L_0 = \mathcal{L}_0$ and that $\E_\omega D = \Delta$,
+Moreover, the strong law of large numbers gaurantees that as $m$ increases,
+these three quantities converge almost surely to their expectations.
+Further, Slutzky's theorem gaurantees that $\sqrt{m} (L - \mathcal{L})$ and
+$\sqrt{m} \Delta^{-1/2} (L_0 - \mathcal{L}_0) \Delta^{-1/2}$ converge in
+distribution to the same limit.  We use this large-sample behavior to
+approximate the the distrubition of $L$ by the distribution of
+$\Delta^{-1/2} L_0 \Delta^{-1/2}$.  Put simply, we treat the degrees as known.
+
+The distribution of $L_0$ is completely determined by the edge
+sampling scheme laid out above.  However, the exact form for the
+density involves an intractible combinatorial sum.  We appeal to a
+crude approximation for the conditional density.
+The approximaton works as follows:
+\begin{enumerate}
+\item For $i = 1, \dotsc, m$, define $x_i \in \reals^n$ such that
+  \[
+    x_i(u)
+      =
+      \begin{cases}
+        +s_i &\text{when $u = u_i$,} \\
+        -s_i &\text{when $u = v_i$,} \\
+        0 &\text{otherwise,}
+      \end{cases}
+  \]
+  where $s_i \in \{ -1, +1 \}$ is chosen arbitrarily.
+\item Note that $L_0 = \sum_{i=1}^m x_i x_i'$.
+\item Take $s_i$ to be random, equal to $+1$ or $-1$ with probability
+  $\tfrac{1}{2}$.  Approximate the distribution of $x_i$ by the
+  distribution of a multivariate normal random variable, $\tilde x_i$,
+  such that $x_i$ and $\tilde x_i$ have the same first and second
+  moments.
+\item Approximate the distribution of $L_0$ by the distribution of $\tilde L_0$, where
+  \(
+  \tilde L_0 = \sum_{i=1}^m \tilde x_i \tilde x_i'.
+  \)
+  \item Use the asymptotic expansion above to approximate the
+    distribution of $L$ by the distribution of
+    $\Delta^{-1/2} \tilde L_0 \Delta^{-1/2}$.
+\end{enumerate}
+
+\textbf{[The stuff below is inconsistent with the development to this point;
+the notation needs to be redone to use the normalized and
+combinatorial Laplacians where appropriate]}
+
+\noindent
+The next two lemmas derive the distribution of $\tilde x_i$ and
+$\tilde L_0$ in terms of $\mathcal{L}$, allowing us to get an
+approximation for $p(L \mid \mathcal{L})$.
+
+\begin{lemma}
+  With $x_i$ and $\tilde x_i$ defined as above,
+  \[
+    \E_\omega[ x_i ] = \E_\omega[ \tilde x_i ] = 0,
+  \]
+  and
+  \[
+    \E_\omega[ x_i x_i' ] = \E_\omega [ \tilde x_i \tilde x_i' ] = \mathcal{L}.
+  \]
+\end{lemma}
+\begin{proof}
+The random variable $\tilde x_i$ is defined to have the same first
+and second moments as $x_i$.
+The first momemnt vanishes since $s_i \overset{d}{=} -s_i$ implies
+that $x_i \overset{d}{=} -x_i$.  For the second moments, note that
+when $u \neq v$, 
+\[
+  \E_\omega[x_i(u) \, x_i(v)]
+  = -s_i^2 \, \prob_\omega\{ (u_i,v_i) = (u,v) \}  = -\omega(u,v)
+  = \mathcal{L}(u,v).
+\]
+Likewise,
+\[
+  \E_\omega[\{x_i(u)\}^2]
+      = \sum_{v} \prob_\omega\{ (u_i,v_i) = (u,v) \}
+      = \sum_{v} \omega(u,v)
+      = \mathcal{L}(u,u).
+\]
+\end{proof}
+
+\begin{lemma}\label{L:approx-wishart}
+  The random matrix $\tilde L$ is distrubted as a Wishart matrix with
+  shape $\mathcal{L}$ and scale $m$.  This distribution, denoted
+  $\mathcal{W}(\mathcal{L}, m)$ is supported on the set of
+  positive-semidefinite matrices with the same nullspace as $\mathcal{L}$.  Whe
+  $m \geq \rank(\mathcal{L})$, the distribution has a denisty on this space
+  given by
+  \begin{equation}\label{E:wishart-density}
+   f_\mathcal{W}( \tilde L \mid \mathcal{L}, m)
+      \propto
+      \frac{|\tilde L|^{(m - \rank(\mathcal{L}) - 1)/2}
+        \exp\{-\tfrac{1}{2} \Tr(\tilde L \mathcal{L}^+) \}}
+        {|\mathcal{L}|^{m/2}}
+  \end{equation}
+  where the constant of proportionality depends only on $m$ and $n$
+  and where $|\cdot|$ denotes pseudodeterminant (product of nonzero
+  eigenvalues).
+\end{lemma}
+\begin{proof}
+  Since $\tilde L$ is a sum of $m$ outer products of multivariate
+  $\mathrm{Normal}(0, \mathcal{L})$, it is Wishart distributed
+  (by definition).
+  Suppose $\rank(\mathcal{L}) = r$ and
+  $U \in \reals^{n \times r}$ is a matrix whose columns are the
+    eigenvectors of $\mathcal{L}$.  Note that
+    $U' \tilde x_i \overset{d}{=} \mathrm{Normal}(0, U' \mathcal{L} U)$,
+    and that $U' \mathcal{L} U$ has full rank.  Thus,
+    \(
+      U' \tilde L U
+    \)
+    has a density over the space of $r \times r$ positive-semidefinite
+    matrices whenever $m \geq r$.  The density of $U' \tilde L U$ is
+    exactly equal to $f_\mathcal{W}(\tilde L \mid \mathcal{L}, m)$,
+    defined above.
+\end{proof}
+
 
 \end{document}
