@@ -176,9 +176,7 @@ decisions to speed up computations.
 Then, Section~\ref{sxn:empirical} will provide an empirical evaluation,
 and 
 Section~\ref{sxn:conc} will provide a brief conclusion.
-%%% ARXIV TO NIPS %%% Additional discussion is available in the Appendix.
-Additional discussion is available in the Appendix of the technical report 
-version of this paper~\cite{PM11_TR}.
+Additional discussion is available in the Appendix.
 
 
 \vspace{-4mm}
@@ -271,8 +269,7 @@ spectral graph
 partitioning~\cite{Spielman:2004,andersen06local,Chung07_heatkernelPNAS,MOV09_TRv2},
 then this vector could be the indicator vector of a small ``seed set'' of 
 nodes.
-%%% ARXIV TO NIPS %%% See Appendix~\ref{sxn:local-partitioning} for a brief discussion of local 
-See Appendix A of~\cite{PM11_TR} for a brief discussion of local 
+See Appendix~\ref{sxn:local-partitioning} for a brief discussion of local 
 and global spectral partitioning in this context. 
 
 Mahoney and Orecchia showed that these three dynamics arise as solutions to 
@@ -430,8 +427,7 @@ its diagonal.
 However, the mode of the density is at $\mathcal{L}$, a Laplacian; and for 
 large values of the scale parameter, most of the mass will be on matrices 
 close to $\mathcal{L}$.
-%%% ARXIV TO NIPS %%% Appendix~\ref{sxn:justification} provides a more detailed heuristic 
-Appendix B of~\cite{PM11_TR} provides a more detailed heuristic 
+Appendix~\ref{sxn:justification} provides a more detailed heuristic 
 justification for the use of the Wishart distribution.
 
 To be more precise, let $m \geq n - 1$ be a scale parameter, and suppose 
@@ -505,8 +501,7 @@ that will allow us to leverage the estimation framework of
 Section~\ref{snx:framework}; and we will show that the MAP estimate 
 of $\mathcal{L}$ for this prior is related to the PageRank procedure via 
 the Mahoney-Orecchia regularized SDP.  
-%%% ARXIV TO NIPS %%% Appendix~\ref{sxn:other-priors} presents priors that lead to the Heat 
-Appendix C of~\cite{PM11_TR} presents priors that lead to the Heat 
+Appendix~\ref{sxn:other-priors} presents priors that lead to the Heat 
 Kernel and Lazy Random Walk in an analogous way; in both of these cases, 
 however, the priors are data-dependent in the strong sense that they 
 explicitly depend on the number of data points.
@@ -833,8 +828,7 @@ Our performance criterion is the relative Frobenius error
 $\|\Theta - \hat \Theta_\eta\|_\mathrm{F} / \|\Theta - \hat \Theta
 \|_\mathrm{F}$, where $\|\cdot\|_\mathrm{F}$ denotes the Frobenius norm
 ($\|A\|_\mathrm{F} = [\Tr(A' A)]^{1/2}$).  
-%%% ARXIV TO NIPS %%% Appendix~\ref{S:spectral-performance} presents similar results when the
-Appendix D of~\cite{PM11_TR} presents similar results when the
+Appendix~\ref{S:spectral-performance} presents similar results when the
 performance criterion is the relative spectral norm error.
 
 
@@ -911,15 +905,15 @@ increasingly important in very large-scale data analysis applications.
 %\clearpage
 \newpage
 
-%\bibliographystyle{plain}
+%%% %\bibliographystyle{plain}
 \bibliographystyle{unsrt}
 \bibliography{refs}
 
-%%% ARXIV TO NIPS %%% \newpage
-%%% ARXIV TO NIPS %%% \appendix
-%%% ARXIV TO NIPS %%% 
-%%% ARXIV TO NIPS %%% 
-%%% ARXIV TO NIPS %%% \input{appendix}
+\newpage
+\appendix
+
+
+\input{appendix}
 
 
 \end{document}

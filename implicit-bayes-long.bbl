@@ -44,12 +44,6 @@ J.~Leskovec, K.J. Lang, A.~Dasgupta, and M.W. Mahoney.
 \newblock {\em Internet Mathematics}, 6(1):29--123, 2009.
 \newblock Also available at: arXiv:0810.1355.
 
-\bibitem{PM11_TR}
-P.~O. Perry and M.~W. Mahoney.
-\newblock Regularized {L}aplacian estimation and fast eigenvector
-  approximation.
-\newblock Preprint: arXiv:1110.1757, 2011.
-
 \bibitem{Spielman:2004}
 D.A. Spielman and S.-H. Teng.
 \newblock Nearly-linear time algorithms for graph partitioning, graph
@@ -95,5 +89,35 @@ S.~Hoory, N.~Linial, and A.~Wigderson.
 B.~Bollobas.
 \newblock {\em Random Graphs}.
 \newblock Academic Press, London, 1985.
+
+\bibitem{Donath:1973}
+W.E. Donath and A.J. Hoffman.
+\newblock Lower bounds for the partitioning of graphs.
+\newblock {\em IBM Journal of Research and Development}, 17:420--425, 1973.
+
+\bibitem{fiedler75B}
+M.~Fiedler.
+\newblock A property of eigenvectors of nonnegative symmetric matrices and its
+  application to graph theory.
+\newblock {\em Czechoslovak Mathematical Journal}, 25(100):619--633, 1975.
+
+\bibitem{Mihail}
+M.~Mihail.
+\newblock Conductance and convergence of {M}arkov chains---a combinatorial
+  treatment of expanders.
+\newblock In {\em Proceedings of the 30th Annual IEEE Symposium on Foundations
+  of Computer Science}, pages 526--531, 1989.
+
+\bibitem{chebotarev1998proximity}
+P.~Yu Chebotarev and E.~V. Shamis.
+\newblock On proximity measures for graph vertices.
+\newblock {\em Automation and Remote Control}, 59(10):1443--1459, 1998.
+
+\bibitem{chandra1989electrical}
+A.~K. Chandra, P.~Raghavan, W.~L. Ruzzo, R.~Smolensky, and P.~Tiwari.
+\newblock The electrical resistance of a graph captures its commute and cover
+  times.
+\newblock In {\em Proc. Twenty-first Ann. ACM Symp. Theor. Comp.}, pages
+  574--586. ACM Press, Seattle, 1989.
 
 \end{thebibliography}
