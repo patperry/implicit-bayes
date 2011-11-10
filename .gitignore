@@ -1,8 +1,12 @@
 *.aux
 *.blg
 *.dvi
+*.nav
 *.out
 *.pdf
+*.snm
+*.toc
+*.vrb
 .RData
 .Rhistory
 implicit-bayes.pdf
