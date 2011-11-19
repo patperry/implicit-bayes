@@ -1,7 +1,9 @@
 source("code/sample.R")
 
+set.seed(0)
+
 require(RColorBrewer)
-palette(brewer.pal(7, "Blues"))
+palette(brewer.pal(7, "OrRd"))
 
 
 optdemo <- function(psamp = c(0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0),
@@ -26,7 +28,6 @@ optdemo <- function(psamp = c(0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0),
 
     adj <- grid.2d(7, 6, wrap=FALSE)
     tot <- sum(adj) / 2
-
 
     plot(range(psamp), range(eta.frob), t='n', log = "x",
          xlab = "Sample Proportion",
