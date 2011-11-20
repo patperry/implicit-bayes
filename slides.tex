@@ -109,21 +109,152 @@
         edge node[auto, rotate=45, anchor=south west] {Mahoney \& Orecchia}
           (structure)
       (graphs)
-        edge [bend right=45] node[below] {Empirical experience}
+        edge [bend right=30] node[below] {Empirical experience}
           (structure);
     \path[<->, ultra thick, dashed]
       (graphs)
         edge node[above, rotate=45, anchor=south west] {This work}
           (regularization);
 \end{tikzpicture}
-From Mahoney and Orecchia, we know that certain regularization penalties
-correspond to certain diffusions.
 From empirical experience, we know that certain diffusions are more
 appropriate for certain classes of graphs.
-This current work attempts to complete the circle by showing that certain 
-type of regularization make certain implicit assumptions about the graph.
+From Mahoney and Orecchia, we know certain diffusions arise as solutions
+to certain regularized eigenvector problems.
+The current work attempts to complete the circle by showing that certain 
+type of regularization make certain implicit assumptions about structural
+properties of the graph.
 \end{frame}
 
+
+\begin{frame}[c]
+  \begin{block}{}
+  \begin{center}
+    \huge{Background}
+  \end{center}
+  \end{block}
+\end{frame}
+
+
+\begin{frame}
+  \begin{block}{Notation for a weighted undirected graph}
+  \begin{itemize}
+    \item vertex set $V = \{ 1, \dotsc, n \}$ 
+    \item edge set $E \subset V \times V$
+    \item edge weight function $w : E \to \mathbb{R}^+$
+    \item degree function $d : V \to \mathbb{R}^+$, $d(u) = \sum_v w(u,v)$
+    \item diagonal degree matrix $D \in \mathbb{R}^\times{V \times V}$, $D(v,v) = d(v)$
+    \item combinatorial Laplacian $L_0 \in \mathbb{R}^{V \times V}$,
+    	$L_0(u,v) = \begin{cases}
+		-w(u,v) &\text{when $u \neq v$} \\
+		d(u) - w(u,v) &\text{otherwise.}
+	\end{cases}$
+    \item normalized Laplacian $L = D^{-1/2} \, L_0 \, D^{-1/2}$
+  \end{itemize}
+  \end{block}
+  We will need the above notation.
+\end{frame}
+
+\begin{frame}
+  \begin{block}{Diffusion-based procedures}
+  \begin{description}
+    \item[Heat Kernel] Charge evolves according to the heat equation
+    	$\frac{\partial H_t}{\partial t} = - L H_t$.
+    \item[PageRank] Charge at a node evlolves by either moving to a neighbor
+    	of the current node or teleporting to a random node.
+    \item[Lazy Random Walk] Charge either stays at the current node or moves
+        to a neighbor.
+  \end{description}
+  \end{block}
+  In each of these diffusions, we distributed charge on the vertices of a
+  graph, and let the charge evolve according to certain dynamics.  The
+  specific choice of the dynamics (Heat Kernel, PageRank, or Lazy Random Walk)
+  is determined by structural features of the graph.  To date, there is some
+  empirical understanding of which dynamics are appropriate for which classes
+  of graphs, but no theoretical basis for these differences.
+\end{frame}
+
+\begin{frame}
+  \begin{block}{Original eigenvector problem}
+  \begin{columns}
+  \column{0.3\textwidth}
+    \begin{equation*}
+    \begin{aligned}
+    & \underset{x}{\text{minimize}}
+    & & x^\mathrm{T} L x \\
+    & \text{subject to}
+    & & \| x \|_2 = 1, \\
+    & & & x^\mathrm{T} D^{1/2} 1 = 0 \\
+    & & &
+    \end{aligned}
+    \end{equation*}
+    (standard form)
+  \column{0.3\textwidth}
+    \begin{equation*}
+    \begin{aligned}
+    & \underset{X}{\text{minimize}}
+    & & \mathrm{Tr}(L X)\\
+    & \text{subject to}
+    & & \mathrm{Tr}(X) = 1, \\
+    & & & X D^{1/2} 1 = 0, \\
+    & & & X \succeq 0
+    \end{aligned}
+    \end{equation*}
+    (relaxed form)
+  \end{columns}
+  \end{block}
+  The correspondence between the two is that the solutions satisfy
+  $x x^\mathrm{T} = X$.
+\end{frame}
+
+\begin{frame}
+  \begin{block}{Regularized eigenvector problem}
+    \begin{equation*}
+    \begin{aligned}
+    & \underset{X}{\text{minimize}}
+    & & \mathrm{Tr}(L X) + \tfrac{1}{\eta} G(X) \\
+    & \text{subject to}
+    & & \mathrm{Tr}(X) = 1, \\
+    & & & X D^{1/2} 1 = 0 \\
+    & & & X \succeq 0
+    \end{aligned}
+    \end{equation*}
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \begin{block}{Mahoney \& Orecchia's result}
+    \centering
+    \begin{tabular}{ccc}
+      Penalty &\phantom{MMM} & Solution \\
+      \hline
+      $\mathrm{Tr}(X \log X) - \mathrm{Tr}(X)$ && Heat Kernel \\
+      $- \log |X|$ && PageRank  \\
+      $\mathrm{Tr}(X^k)$ && Lazy Random Walk
+    \end{tabular}
+  \end{block}
+  Mahoney \& Orecchia's result shows that certain choices of the penalty
+  function $G(X)$ result in the solutions of the regularized eigenvector
+  problem involving certain diffusions (summarized by the table).
+\end{frame}
+
+
+\begin{frame}
+  \begin{block}{}
+  \begin{center}
+    \huge{Statistical framework for regularized graph estimation}
+  \end{center}
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \begin{block}{Analogy with regularized linear regression}
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \begin{block}{Regularization as ``Bayesianization''}
+  \end{block}
+\end{frame}
 
 \begin{frame}
   \frametitle{References}
