@@ -1,0 +1,10 @@
+\begin{thebibliography}{1}
+
+\bibitem{MO11-implementing}
+M.~W. Mahoney and L.~Orecchia.
+\newblock Implementing regularization implicitly via approximate eigenvector
+  computation.
+\newblock In {\em Proceedings of the 28th International Conference on Machine
+  Learning}, pages 121--128, 2011.
+
+\end{thebibliography}
