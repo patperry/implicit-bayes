@@ -248,6 +248,14 @@ properties of the graph.
 
 \begin{frame}
   \begin{block}{Analogy with regularized linear regression}
+  \begin{itemize}
+    \item Observe $n$ predictor-response pairs in $\mathbb{R}^p \times \mathbb{R}$:
+      $(x_1, y_1), \dotsc, (x_n, y_n)$
+    \item Original problem: find $\beta$ such that $\beta' x_i \approx y_i$; minimize $F(\beta) =
+    \sum_i \|y_i - \beta' x_i \|_2^2$
+    \item Regularized problem: minimize $F(\beta) + \lambda \| \beta \|_2^2$
+    (ridge) or minimize $F(\beta) + \lambda \| \beta \|_1$ (lasso)
+  \end{itemize}
   \end{block}
 \end{frame}
 
