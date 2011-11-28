@@ -1,11 +1,11 @@
-\documentclass[xcolor=dvipsnames]{beamer} 
-\usecolortheme[named=OliveGreen]{structure} 
-\usetheme[height=7mm]{Rochester} 
+\documentclass[xcolor=dvipsnames]{beamer}
+\usecolortheme[named=OliveGreen]{structure}
+\usetheme[height=7mm]{Rochester}
 \usepackage{tikz}
-\usetikzlibrary{arrows,shapes}
+\usetikzlibrary{arrows,petri,positioning,shapes}
 
-\setbeamertemplate{items}[ball] 
-\setbeamertemplate{blocks}[rounded][shadow=true] 
+\setbeamertemplate{items}[ball]
+\setbeamertemplate{blocks}[rounded][shadow=true]
 \setbeamercovered{invisible}
 \setbeamertemplate{navigation symbols}{} % Remove navigation symbols
 \setbeamertemplate{headline}{}
@@ -260,6 +260,33 @@ properties of the graph.
 \end{frame}
 
 \begin{frame}
+  \begin{tikzpicture}
+    [pre/.style={<-, >=stealth', semithick},
+     post/.style={->, >=stealth', semithick}]
+
+    \node (model) {$y_i | x_i, \beta \sim \mathrm{Normal}(x_i' \beta, \sigma^2)$};
+
+    \node (normal)  [below left=of model, xshift=2.5cm]  {$\beta_j \sim \mathrm{Normal}(0, \tau^2)$};
+    \node (laplace) [below right=of model, xshift=-2.5cm] {$\beta_j \sim \mathrm{Laplace}(\mu)$};
+    \node (tee) [circle, at = (model |- normal), yshift=1cm, inner sep=0, fill=black, minimum size=0.5pt, draw] {}
+      edge[pre] (model)
+      edge[post] (normal)
+      edge[post] (laplace);
+
+    \node (l2) [below=of normal]  {$\ell_2$-regularized LS}
+      edge[pre] (normal);
+    \node (l1) [below=of laplace] {$\ell_1$-regularized LS}
+      edge[pre] (laplace);
+
+    \node (prior label) [left=of normal]                       {Prior};
+    \node (model label) [at=(prior label |- model)]            {Model};
+    \node (map label)   [at=(prior label |- l2), align=center] {MAP\\ Estimate};
+  \end{tikzpicture}
+
+  Regularization is equivalent to ``Bayesianization'' in the following sense:
+  the solution to the regularized problem is equal to the maximim \textit{a posteriori} probability
+  (MAP) estimate of the parameter with a prior determined by the
+  regularization penalty.
 \end{frame}
 
 \begin{frame}
