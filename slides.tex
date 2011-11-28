@@ -1,6 +1,8 @@
 \documentclass[xcolor=dvipsnames]{beamer}
 \usecolortheme[named=OliveGreen]{structure}
 \usetheme[height=7mm]{Rochester}
+\usepackage{graphicx}
+\usepackage{subfigure}
 \usepackage{tikz}
 \usetikzlibrary{arrows,petri,positioning,shapes}
 
@@ -287,6 +289,68 @@ properties of the graph.
   the solution to the regularized problem is equal to the maximim \textit{a posteriori} probability
   (MAP) estimate of the parameter with a prior determined by the
   regularization penalty.
+\end{frame}
+
+\begin{frame}
+\begin{figure}[h]
+    \centering
+    \subfigure[Dirichlet distribution order statistics.]{
+      \makebox{\label{F:dirichlet}\includegraphics[scale=0.5]{plots/dirichlet}}
+    }
+    \subfigure[Spectrum of the inverse Laplacian.]{
+      \makebox{\label{F:interpolate}\includegraphics[scale=0.5]{plots/interpolate}}
+    }
+\end{figure}
+\setcounter{subfigure}{0}
+\vspace{-1em}
+Analytical and empirical priors.
+\subref{F:dirichlet} shows the Dirichlet distribution order statistics versus the shape parameter; and
+\subref{F:interpolate} shows the spectrum of $\Theta$ as a function of the 
+rewiring parameter.
+\end{frame}
+
+\begin{frame}
+\begin{figure}[h]
+  \centering
+  \subfigure[$m/\mu = 0.2$; $s = 4$.]{
+    \makebox{\label{fig:perf-frob:a}
+             \includegraphics[scale=0.24]{plots/estimation-frob-p020}}
+  }
+  \subfigure[$m/\mu = 1.0$; $s = 4$.]{
+    \makebox{\label{fig:perf-frob:b}
+             \includegraphics[scale=0.24]{plots/estimation-frob-p100}}
+  }
+  \subfigure[$m/\mu = 2.0$; $s = 4$.]{
+    \makebox{\label{fig:perf-frob:c}
+             \includegraphics[scale=0.24]{plots/estimation-frob-p200}}
+  } \\
+\vspace{-1.5em}
+  \subfigure[$m/\mu = 2.0$; $s = 0$.]{
+    \makebox{\label{fig:perf-frob:d}
+             \includegraphics[scale=0.24]{plots/estimation-frob-s0-p200}}
+  }
+  \subfigure[$m/\mu = 2.0$; $s = 32$.]{
+    \makebox{\label{fig:perf-frob:e}
+             \includegraphics[scale=0.24]{plots/estimation-frob-s32-p200}}
+  }
+\setcounter{subfigure}{0}
+\vspace{-1.5em}
+\end{figure}
+These plots show the relative Frobenius norm error, versus the (normalized) regularization parameter 
+$\eta / \bar \tau$ for various values of the (normalized) number of edges, 
+$m/\mu$, and the edge-swap parameter, $s$.
+Smaller values along the X-axis correspond to stronger regularization.
+\end{frame}
+
+\begin{frame}
+    \begin{center}
+    \makebox{\label{F:optimal-frob}
+             \includegraphics[scale=0.6]{plots/optimal}}
+    \vspace{-2em}
+  \end{center}
+This figure plots the optimal regularization parameter 
+$\eta^\ast / \bar \tau$ as a function of sample proportion for different
+fractions of edge swaps.
 \end{frame}
 
 \begin{frame}
