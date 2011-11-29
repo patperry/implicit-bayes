@@ -13,10 +13,23 @@
 \setbeamertemplate{headline}{}
 \setlength{\parskip}{1em}
 
-\DeclareMathOperator{\rank}{rank}
+\newcommand{\reals}{\mathbb{R}}
+\newcommand{\trans}{\mathrm{T}}
+
+\DeclareMathOperator{\Tr}{Tr}
 \DeclareMathOperator*{\argmax}{argmax}
 \DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\rank}{rank}
+\newcommand{\Normal}[1][]{\mathcal{N}_{#1}}
+\newcommand{\Wishart}[1][]{\mathcal{W}_{#1}}
 
+\newcommand{\prob}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\DeclareMathOperator{\RSS}{RSS}
+
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{remark}[theorem]{Remark}
 
 
 \title{Regularized Laplacian Estimation and \\ Fast Eigenvector Approximation}
@@ -354,6 +367,56 @@ $\mathcal{L}$ plays the role of the penalty function.
       \]
   \end{itemize}
 \end{block}
+\end{frame}
+
+
+\begin{frame}[c]
+  \begin{block}{}
+  \begin{center}
+    \huge{A prior related to the PageRank procedure}
+  \end{center}
+  \end{block}
+\end{frame}
+
+
+\begin{frame}
+  \begin{block}{Prior density}
+    Let $\mathcal{L}^{+} = \tau O \Lambda O'$ be the spectral decomposition of
+    the pseudoinverse of the normalized Laplacian $\mathcal{L}$, where
+    $\tau \geq 0$ is a scale factor, $O \in \mathbb{R}^{n \times n - 1}$ is
+    an orthogonal matrix, and
+    $\Lambda = \mathrm{diag}\big(\lambda(1), \dotsc, \lambda(n-1)\big)$,
+    where $\sum_v \lambda(v) = 1$.  The prior takes the form:
+    \[
+      p(\mathcal{L}) \propto p(\tau) \prod_{v=1}^{n-1} \lambda(v)^{\alpha - 1}
+    \]
+    Note $\lambda$ is unordered.
+  \end{block}
+  This is the only prior for which $\lambda$ is exchangeable and neutral
+  (Fabius, 1973).
+\end{frame}
+
+
+\begin{frame}
+  \begin{proposition}
+    If $\mathcal{\hat L}$ is the MAP estimate of $\mathcal{L}$, with
+    $\hat \tau = \Tr(\mathcal{\hat L}^+)$ and
+    $\hat \Theta = \hat \tau^{-1} \mathcal{\hat L}^+$,
+    then $\hat \Theta$ solve
+    the Mahoney-Orecchia regularized SDP with $G(X) = -\log |X|$ and
+    $\eta$ defined by
+    \[
+      \eta = \frac{m \, \hat \tau}{m + 2\,(\alpha - 1)}.
+    \]
+  \end{proposition}
+\end{frame}
+
+\begin{frame}[c]
+  \begin{block}{}
+  \begin{center}
+    \huge{Empirical evaluation}
+  \end{center}
+  \end{block}
 \end{frame}
 
 
