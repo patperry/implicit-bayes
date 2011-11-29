@@ -420,10 +420,11 @@ $\mathcal{L}$ plays the role of the penalty function.
 \end{frame}
 
 \begin{frame}
+  \begin{center}
   \begin{tikzpicture}
     [vertex/.style={circle,draw=blue!50,fill=blue!20,thick},
-     txt/.style={scale=4,transform shape},
-     scale=0.25,transform shape]
+     txt/.style={scale=5,transform shape},
+     scale=0.2,transform shape]
     \foreach \x in {1,...,5} {
       \foreach \y in {1,...,6} {
         \draw (\x,\y) -- +(0,1);
@@ -482,10 +483,15 @@ $\mathcal{L}$ plays the role of the penalty function.
         $n = w \, h$ nodes, \\
         $\mu = 2 \, w \, h - w - h$ edges
       };
-
-
   \end{tikzpicture}
+  \end{center}
+  \vspace{-2em}
+
+  We generate a population Laplacian $\mathcal{L}$ by performing $s$ edge
+  swaps starting from a 2-dimensional grid.  For $s = 0$ we have a
+  low-dimensional graph; as $s \to \infty$ we have an expander.
 \end{frame}
+
 
 \begin{frame}
 \begin{figure}[h]
@@ -503,6 +509,34 @@ Analytical and empirical priors.
 \subref{F:dirichlet} shows the Dirichlet distribution order statistics versus the shape parameter; and
 \subref{F:interpolate} shows the spectrum of $\Theta$ as a function of the 
 rewiring parameter.
+\end{frame}
+
+
+\begin{frame}{}
+  [Add figure demonstrating sampling]
+
+  We generate a sample Laplacian $L$ by sampling $m$ edges (with replacement)
+  from the graph with Laplacian $\mathcal{L}$.
+\end{frame}
+
+\begin{frame}
+  \begin{block}{Estimation performance}
+    \begin{itemize}
+      \item $\mathcal{\hat L}$ unregularized estimate, equal to observed Laplacian, $L$
+      \item $\mathcal{\hat L}_\eta$ regularized estimate, gotten from solving (implicitly!) the
+        Mahoney-Orecchia regularized SDP with $G(X) = -\log |X|$
+      \item $\tau = \Tr(\mathcal{L}^+)$, $\Theta = \tau^{-1} \mathcal{L}^+$
+      \item $\hat \tau = \Tr(\mathcal{\hat L}^+)$, $\hat \Theta = \hat \tau^{-1} \mathcal{\hat L}^+$
+      \item $\hat \tau_\eta = \Tr(\mathcal{\hat L_\eta}^+)$, $\hat \Theta_\eta = \hat \tau_\eta^{-1} \mathcal{\hat L_\eta}^+$
+      \item performance criterion is relative Frobenius error:
+        \[
+	  \|\Theta - \hat \Theta_\eta\|_\mathrm{F} / \|\Theta - \hat \Theta \|_\mathrm{F}
+	\]
+	where $\|A\|_\mathrm{F} = [\Tr(A' A)]^{1/2}$
+      \item $\bar \tau$ is mean of $\tau$ over all replicates
+      \item $\eta^\ast$ is optimal value of $\eta$
+    \end{itemize}
+  \end{block}
 \end{frame}
 
 \begin{frame}
