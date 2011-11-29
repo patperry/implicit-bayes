@@ -13,6 +13,10 @@
 \setbeamertemplate{headline}{}
 \setlength{\parskip}{1em}
 
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\argmin}{argmin}
+
 
 
 \title{Regularized Laplacian Estimation and \\ Fast Eigenvector Approximation}
@@ -307,6 +311,51 @@ properties of the graph.
   (MAP) estimate of the parameter with a prior determined by the
   regularization penalty.
 \end{frame}
+
+\begin{frame}
+\begin{block}{Bayesian inference for the population Laplacian (broadly)}
+  \begin{itemize}
+    \item population Laplacian, $\mathcal{L}$ from prior $p(\mathcal{L})$
+    \item observed (sample) Laplacian from distribution $p(L \mid \mathcal{L})$
+    \item estimate $\mathcal{\hat L} = \argmax_{\mathcal{L}} \{ p(\mathcal{L} \mid L) \}$
+    \item equivalently,
+      $\mathcal{\hat L} = \argmin_{\mathcal{L}} \{ -\log p(L \mid \mathcal{L}) -\log p(\mathcal{L}) \}$
+  \end{itemize}
+\end{block}
+
+  To apply the Bayesian formalism to the Laplacian eigenvector problem, we
+assume that there exists a ``population'' Laplacian $\mathcal{L}$; we construe
+the observed (sample) Laplacian as a noisy version of $\mathcal{L}$.  In
+estimating $\mathcal{L}$, the negative log of the likelihood plays the role of
+the optimization criterion; the negative log of the prior distribution for
+$\mathcal{L}$ plays the role of the penalty function.
+
+\end{frame}
+
+
+\begin{frame}
+\begin{block}{Bayesian inference for the population Laplacian (specifics)}
+  \begin{itemize}
+    \item two parameters, $m$ (scalar) and $U$ (function)
+    \item assume $\mathcal{L} \in \mathcal{X}$, where
+      \[
+        \mathcal{X} = \{ X : X \succeq 0, \, X D^{1/2} 1 = 0, \, \rank(X) = n - 1 \}
+      \]
+    \item prior
+      \(
+        p(\mathcal{L}) \propto \exp\{ - U(\mathcal{L})\}
+      \)
+    \item model $L \sim \tfrac{1}{m} \mathrm{Wishart}(\mathcal{L}, m)$, i.e.
+      \[
+        p(L \mid \mathcal{L})
+          \propto
+            \frac{\exp\{-\frac{m}{2} \mathrm{Tr}(L \, \mathcal{L}^+)\}}
+                 {|\mathcal{L}|^{m/2}} 
+      \]
+  \end{itemize}
+\end{block}
+\end{frame}
+
 
 \begin{frame}
 \begin{figure}[h]
