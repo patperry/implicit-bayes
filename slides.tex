@@ -4,7 +4,7 @@
 \usepackage{graphicx}
 \usepackage{subfigure}
 \usepackage{tikz}
-\usetikzlibrary{arrows,fit,petri,positioning,shapes}
+\usetikzlibrary{arrows,backgrounds,fit,petri,positioning,shapes}
 
 \setbeamertemplate{items}[ball]
 \setbeamertemplate{blocks}[rounded][shadow=true]
@@ -419,6 +419,73 @@ $\mathcal{L}$ plays the role of the penalty function.
   \end{block}
 \end{frame}
 
+\begin{frame}
+  \begin{tikzpicture}
+    [vertex/.style={circle,draw=blue!50,fill=blue!20,thick},
+     txt/.style={scale=4,transform shape},
+     scale=0.25,transform shape]
+    \foreach \x in {1,...,5} {
+      \foreach \y in {1,...,6} {
+        \draw (\x,\y) -- +(0,1);
+	\draw (\x,\y) -- +(1,0);
+	\node at (\x,\y) [vertex] {};
+      }
+      \draw (\x,7) -- +(1,0);
+      \node at (\x,7) [vertex] {};
+    }
+    \foreach \y in {1,...,6} {
+        \draw (6,\y) -- +(0,1);
+	\node at (6,\y) [vertex] {};
+    }
+    \node at (6,7) [vertex]{};
+
+    \node at (0,0) (l0 lower) {};
+    \node at (7,8) (l0 upper) {};
+
+    \node at (0,4)   (l0 h) [txt] {$h$};
+    \node at (3.5,8) (l0 w) [txt] {$w$};
+
+    \begin{scope}[yshift=-11cm]
+      \begin{scope}[xshift=-4.5cm]
+        \draw (1,1) rectangle (6,7);
+        \draw (2,5) node[vertex] {} -- (3,5) node[vertex] {};
+        \draw (5,3) node[vertex] {} -- (5,2) node[vertex] {};
+        \node at (0,0) (s lower) {};
+      \end{scope}
+
+      \begin{scope}[xshift=4.5cm]
+        \draw (1,1) rectangle (6,7);
+        \draw (2,5) node[vertex] {} -- (5,2) node[vertex] {};
+        \draw (5,3) node[vertex] {} -- (3,5) node[vertex] {};
+        \node at (7,8) (s upper) {};
+      \end{scope}
+
+      \draw[->,thin,>=stealth'] (2,4) to [out=30,in=150] (5,4);
+
+      \node[draw,rectangle,fit=(s lower)(s upper)] (swap) {};
+      \node (swap text) [below=of swap, yshift=8mm] [txt] {$s$ swaps};
+    \end{scope}
+
+    \begin{scope}[yshift=-19cm]
+      \node at (3.5,0) [scale=10, align=center, transform shape] (l) {$\mathcal{L}$};
+    \end{scope}
+
+    \node (r1) [fit=(l0 lower)(l0 upper)] {};
+    \node (r2) [fit=(swap)(swap text)] {};
+    \node (r3) [fit=(l)] {};
+
+    \draw[->,ultra thick,>=latex] (r1) to (r2);
+    \draw[->,ultra thick,>=latex] (r2) to (r3);
+
+    \node [right=of r1, align=left] (l0 text) [txt]
+      {
+        $n = w \, h$ nodes, \\
+        $\mu = 2 \, w \, h - w - h$ edges
+      };
+
+
+  \end{tikzpicture}
+\end{frame}
 
 \begin{frame}
 \begin{figure}[h]
