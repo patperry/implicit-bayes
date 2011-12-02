@@ -47,12 +47,14 @@ grid.2d <- function(width, height, wrap = FALSE) {
 
 plot.adj <- function(object, ...) {
     adj <- object
+    amax <- max(adj)
     plot(attr(adj, "x"), attr(adj, "y"), ...)
     for (i in seq_len(nrow(adj))) {
         for (j in seq_len(ncol(adj))) {
             if (adj[i,j] > 0)
                 segments(attr(adj, "x")[i], attr(adj, "y")[i],
-                         attr(adj, "x")[j], attr(adj, "y")[j], ...)
+                         attr(adj, "x")[j], attr(adj, "y")[j],
+			 lwd=sqrt(adj[i,j]), ...)
         }
     }
 }
