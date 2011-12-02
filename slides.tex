@@ -488,27 +488,33 @@ $\mathcal{L}$ plays the role of the penalty function.
   \vspace{-2em}
 
   We generate a population Laplacian $\mathcal{L}$ by performing $s$ edge
-  swaps starting from a 2-dimensional grid.  For $s = 0$ we have a
-  low-dimensional graph; as $s \to \infty$ we have an expander.
+  swaps starting from a 2-dimensional grid with $n$ nodes and $\mu$ edges.
+\end{frame}
+
+\begin{frame}
+  \centering
+  \makebox{\includegraphics[scale=0.55]{plots/interpolate-graphs}}
+  When $s = 0$ the population graph with Laplacian $\mathcal{L}$ is
+  low-dimensional; as $s \to \infty$, the graph becomes an expander.
 \end{frame}
 
 
 \begin{frame}
 \begin{figure}[h]
     \centering
-    \subfigure[Dirichlet distribution order statistics.]{
-      \makebox{\label{F:dirichlet}\includegraphics[scale=0.5]{plots/dirichlet}}
-    }
-    \subfigure[Spectrum of the inverse Laplacian.]{
+    \subfigure[Eigenvalues of $\Theta = (\Tr(\mathcal{L^+}))^{-1} \mathcal{L^+}$]{
       \makebox{\label{F:interpolate}\includegraphics[scale=0.5]{plots/interpolate}}
+    }
+    \subfigure[Draws from Dirichlet($\alpha$)]{
+      \makebox{\label{F:dirichlet}\includegraphics[scale=0.5]{plots/dirichlet}}
     }
 \end{figure}
 \setcounter{subfigure}{0}
 \vspace{-1em}
-Analytical and empirical priors.
-\subref{F:dirichlet} shows the Dirichlet distribution order statistics versus the shape parameter; and
-\subref{F:interpolate} shows the spectrum of $\Theta$ as a function of the 
-rewiring parameter.
+The similarity between the figures suggest that the
+prior $p(\mathcal{L})$ qualitatively matches the simulation, with
+$\alpha$ analogous to $\sqrt{s/\mu}$.
+
 \end{frame}
 
 

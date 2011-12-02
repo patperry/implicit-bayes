@@ -25,7 +25,9 @@ par(mfrow=c(1,1))
 
 plot(range(shape), range(lambda.mean), t='n',
      ylab = "Order statistics",
-     xlab = expression(Shape))
+     #xlab = expression(Shape)
+     xlab = expression(alpha)
+     )
 for (i in seq_along(shape)) {
     points( rep(shape[i], n), lambda.mean[i,])
 }

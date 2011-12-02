@@ -45,7 +45,9 @@ demo2.swaps <- function(width = 7, height = 7, wrap = TRUE,
 
     plot(sqrt(c(0, max(nswaps)) / tot), c(0, max(ilambda0, max(ilambda.mean))),t='n',
            ylab="Inverse Laplacian Eigenvalues",
-           xlab=expression(sqrt(Swaps / Edges)))
+           #xlab=expression(sqrt(Swaps / Edges))
+           xlab=expression(sqrt(s / mu))
+	   )
     points(rep(0, nrow(adj) - 1), ilambda0)
     for (i in seq_along(nswaps)) {
         points(rep(sqrt(nswaps[i] / tot), nrow(adj) - 1), ilambda.mean[i,])
