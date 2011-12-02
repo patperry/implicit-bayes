@@ -118,7 +118,8 @@ demo <- function(width = 6, height = 7, wrap = FALSE, nswaps = 0, psamp = 0.99,
 }
 
 repdemo <- function(nreps = 10,  penalty = seq(0.1, 100, length.out = 100),
-                    type=c("frobenius", "spectral"), quiet = FALSE, ...)
+                    type=c("frobenius", "spectral"), label="",
+		    quiet = FALSE, ...)
 {
     type <- match.arg(type)
     npenalty <- length(penalty)
@@ -167,7 +168,8 @@ repdemo <- function(nreps = 10,  penalty = seq(0.1, 100, length.out = 100),
     if ("spectral" %in% type) {
         plot(range(penalty), range(loss.spectral.mean), t = 'n',
              main = "",
-             xlab = "Regularization",
+             #xlab = "Regularization",
+	     xlab = expression(1/eta),
              ylab = "Rel. Spectral Error",
              ylim=range(c(0,
                           loss.spectral.mean - loss.spectral.sd,
@@ -176,12 +178,14 @@ repdemo <- function(nreps = 10,  penalty = seq(0.1, 100, length.out = 100),
         lines(penalty, loss.spectral.mean + loss.spectral.sd, col=2)
         lines(penalty, loss.spectral.mean - loss.spectral.sd, col=2)
         points(penalty, loss.spectral.mean, col=1)        
+	legend("bottomright", label, box.col=0, inset=c(0.01, 0))
     }
 
     if ("frobenius" %in% type) {
         plot(range(penalty), range(loss.frobenius.mean), t = 'n',
              main = "",
-             xlab = "Regularization",
+             #xlab = "Regularization",
+	     xlab = expression(1/eta),
              ylab = "Rel. Frobenius Error",
              ylim=range(c(0,
                           loss.frobenius.mean - loss.frobenius.sd,
@@ -190,6 +194,7 @@ repdemo <- function(nreps = 10,  penalty = seq(0.1, 100, length.out = 100),
         lines(penalty, loss.frobenius.mean + loss.frobenius.sd, col = 2)
         lines(penalty, loss.frobenius.mean - loss.frobenius.sd, col = 2)
         points(penalty, loss.frobenius.mean, col = 1)
+	legend("bottomright", label, box.col=0, inset=c(0.01, 0))
     }
 
     invisible(res)

@@ -3,12 +3,31 @@ source("code/sample.R")
 require(RColorBrewer)
 palette(brewer.pal(8, "Dark2"))
 
-pdf("plots/estimation-frob-p010.pdf", 5, 5)
+pdf("plots/estimation-frob-s0-p020.pdf", 5, 5)
 repdemo(width = 6, height = 7, wrap = FALSE,
-        nswaps = 4,
-        psamp = 0.10,
+        nswaps = 0,
+        psamp = 0.20,
         penalty = seq(0.1, 200, length.out = 100),
         nreps = 100,
+	label=expression(list(m/mu == 0.2, s == 0)),
+        type="frobenius")
+dev.off()
+pdf("plots/estimation-frob-s0-p100.pdf", 5, 5)
+repdemo(width = 6, height = 7, wrap = FALSE,
+        nswaps = 0,
+        psamp = 1.00,
+        penalty = seq(0.1, 200, length.out = 100),
+        nreps = 100,
+	label=expression(list(m/mu == 1, s == 0)),
+        type="frobenius")
+dev.off()
+pdf("plots/estimation-frob-s0-p200.pdf", 5, 5)
+repdemo(width = 6, height = 7, wrap = FALSE,
+        nswaps = 0,
+        psamp = 2.00,
+        penalty = seq(0.1, 200, length.out = 100),
+        nreps = 100,
+	label=expression(list(m/mu == 2, s == 0)),
         type="frobenius")
 dev.off()
 
@@ -16,6 +35,63 @@ pdf("plots/estimation-frob-p020.pdf", 5, 5)
 repdemo(width = 6, height = 7, wrap = FALSE,
         nswaps = 4,
         psamp = 0.20,
+        penalty = seq(0.1, 200, length.out = 100),
+        nreps = 100,
+	label=expression(list(m/mu == 0.2, s == 4)),
+        type="frobenius")
+dev.off()
+pdf("plots/estimation-frob-p100.pdf", 5, 5)
+repdemo(width = 6, height = 7, wrap = FALSE,
+        nswaps = 4,
+        psamp = 1,
+        penalty = seq(0.1, 200, length.out = 100),
+        nreps = 100,
+	label=expression(list(m/mu == 1, s == 4)),
+        type="frobenius")
+dev.off()
+pdf("plots/estimation-frob-p200.pdf", 5, 5)
+repdemo(width = 6, height = 7, wrap = FALSE,
+        nswaps = 4,
+        psamp = 2,
+        penalty = seq(0.1, 200, length.out = 100),
+        nreps = 100,
+	label=expression(list(m/mu == 2, s == 4)),
+        type="frobenius")
+dev.off()
+
+pdf("plots/estimation-frob-s32-p020.pdf", 5, 5)
+repdemo(width = 6, height = 7, wrap = FALSE,
+        nswaps = 32,
+        psamp = 0.20,
+        penalty = seq(0.1, 200, length.out = 100),
+        nreps = 100,
+	label=expression(list(m/mu == 0.2, s == 32)),
+        type="frobenius")
+dev.off()
+pdf("plots/estimation-frob-s32-p100.pdf", 5, 5)
+repdemo(width = 6, height = 7, wrap = FALSE,
+        nswaps = 32,
+        psamp = 1.00,
+        penalty = seq(0.1, 200, length.out = 100),
+        nreps = 100,
+	label=expression(list(m/mu == 1, s == 32)),
+        type="frobenius")
+dev.off()
+pdf("plots/estimation-frob-s32-p200.pdf", 5, 5)
+repdemo(width = 6, height = 7, wrap = FALSE,
+        nswaps = 32,
+        psamp = 2.00,
+        penalty = seq(0.1, 200, length.out = 100),
+        nreps = 100,
+	label=expression(list(m/mu == 2, s == 32)),
+        type="frobenius")
+dev.off()
+
+
+pdf("plots/estimation-frob-p010.pdf", 5, 5)
+repdemo(width = 6, height = 7, wrap = FALSE,
+        nswaps = 4,
+        psamp = 0.10,
         penalty = seq(0.1, 200, length.out = 100),
         nreps = 100,
         type="frobenius")
@@ -30,23 +106,6 @@ repdemo(width = 6, height = 7, wrap = FALSE,
         type="frobenius")
 dev.off()
 
-pdf("plots/estimation-frob-p100.pdf", 5, 5)
-repdemo(width = 6, height = 7, wrap = FALSE,
-        nswaps = 4,
-        psamp = 1,
-        penalty = seq(0.1, 200, length.out = 100),
-        nreps = 100,
-        type="frobenius")
-dev.off()
-
-pdf("plots/estimation-frob-p200.pdf", 5, 5)
-repdemo(width = 6, height = 7, wrap = FALSE,
-        nswaps = 4,
-        psamp = 2,
-        penalty = seq(0.1, 200, length.out = 100),
-        nreps = 100,
-        type="frobenius")
-dev.off()
 
 pdf("plots/estimation-frob-p500.pdf", 5, 5)
 repdemo(width = 6, height = 7, wrap = FALSE,
@@ -129,39 +188,7 @@ repdemo(width = 6, height = 7, wrap = FALSE,
         type="spectral")
 dev.off()
 
-pdf("plots/estimation-frob-s32-p020.pdf", 5, 5)
-repdemo(width = 6, height = 7, wrap = FALSE,
-        nswaps = 32,
-        psamp = 0.20,
-        penalty = seq(0.1, 200, length.out = 100),
-        nreps = 100,
-        type="frobenius")
-dev.off()
-pdf("plots/estimation-frob-s32-p200.pdf", 5, 5)
-repdemo(width = 6, height = 7, wrap = FALSE,
-        nswaps = 32,
-        psamp = 2.00,
-        penalty = seq(0.1, 200, length.out = 100),
-        nreps = 100,
-        type="frobenius")
-dev.off()
 
-pdf("plots/estimation-frob-s0-p020.pdf", 5, 5)
-repdemo(width = 6, height = 7, wrap = FALSE,
-        nswaps = 0,
-        psamp = 0.20,
-        penalty = seq(0.1, 200, length.out = 100),
-        nreps = 100,
-        type="frobenius")
-dev.off()
-pdf("plots/estimation-frob-s0-p200.pdf", 5, 5)
-repdemo(width = 6, height = 7, wrap = FALSE,
-        nswaps = 0,
-        psamp = 2.00,
-        penalty = seq(0.1, 200, length.out = 100),
-        nreps = 100,
-        type="frobenius")
-dev.off()
 
 pdf("plots/estimation-spec-s32-p020.pdf", 5, 5)
 repdemo(width = 6, height = 7, wrap = FALSE,

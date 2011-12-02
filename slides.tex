@@ -546,36 +546,54 @@ $\alpha$ analogous to $\sqrt{s/\mu}$.
 \end{frame}
 
 \begin{frame}
+	\centering
+	\includegraphics[scale=0.5]{plots/estimation-frob-p100}
+
+	For certain values of $\eta$, the regularized estimate
+	$\mathcal{\hat L}_\eta$ outperforms the unregularized
+	estimate $\mathcal{\hat L}$, i.e.
+	$\|\Theta - \hat \Theta_\eta\|_\mathrm{F}
+	   / \|\Theta - \hat \Theta\|_\mathrm{F} < 1$.
+\end{frame}
+
+\begin{frame}
+  \begin{center}
 \begin{figure}[h]
-  \centering
-  \subfigure[$m/\mu = 0.2$; $s = 4$.]{
-    \makebox{\label{fig:perf-frob:a}
-             \includegraphics[scale=0.24]{plots/estimation-frob-p020}}
+  \subfigure{%[$m/\mu = 0.2$; $s = 0$.]{
+    \makebox{\includegraphics[scale=0.24]{plots/estimation-frob-s0-p020}}
   }
-  \subfigure[$m/\mu = 1.0$; $s = 4$.]{
-    \makebox{\label{fig:perf-frob:b}
-             \includegraphics[scale=0.24]{plots/estimation-frob-p100}}
+  \subfigure{%[$m/\mu = 1.0$; $s = 0$.]{
+    \makebox{\includegraphics[scale=0.24]{plots/estimation-frob-s0-p100}}
   }
-  \subfigure[$m/\mu = 2.0$; $s = 4$.]{
-    \makebox{\label{fig:perf-frob:c}
-             \includegraphics[scale=0.24]{plots/estimation-frob-p200}}
+  \subfigure{%[$m/\mu = 2.0$; $s = 0$.]{
+    \makebox{\includegraphics[scale=0.24]{plots/estimation-frob-s0-p200}}
   } \\
-\vspace{-1.5em}
-  \subfigure[$m/\mu = 2.0$; $s = 0$.]{
-    \makebox{\label{fig:perf-frob:d}
-             \includegraphics[scale=0.24]{plots/estimation-frob-s0-p200}}
+\vspace{-2.0em}
+  \subfigure{%[$m/\mu = 0.2$; $s = 4$.]{
+    \makebox{\includegraphics[scale=0.24]{plots/estimation-frob-p020}}
   }
-  \subfigure[$m/\mu = 2.0$; $s = 32$.]{
-    \makebox{\label{fig:perf-frob:e}
-             \includegraphics[scale=0.24]{plots/estimation-frob-s32-p200}}
+  \subfigure{%[$m/\mu = 1.0$; $s = 4$.]{
+    \makebox{\includegraphics[scale=0.24]{plots/estimation-frob-p100}}
+  }
+  \subfigure{%[$m/\mu = 2.0$; $s = 4$.]{
+    \makebox{\includegraphics[scale=0.24]{plots/estimation-frob-p200}}
+  } \\
+\vspace{-2.0em}
+  \subfigure{%[$m/\mu = 0.2$; $s = 32$.]{
+    \makebox{\includegraphics[scale=0.24]{plots/estimation-frob-s32-p020}}
+  }
+  \subfigure{%[$m/\mu = 1.0$; $s = 32$.]{
+    \makebox{\includegraphics[scale=0.24]{plots/estimation-frob-s32-p100}}
+  }
+  \subfigure{%[$m/\mu = 2.0$; $s = 32$.]{
+    \makebox{\includegraphics[scale=0.24]{plots/estimation-frob-s32-p200}}
   }
 \setcounter{subfigure}{0}
-\vspace{-1.5em}
+\vspace{-2.5em}
 \end{figure}
-These plots show the relative Frobenius norm error, versus the (normalized) regularization parameter 
-$\eta / \bar \tau$ for various values of the (normalized) number of edges, 
-$m/\mu$, and the edge-swap parameter, $s$.
-Smaller values along the X-axis correspond to stronger regularization.
+  \end{center}
+The optimal regularization parameter $\eta^\ast$ depends on $m/\mu$ and
+$s$.
 \end{frame}
 
 \begin{frame}
