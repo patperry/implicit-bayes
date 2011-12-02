@@ -517,11 +517,21 @@ $\alpha$ analogous to $\sqrt{s/\mu}$.
 
 \end{frame}
 
-\begin{frame}{}
-  [Add figure]
+\begin{frame}
+  \begin{center}
+  \begin{tikzpicture}
+     \node[scale=2, transform shape] (pop) {$\mathcal{L}$};
+     \node[draw, rectangle, below=of pop] (sampler)
+	{sample $m$ edges with replacement};
+     \node[scale=2, transform shape, below=of sampler] (obs) {$L$};
+     \draw[->,ultra thick,>=latex] (pop) to (sampler);
+     \draw[->,ultra thick,>=latex] (sampler) to (obs);
+  \end{tikzpicture}
+  \end{center}
+  \vspace{-2em}
 
-  We generate a sample Laplacian $L$ by sampling $m$ edges (with replacement)
-  from the graph with Laplacian $\mathcal{L}$.
+  We generate a sample Laplacian $L$ by sampling $m$ edges
+  from the population graph with Laplacian $\mathcal{L}$.
 \end{frame}
 
 \begin{frame}
