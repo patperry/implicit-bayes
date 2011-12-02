@@ -530,8 +530,9 @@ $\alpha$ analogous to $\sqrt{s/\mu}$.
   \end{center}
   \vspace{-2em}
 
-  We generate a sample Laplacian $L$ by sampling $m$ edges
-  from the population graph with Laplacian $\mathcal{L}$.
+  Given a population graph with Laplacian $\mathcal{L}$,
+  we generate a sample Laplacian $L$ by sampling $m$ edges.
+  In the experiments, we get to observe $L$ but not $\mathcal{L}$.
 \end{frame}
 
 \begin{frame}
@@ -545,23 +546,23 @@ $\alpha$ analogous to $\sqrt{s/\mu}$.
 \end{frame}
 
 \begin{frame}
-  \begin{block}{Estimation performance}
-    \begin{itemize}
-      \item $\mathcal{\hat L}$ unregularized estimate, equal to observed Laplacian, $L$
-      \item $\mathcal{\hat L}_\eta$ regularized estimate, gotten from solving (implicitly!) the
-        Mahoney-Orecchia regularized SDP with $G(X) = -\log |X|$
+  \begin{block}{Two estimators for $\mathcal{L}$}
+    \begin{description}
+      \item[unregularized] $\mathcal{\hat L} = L$
+      \item[regularized] $\mathcal{\hat L}_\eta$, solution to
+        the Mahoney-Orecchia regularized SDP
+	with $G(X) = -\log |X|$
+    \end{description}
+  \end{block}
+
+  Notation:
+  \vspace{-1em}
+  \begin{itemize}
       \item $\tau = \Tr(\mathcal{L}^+)$, $\Theta = \tau^{-1} \mathcal{L}^+$
       \item $\hat \tau = \Tr(\mathcal{\hat L}^+)$, $\hat \Theta = \hat \tau^{-1} \mathcal{\hat L}^+$
       \item $\hat \tau_\eta = \Tr(\mathcal{\hat L_\eta}^+)$, $\hat \Theta_\eta = \hat \tau_\eta^{-1} \mathcal{\hat L_\eta}^+$
-      \item performance criterion is relative Frobenius error:
-        \[
-	  \|\Theta - \hat \Theta_\eta\|_\mathrm{F} / \|\Theta - \hat \Theta \|_\mathrm{F}
-	\]
-	where $\|A\|_\mathrm{F} = [\Tr(A' A)]^{1/2}$
       \item $\bar \tau$ is mean of $\tau$ over all replicates
-      \item $\eta^\ast$ is optimal value of $\eta$
     \end{itemize}
-  \end{block}
 \end{frame}
 
 \begin{frame}
