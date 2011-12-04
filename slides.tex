@@ -392,23 +392,29 @@ $\mathcal{L}$ plays the role of the penalty function.
     \]
     Note $\lambda$ is unordered.
   \end{block}
-  This is the only prior for which $\lambda$ is exchangeable and neutral
-  (Fabius, 1973).
+
+  We specify the unique prior for $\mathcal{L}$ that has the following properties:
+  (1) it is orthogonally invariant; (2) the distribution for the eigenvalues
+  of $\mathcal{L}$ is the exchangeable and neutral.
 \end{frame}
 
 
 \begin{frame}
-  \begin{proposition}
+  \begin{proposition}\label{P:map-sdp}
     If $\mathcal{\hat L}$ is the MAP estimate of $\mathcal{L}$, with
     $\hat \tau = \Tr(\mathcal{\hat L}^+)$ and
     $\hat \Theta = \hat \tau^{-1} \mathcal{\hat L}^+$,
-    then $\hat \Theta$ solve
+    then $\hat \Theta$ solves
     the Mahoney-Orecchia regularized SDP with $G(X) = -\log |X|$ and
     $\eta$ defined by
     \[
       \eta = \frac{m \, \hat \tau}{m + 2\,(\alpha - 1)}.
     \]
   \end{proposition}
+ 
+  With this specific prior, the MAP estimate solves the Mahoney-Orecchia SDP
+  related to the PageRank procedure.  Note: with different choices of priors,
+  one can recover the Heat Kernel and Lazy Random Walk SDP solutions.
 \end{frame}
 
 \begin{frame}[c]
@@ -553,16 +559,18 @@ $\alpha$ analogous to $\sqrt{s/\mu}$.
         the Mahoney-Orecchia regularized SDP
 	with $G(X) = -\log |X|$
     \end{description}
-  \end{block}
 
-  Notation:
-  \vspace{-1em}
-  \begin{itemize}
-      \item $\tau = \Tr(\mathcal{L}^+)$, $\Theta = \tau^{-1} \mathcal{L}^+$
-      \item $\hat \tau = \Tr(\mathcal{\hat L}^+)$, $\hat \Theta = \hat \tau^{-1} \mathcal{\hat L}^+$
-      \item $\hat \tau_\eta = \Tr(\mathcal{\hat L_\eta}^+)$, $\hat \Theta_\eta = \hat \tau_\eta^{-1} \mathcal{\hat L_\eta}^+$
-      \item $\bar \tau$ is mean of $\tau$ over all replicates
-    \end{itemize}
+    \vspace{1em}
+    Notation: 
+      $\tau = \Tr(\mathcal{L}^+)$, $\Theta = \tau^{-1} \mathcal{L}^+$;
+      $\hat \tau = \Tr(\mathcal{\hat L}^+)$, $\hat \Theta = \hat \tau^{-1}
+\mathcal{\hat L}^+$;
+      $\hat \tau_\eta = \Tr(\mathcal{\hat L_\eta}^+)$, $\hat \Theta_\eta =
+\hat \tau_\eta^{-1} \mathcal{\hat L_\eta}^+$;
+      $\bar \tau$ is mean of $\tau$ over all replicates
+\end{block}
+  We compare two estimators for $\mathcal{L}$: regularized 
+  ($\mathcal{\hat L}_\eta$) and unregularized ($\mathcal{\hat L}$).
 \end{frame}
 
 \begin{frame}
@@ -612,20 +620,35 @@ $\alpha$ analogous to $\sqrt{s/\mu}$.
 \vspace{-2.5em}
 \end{figure}
   \end{center}
-The optimal regularization parameter $\eta^\ast$ depends on $m/\mu$ and
+The optimal regularization parameter $\eta$ depends on $m/\mu$ and
 $s$.
 \end{frame}
 
 \begin{frame}
     \begin{center}
-    \makebox{\label{F:optimal-frob}
-             \includegraphics[scale=0.6]{plots/optimal}}
+\begin{figure}[h]
+  \subfigure{
+    \makebox{\includegraphics[scale=0.4]{plots/optimal}}
+  }
+  \subfigure{
+    \makebox{\includegraphics[scale=0.4]{plots/optimal-theory}}
+  }
     \vspace{-2em}
+\end{figure}
   \end{center}
-This figure plots the optimal regularization parameter 
-$\eta^\ast / \bar \tau$ as a function of sample proportion for different
-fractions of edge swaps.
+The optimal $\eta$ increases with $m$ and $s/\mu$ (left); this agrees
+qualitatively with Proposition~\ref{P:map-sdp} (right).
 \end{frame}
+
+
+\begin{frame}[c]
+  \begin{block}{}
+  \begin{center}
+    \huge{Conclusion}
+  \end{center}
+  \end{block}
+\end{frame}
+
 
 \begin{frame}
   \frametitle{References}

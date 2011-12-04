@@ -30,20 +30,21 @@ optdemo <- function(psamp = c(0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0),
     tot <- sum(adj) / 2
 
     plot(range(psamp), range(eta.frob), t='n', log = "x",
-         xlab = "Sample Proportion",
-         ylab = "Optimal Penalty")
+         xlab = expression(m/mu),
+         ylab = expression(paste("Optimal ", eta)))
     for (i in seq_along(swaps)) {
         points(psamp, eta.frob[i,], col = i)
         lines(psamp, eta.frob[i,], col = i, lty = i)        
     }
     ix <- nswaps:1
-    legend("topleft", inset = 0.05, title = "Swaps/Edges",
+    legend("topleft", inset = 0.05, title = expression(s/mu),
            legend = format(swaps / tot, digits = 1)[ix],
            col = seq_along(swaps)[ix], lty = seq_along(swaps)[ix])
 }
     
 
 pdf("plots/optimal.pdf", width = 5, height = 5)
+par(mar=c(5,6,4,2) + .1)
 optdemo(width = 6, height = 7, wrap = FALSE,
         nreps = 100,
         type="frobenius")
