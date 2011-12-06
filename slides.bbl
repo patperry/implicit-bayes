@@ -7,9 +7,10 @@ M.~W. Mahoney and L.~Orecchia.
 \newblock In {\em Proceedings of the 28th International Conference on Machine
   Learning}, pages 121--128, 2011.
 
-\bibitem{fabius1973two}
-J.~Fabius.
-\newblock Two characterizations of the {D}irichlet distribution.
-\newblock {\em Ann. Statist.}, 1:583--587, 1973.
+\bibitem{LLM10_communities_CONF}
+J.~Leskovec, K.J. Lang, and M.W. Mahoney.
+\newblock Empirical comparison of algorithms for network community detection.
+\newblock In {\em WWW '10: Proceedings of the 19th International Conference on
+  World Wide Web}, pages 631--640, 2010.
 
 \end{thebibliography}

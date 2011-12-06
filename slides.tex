@@ -66,9 +66,9 @@
 \begin{frame}
   \begin{block}{Eigenvectors reveal structure}
   \begin{description}
-    \item[Modularity matrix] community detection
     \item[Graph Laplacian] spectral clustering
     \item[Covariance matrix] factor analysis
+    \item[Modularity matrix] community detection
   \end{description}
   \end{block}
   
@@ -87,17 +87,20 @@
   \end{description}
   \end{block}
 
-  Alternatively, one can distributed random charge on the data points and
-  let the distribution of the charge according to a diffusion; the properties
-  of this diffusion are related to the geometry of the dataset.
+  For example, one can distributed charge (randomly, adversarially, etc) on 
+  the data points and let the distribution of the charge evolve according to 
+  a diffusion---the properties of this diffusion are related to the geometry 
+  of the dataset.
 
-  Mahoney~and~Orecchia~\cite{MO11-implementing} showed that diffusions arise
-  as solutions to \emph{regularized} eigenvector problems.
+  Mahoney~and~Orecchia~\cite{MO11-implementing} showed that diffusions also 
+  arise as solutions to \emph{regularized} eigenvector problems---that is, 
+  running diffusions to only the pre-asymptotic state \emph{exactly} solves 
+  a regularized version of the exact asymptotic problem \emph{implicitly}.
 \end{frame}
 
 
 \begin{frame}
-  \begin{block}{Regularization}
+  \begin{block}{Explicit regularization}
   \begin{description}
     \item[Original problem] minimize $f(x)$
     \item[Regularized problem] minimize $f(x) + \frac{1}{\eta} g(x)$
@@ -106,9 +109,36 @@
 
   Regularization is a general principle where we add a penalty function to
   the optimization criterion.  E.g., $g(x) = \|x\|_2$ or $g(x) = \|x\|_1$.
-  The solution to the regularized problem is
-  often less sensitive to perturbations of the input data, and thus is
-  has better statistical robustness.
+
+  The solution to the regularized problem is often less sensitive to 
+  perturbations of the input data, and thus is has better statistical 
+  robustness.
+  
+  Typically $g(x)$ is added explicitly added, the modified problem is then
+  solved with a black-box solver, and $1/\eta$ is then determined by corss 
+  validation.
+\end{frame}
+
+
+\begin{frame}
+  \begin{block}{Implicit regularization}
+  \begin{description}
+    \item[Question] Can regularization be implemented implicitly by running
+                    fast approximation algorithms, rather than explicitly by
+                    solving a modified problem exactly?
+  \end{description}
+  \end{block}
+
+Leskovec, Lang, and Mahoney~\cite{LLM10_communities_CONF} empirically 
+observed implicit regularization for spectral-based versus flow-based 
+approximation algorithms for a graph partitioning problem.
+
+Mahoney~and~Orecchia~\cite{MO11-implementing} theoretically proved that 
+certain diffusion-based approximation algorithms implicitly solve regularized 
+versions of the exact algorithm.
+
+Here, we consider the Mahoney-Orecchia formulation.
+
 \end{frame}
 
 \begin{frame}
@@ -135,13 +165,17 @@
         edge node[above, rotate=45, anchor=south west] {This work}
           (regularization);
 \end{tikzpicture}
+
 From empirical experience, we know that certain diffusions are more
 appropriate for certain classes of graphs.
+
 From Mahoney and Orecchia, we know certain diffusions arise as solutions
 to certain regularized eigenvector problems.
-The current work attempts to complete the circle by showing that certain 
-type of regularization make certain implicit assumptions about structural
+
+The current work completes the circle by showing that certain type of 
+regularization make certain implicit assumptions about structural 
 properties of the graph.
+
 \end{frame}
 
 
@@ -177,19 +211,23 @@ properties of the graph.
   \begin{block}{Diffusion-based procedures}
   \begin{description}
     \item[Heat Kernel] Charge evolves according to the heat equation
-    	$\frac{\partial H_t}{\partial t} = - L H_t$.
-    \item[PageRank] Charge at a node evlolves by either moving to a neighbor
-    	of the current node or teleporting to a random node.
+    	$\frac{\partial H_t}{\partial t} = - L H_t$ for $t$ steps.
+    \item[PageRank] Charge at a node evolves by either moving to a neighbor
+    	of the current node or teleporting to a random node with 
+        probability $\gamma$.
     \item[Lazy Random Walk] Charge either stays at the current node or moves
-        to a neighbor.
+        to a neighbor, and does so for $q$ steps.
   \end{description}
   \end{block}
+
   In each of these diffusions, we distributed charge on the vertices of a
-  graph, and let the charge evolve according to certain dynamics.  The
-  specific choice of the dynamics (Heat Kernel, PageRank, or Lazy Random Walk)
-  is determined by structural features of the graph.  To date, there is some
-  empirical understanding of which dynamics are appropriate for which classes
-  of graphs, but no theoretical basis for these differences.
+  graph, and let the charge evolve (for some ``time'' $t$, $\gamma$, and $q$) 
+  according to certain dynamics.  
+
+  To date, there is some empirical understanding of which dynamics (Heat 
+  Kernel, PageRank, or Lazy Random Walk) are appropriate for which classes 
+  of graphs; but no theoretical basis for these differences.
+
 \end{frame}
 
 \begin{frame}
@@ -206,7 +244,7 @@ properties of the graph.
     & & &
     \end{aligned}
     \end{equation*}
-    (standard form)
+    (standard form: $x \in \mathbb{R}^{n}$)
   \column{0.3\textwidth}
     \begin{equation*}
     \begin{aligned}
@@ -218,11 +256,11 @@ properties of the graph.
     & & & X \succeq 0
     \end{aligned}
     \end{equation*}
-    (relaxed form)
+    (relaxed form: $X \in \mathbb{R}^{n \times n}$)
   \end{columns}
   \end{block}
-  The correspondence between the two is that the solutions satisfy
-  $x x^\mathrm{T} = X$.
+  The two problems are equivalent, in that the two is that the solutions
+  satisfy $x x^\mathrm{T} = X$.
 \end{frame}
 
 \begin{frame}
@@ -238,6 +276,7 @@ properties of the graph.
     \end{aligned}
     \end{equation*}
   \end{block}
+  This seems to make the problem much harder, but ...
 \end{frame}
 
 \begin{frame}
@@ -251,9 +290,15 @@ properties of the graph.
       $\mathrm{Tr}(X^k)$ && Lazy Random Walk
     \end{tabular}
   \end{block}
-  Mahoney \& Orecchia's result shows that certain choices of the penalty
-  function $G(X)$ result in the solutions of the regularized eigenvector
-  problem involving certain diffusions (summarized by the table).
+  Mahoney \& Orecchia's show that certain choices of the penalty function 
+  $G(X)$ result in the solutions of the regularized eigenvector problem 
+  involving certain diffusions (summarized by the table); or, equivalently, 
+  that running certain diffusion-based procedures \emph{implicitly} solves
+  these regularized SDPs \emph{exactly}.
+
+  The choice of $1/\eta$ is related to the choice of $t$, $\gamma$, and $q$; 
+  and this holds for any initial starting vector.
+
 \end{frame}
 
 
@@ -413,8 +458,10 @@ $\mathcal{L}$ plays the role of the penalty function.
   \end{proposition}
  
   With this specific prior, the MAP estimate solves the Mahoney-Orecchia SDP
-  related to the PageRank procedure.  Note: with different choices of priors,
-  one can recover the Heat Kernel and Lazy Random Walk SDP solutions.
+  related to the PageRank procedure.  
+
+  Note: with different choices of priors, one can recover the Heat Kernel 
+  and Lazy Random Walk SDP solutions.
 \end{frame}
 
 \begin{frame}[c]
@@ -500,8 +547,9 @@ $\mathcal{L}$ plays the role of the penalty function.
 \begin{frame}
   \centering
   \makebox{\includegraphics[scale=0.55]{plots/interpolate-graphs}}
-  When $s = 0$ the population graph with Laplacian $\mathcal{L}$ is
-  low-dimensional; as $s \to \infty$, the graph becomes an expander.
+  When $s = 0$ the population graph with Laplacian $\mathcal{L}$ is a
+  low-dimensional grid; as $s \to \infty$, it becomes an expander-like 
+  random graph.
 \end{frame}
 
 
@@ -582,6 +630,8 @@ $\alpha$ analogous to $\sqrt{s/\mu}$.
 	estimate $\mathcal{\hat L}$, i.e.
 	$\|\Theta - \hat \Theta_\eta\|_\mathrm{F}
 	   / \|\Theta - \hat \Theta\|_\mathrm{F} < 1$.
+
+        Similar empirical results are also seen for spectral norm error.
 \end{frame}
 
 \begin{frame}
@@ -644,9 +694,54 @@ qualitatively with Proposition~\ref{P:map-sdp} (right).
 \begin{frame}[c]
   \begin{block}{}
   \begin{center}
-    \huge{Conclusion}
+    \huge{Conclusions}
   \end{center}
   \end{block}
+
+\begin{itemize}
+\item
+We have
+provided a statistical interpretation for the observation that popular 
+diffusion-based procedures to compute a quick approximation to the first 
+nontrivial eigenvector of a data graph Laplacian exactly solve a certain 
+regularized version of the problem.
+\item
+We have
+provided a statistical framework for regularized graph estimation, 
+including providing a sampling model and applying Bayesian inference 
+ideas directly to a graph Laplacian.
+\item
+We have
+made explicit the implicit prior assumptions associated with making 
+certain decisions (that are already made in practice) to speed up 
+computations.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[c]
+  \begin{block}{}
+  \begin{center}
+    \huge{Extensions}
+  \end{center}
+  \end{block}
+
+\begin{itemize}
+\item
+Obtain our main proposition with a more empirically-plausible model than the 
+Wishart distribution.
+\item
+Extend our empirical evaluation to much larger and more realistic data sets.
+\item
+Apply our methodology to other widely-used approximation algorithms.
+\item
+Characterize when implicitly regularizing an eigenvector leads to better 
+statistical behavior in downstream applications where that eigenvector is 
+used.  
+\item
+Understand these algorithmic-statistical tradeoffs in large-scale data 
+analysis more generally.
+\end{itemize}
 \end{frame}
 
 
