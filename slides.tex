@@ -417,6 +417,26 @@ $\mathcal{L}$ plays the role of the penalty function.
 \end{block}
 \end{frame}
 
+\begin{frame}
+\begin{block}{Heuristic justification for Wishart}
+  \begin{enumerate}
+  
+    \item $L_0 = \sum_{i=1}^{m} x_i x_i'$, where $x_i(u) = +1$, $x_i(v) = -1$,
+    and $(u,v)$ is the $i$th edge in graph.
+
+    \item Approximate distribution of $x_i$ by $\tilde x_i \sim
+    \mathrm{Normal}(0, \mathcal{L}_0)$; first two moments of $x_i$ and $\tilde
+    x_i$ match.
+
+    \item $\sum_{i=1}^m \tilde x_i \tilde x_i'$ is distributd as
+    $\mathrm{Wishart}(\mathcal{L}_0, m)$.
+
+    \item Similar approximation holds for normalized Laplacian.
+
+  \end{enumerate}
+\end{block}
+\end{frame}
+
 
 \begin{frame}[c]
   \begin{block}{}
