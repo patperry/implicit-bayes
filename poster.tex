@@ -188,6 +188,7 @@ Approximation}
     \end{itemize}
     \vspace{1em}
 
+\begin{center}
   \begin{tikzpicture}
     [pre/.style={<-, >=stealth', semithick},
      post/.style={->, >=stealth', semithick},
@@ -227,6 +228,7 @@ Approximation}
     \node (py label)    [py, at=(prior label |- likelihood)]    {$p(y | \beta)$};
     \node (map label)   [at=(prior label |- l2), align=center] {MAP\\ Estimate};
   \end{tikzpicture}
+  \end{center}
 
   \vspace{2em}
   Regularization is equivalent to ``Bayesianization'' in the sense that
