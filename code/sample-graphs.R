@@ -28,10 +28,10 @@ for (i in seq_along(psamp)) {
 	adj[[i]] <- adj1
 }
 
-#pdf("plots/sample-graphs.pdf", width=15, height=2.5)
-#par(mfrow=c(1, length(s)))
-pdf("plots/sample-graphs.pdf", width=7.5, height=5)
-par(mfrow=c(2, (length(psamp) + 1) %/% 2))
+pdf("plots/sample-graphs-long.pdf", width=15, height=2.5)
+par(mfrow=c(1, length(psamp)))
+#pdf("plots/sample-graphs.pdf", width=7.5, height=5)
+#par(mfrow=c(2, (length(psamp) + 1) %/% 2))
 for (i in seq_along(psamp)) {
 	plot(adj[[i]], xlab="", ylab="", axes=FALSE,
 	     main=bquote(m/mu == .(psamp[i])))
