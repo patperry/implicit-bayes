@@ -87,7 +87,7 @@
   \end{description}
   \end{block}
 
-  For example, one can distributed charge (randomly, adversarially, etc) on 
+  For example, one can distribute charge (randomly, adversarially, etc.) on 
   the data points and let the distribution of the charge evolve according to 
   a diffusion---the properties of this diffusion are related to the geometry 
   of the dataset.
@@ -114,8 +114,8 @@
   perturbations of the input data, and thus is has better statistical 
   robustness.
   
-  Typically $g(x)$ is added explicitly added, the modified problem is then
-  solved with a black-box solver, and $1/\eta$ is then determined by corss 
+  Typically $g(x)$ is explicitly added, the modified problem is then
+  solved with a black-box solver, and $1/\eta$ is then determined by cross 
   validation.
 \end{frame}
 
@@ -196,9 +196,9 @@ properties of the graph.
   \begin{itemize}
     \item vertex set $V = \{ 1, \dotsc, n \}$ 
     \item edge set $E \subset V \times V$
-    \item edge weight function $w : E \to \mathbb{R}^+$
-    \item degree function $d : V \to \mathbb{R}^+$, $d(u) = \sum_v w(u,v)$
-    \item diagonal degree matrix $D \in \mathbb{R}^\times{V \times V}$, $D(v,v) = d(v)$
+    \item edge weight function $w : E \to \mathbb{R}_+$
+    \item degree function $d : V \to \mathbb{R}_+$, $d(u) = \sum_v w(u,v)$
+    \item diagonal degree matrix $D \in \mathbb{R}^{V \times V}$, $D(v,v) = d(v)$
     \item combinatorial Laplacian $L_0 \in \mathbb{R}^{V \times V}$,
     	$L_0(u,v) = \begin{cases}
 		-w(u,v) &\text{when $u \neq v$} \\
@@ -262,7 +262,7 @@ properties of the graph.
     (relaxed form: $X \in \mathbb{R}^{n \times n}$)
   \end{columns}
   \end{block}
-  The two problems are equivalent, in that the two is that the solutions
+  The two problems are equivalent, in that the solutions
   satisfy $x x^\mathrm{T} = X$.
 \end{frame}
 
