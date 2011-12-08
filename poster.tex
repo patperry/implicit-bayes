@@ -1,0 +1,388 @@
+\documentclass[final,hyperref={pdfpagelabels=false}]{beamer}
+\usepackage{grffile}
+\mode<presentation>{\usetheme{NIPS}}
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath,amsthm, amssymb, latexsym}
+\usepackage{tikz}
+\usetikzlibrary{arrows,backgrounds,fit,petri,positioning,shapes}
+%\usefonttheme[onlymath]{serif}
+\boldmath
+\usepackage[orientation=portrait,size=a0,scale=1.4,debug]{beamerposter}
+% change list indention level
+% \setdefaultleftmargin{3em}{}{}{}{}{}
+
+
+%\usepackage{snapshot} % will write a .dep file with all dependencies, allows for easy bundling
+
+\usepackage{array,booktabs,tabularx}
+\newcolumntype{Z}{>{\centering\arraybackslash}X} % centered tabularx columns
+\newcommand{\pphantom}{\textcolor{ta3aluminium}} % phantom introduces a vertical space in p formatted table columns??!!
+
+\listfiles
+\providecommand\thispdfpagelabel[1]{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\graphicspath{{figures/}}
+
+\newcommand{\reals}{\mathbb{R}}
+\newcommand{\trans}{\mathrm{T}}
+
+\DeclareMathOperator{\Tr}{Tr}
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\rank}{rank}
+\newcommand{\Normal}[1][]{\mathcal{N}_{#1}}
+\newcommand{\Wishart}[1][]{\mathcal{W}_{#1}}
+
+\newcommand{\prob}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\DeclareMathOperator{\RSS}{RSS}
+
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{remark}[theorem]{Remark}
+
+
+\title{\huge Regularized Laplacian Estimation and \\ Fast Eigenvector
+Approximation}
+\author{Patrick O. Perry and Michael W. Mahoney}
+\institute{NYU Stern and Stanford University}
+%\date[Sep. 8th, 2009]{Sep. 8th, 2009}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newlength{\columnheight}
+\setlength{\columnheight}{105cm}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\begin{frame}
+  \begin{columns}
+    % ---------------------------------------------------------%
+    % Set up a column 
+    \begin{column}{.49\textwidth}
+      \begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
+        \begin{minipage}[T]{.95\textwidth}  % tweaks the width, makes a new \textwidth
+          \parbox[t][\columnheight]{\textwidth}{ % must be some better way to set the the height, width and textwidth simultaneously
+            % Since all columns are the same length, it is all nice and tidy.  You have to get the height empirically
+            % ---------------------------------------------------------%
+            % fill each column with content            
+            \begin{block}{Structure in high-dimensional data}
+              \begin{itemize}
+
+              \item Eigenvectors reveal structure
+	        \begin{description}
+	      	\item[Graph Laplacian] spectral clustering
+		\item[Covariance matrix] factor analysis
+		\item[Modularity matrix] community detection
+		\end{description}
+
+              \item Diffusions reveal structure
+	        \begin{description}
+		\item[Heat diffusion] evolution determined by heat equation
+		\item[PageRank surfer] random walk with teleportation
+		\item[Truncated random walk] finite-length random walk
+		\end{description}
+
+              \end{itemize}              
+
+		\vspace{1em}
+	      One way to find structure in a high-dimensional dataset is by
+	      examining the eigenstructures of certain matrices related to the
+	      data; another way is by distributing charge (randomly,
+	      adversarially, etc.) on the data points and letting the
+	      distribution of the charge evolve according to a diffusion.
+
+            \end{block}
+
+            \vfill
+
+            \begin{block}{Three eigenvector problems for graph Laplacian $L$}
+              \begin{itemize}
+              \item Original: minimize $x' L x$
+              \item Relaxed to an SDP: minimize $\mathrm{Tr}(L X)$
+              \item Regularized: minimize $\mathrm{Tr}(L X) + \tfrac{1}{\eta} G(X)$
+              \end{itemize}
+
+	      \vspace{1em}
+	      Mahoney and Orechhia (2011) show that certain choices of the penalty
+	      function $G(X)$ result in the solutions of the regularized
+	      eigenenvector problem; equivalently, running certain
+	      diffusion-based procedures \emph{implicitly} solves a
+	      regularized SDP \emph{exactly}.  The choice of $1/\eta$ is
+	      related to the parameters of the diffusion.
+            \end{block}
+
+	    \vfill
+
+            \begin{block}{Regularization}
+	      \begin{itemize}
+	        \item In \emph{explicit} regularization, we add a ``penalty'' to the
+		optimization criterion.
+
+		\item \textbf{Question:} Can regularization be implemented
+		\emph{implicitly} by running fast approximation algorithms, rather
+		than explicitly solving a modified problem exactly?
+		\begin{itemize}
+		\item Leskovec, Lang, and Mahoney (2010) empirically observed
+		implicit regularization for spectral-based versus flow-based
+		approximation algorithms for graph partitioning.
+
+		\item Mahoney and Orecchia (2011) theoretically proved that
+		certain diffusion-based approximation algorithms implicitly solve
+		regularized versions of the exact algorithm.
+		\end{itemize}
+
+		\item \textbf{Question:} Is there a theoretical basis for
+		which dynamics (Heat Kernel, PageRank, or Lazy Random Walk) are appropriate
+		for which classes of graphs?
+
+		\begin{itemize}
+		\item We can answer this question by filling in the missing
+		link:
+	    \begin{center}
+	    \begin{tikzpicture}[scale=2]
+	 \matrix[nodes={draw, ultra thick, fill=blue!20, minimum width=6em, minimum height=4em},
+        row sep=1em,column sep=3em,ampersand replacement=\&] {
+      \node[ellipse] (graphs) {Graphs};\&
+      \node[ellipse] (regularization) {Regularization};\&
+      \node[ellipse] (structure) {$\stackrel{\hbox{Diffusion/}}{\hbox{Structure}}$};\\
+    };
+    \path[<->, ultra thick]
+      (regularization)
+        edge node[auto, rotate=45, anchor=south west] {MO (2011)}
+          (structure)
+      (graphs)
+        edge [bend right=30] node[below] {Empirical experience}
+          (structure);
+    \path[<->, ultra thick, dashed]
+      (graphs)
+        edge node[above, rotate=45, anchor=south west] {???}
+          (regularization);
+\end{tikzpicture}
+\end{center}
+\end{itemize}
+\end{itemize}
+	    \end{block}
+
+            \vfill
+
+
+            \vfill
+            \begin{block}{Analogy to linear regression: regularization as ``Bayesianization''}
+  \begin{itemize}
+    \item Observe $n$ predictor-response pairs in $\mathbb{R}^p \times \mathbb{R}$:
+      $(x_1, y_1), \dotsc, (x_n, y_n)$
+    \item Original problem: find $\beta$ to minimize $F(\beta) =
+    \sum_i \|y_i - \beta' x_i \|_2^2$
+    \item Regularized problem: minimize $F(\beta) + \frac{1}{\eta} \| \beta \|_2^2$
+    (ridge) or minimize $F(\beta) + \frac{1}{\eta} \| \beta \|_1$ (lasso)
+    \item Bayesian formulation:
+  \begin{tikzpicture}
+    [pre/.style={<-, >=stealth', semithick},
+     post/.style={->, >=stealth', semithick},
+     py/.style={color=blue},
+     pbeta/.style={color=red},
+     scale=0.75, transform shape]
+
+    \node (model)
+      {$y_i | x_i, \beta \sim \mathrm{Normal}(x_i' \beta, \sigma^2)$} ;
+    \node (likelihood) [py, below=of model, yshift=1cm]
+      {$\exp\{ -\frac{1}{2 \sigma^2} \sum_i (y_i - \beta' x_i)^2\}$};
+
+    \node (normal)  [below left=of likelihood, xshift=2.5cm]
+      {$\beta_j \sim \mathrm{Normal}(0, \tau^2)$};
+    \node (normal prior) [pbeta, below=of normal, yshift=1cm]
+      {$\exp\{ -\frac{1}{2 \tau^2} \|\beta\|_2^2 \}$};
+
+    \node (laplace) [below right=of likelihood, xshift=-2.5cm]
+      {$\beta_j \sim \mathrm{Laplace}(\mu)$};
+    \node (laplace prior) [pbeta, below=of laplace, yshift=1cm]
+      {$\exp\{ -\frac{1}{\mu} \|\beta\|_1 \}$};
+
+    \node (tee) [circle, at= (model |- normal), yshift=1cm, inner sep=0,
+                 fill=black, minimum size=0.5pt, draw] {}
+      edge[pre] (likelihood)
+      edge[post] (normal)
+      edge[post] (laplace);
+
+    \node (l2) [below=of normal prior]  {$\ell_2$-regularized LS}
+      edge[pre] (normal prior);
+    \node (l1) [below=of laplace prior] {$\ell_1$-regularized LS}
+      edge[pre] (laplace prior);
+
+    \node (prior label) [left=of normal]                    {Prior};
+    \node (pbeta label) [pbeta, at=(prior label |- normal prior)]  {$p(\beta)$};
+    \node (model label) [at=(prior label |- model)]         {Model};
+    \node (py label)    [py, at=(prior label |- likelihood)]    {$p(y | \beta)$};
+    \node (map label)   [at=(prior label |- l2), align=center] {MAP\\ Estimate};
+  \end{tikzpicture}
+  \end{itemize}
+
+  \vspace{1em}
+  Regularization is equivalent to ``Bayesianization'' in the sense that
+  the solution to the regularized problem is equal to the maximim \textit{a posteriori} probability
+  (MAP) estimate of the parameter with a prior determined by the
+  regularization penalty.
+
+	    
+            \end{block}
+          }
+        \end{minipage}
+      \end{beamercolorbox}
+    \end{column}
+    % ---------------------------------------------------------%
+    % end the column
+
+    % ---------------------------------------------------------%
+    % Set up a column 
+    \begin{column}{.49\textwidth}
+      \begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
+        \begin{minipage}[T]{.95\textwidth} % tweaks the width, makes a new \textwidth
+          \parbox[t][\columnheight]{\textwidth}{ % must be some better way to set the the height, width and textwidth simultaneously
+            % Since all columns are the same length, it is all nice and tidy.  You have to get the height empirically
+            % ---------------------------------------------------------%
+            % fill each column with content
+            
+            \begin{block}{Bayesian inference for the population Laplacian (broadly)}
+  \begin{itemize}
+    \item population Laplacian, $\mathcal{L}$ from prior $p(\mathcal{L})$
+    \item observed (sample) Laplacian from distribution $p(L \mid \mathcal{L})$
+    \item estimate $\mathcal{\hat L} = \argmax_{\mathcal{L}} \{ p(\mathcal{L} \mid L) \}$
+    \item equivalently,
+      $\mathcal{\hat L} = \argmin_{\mathcal{L}} \{ -\log p(L \mid \mathcal{L}) -\log p(\mathcal{L}) \}$
+  \end{itemize}
+
+  \vspace{1em}
+
+  To apply the Bayesian formalism to the Laplacian eigenvector problem, we
+assume that there exists a ``population'' Laplacian $\mathcal{L}$; we construe
+the observed (sample) Laplacian as a noisy version of $\mathcal{L}$.  In
+estimating $\mathcal{L}$, the negative log of the likelihood plays the role of
+the optimization criterion; the negative log of the prior distribution for
+$\mathcal{L}$ plays the role of the penalty function.
+  
+            \end{block}
+
+            \vfill
+            \begin{block}{Results: Manually Aligned Faces}
+            \end{block}
+
+            \vfill
+            \begin{block}{Results: Unaligned Faces}
+              \begin{columns}
+                \begin{column}{.59\textwidth}
+                  \begin{itemize}
+                  \item Automatically aligned by Viola \& Jones
+                  \end{itemize}
+                  \vskip-0.5ex
+                  \begin{table}
+                    \centering
+                    \small
+                    \begin{tabular}{@{} p{.4\linewidth} r r @{}}
+                      \toprule 
+                      Descriptor  &      \multicolumn{2}{c @{}}{Error Rates [\%]}      \\
+                      \cmidrule(l){2-3}   
+                      &   AR-Face       & CMU-PIE  \\
+                      \cmidrule(r){1-1}  \cmidrule(lr){2-2}  \cmidrule(l){3-3}  
+                      SURF-64     &   5.97          & 15.32    \\ 
+                      SURF-128    &   5.71          & 11.42    \\ 
+                      SIFT        &   5.45          & 8.32     \\  
+                      \addlinespace
+                      U-SURF-64   &   5.32          & 5.52     \\  
+                      U-SURF-128  &   5.71          & \textbf{4.86}  \\ 
+                      U-SIFT      &   \textbf{4.15} & 8.99     \\  
+                      \bottomrule
+                    \end{tabular}
+                  \end{table}
+                \end{column}
+                \begin{column}{.39\textwidth}                
+                  \vskip-3ex
+                  \begin{itemize}
+                  \item Manually aligned faces 
+
+%                      \includegraphics[width=0.9\linewidth]{hanselmann-thesis/slides/figures/alignment_cmu}
+
+                  \item Unaligned faces 
+
+%                      \includegraphics[width=0.9\linewidth]{hanselmann-thesis/slides/figures/unalignment_cmu}
+
+                  \end{itemize}
+                \end{column}
+              \end{columns}
+            \end{block}
+            \vfill
+            \begin{block}{Results: Partially Occluded Faces}
+              \begin{itemize}
+              \item AR-Face: 110 classes, 110 train (``one-shot'' training), 550 test
+              \end{itemize}
+              \vskip-0.5ex
+              \begin{table}
+                \small
+                \centering
+                \begin{tabular}{@{} l @{} r r r r r r@{}}
+                  \toprule 
+                  Descriptor          & \multicolumn{6}{c @{}}{Error Rates [\%]}                                                                 \\
+                  \cmidrule(l){2-7}
+                  & \textit{AR1scarf}  & \textit{AR1sun}  & \textit{ARneutral} & \textit{AR2scarf} & \textit{AR2sun}  & Avg. \\
+                  \cmidrule(r){1-1}     \cmidrule(lr){2-2}   \cmidrule(lr){3-3} \cmidrule(lr){4-4}   \cmidrule(lr){5-5}  \cmidrule(lr){6-6}  \cmidrule(l){7-7} 
+                  SURF-64             & 2.72             & 30.00          & 0.00                & 4.54            & 47.27      & 16.90 \\        
+                  SURF-128            & 1.81             & 23.63          & 0.00                & 3.63            & 40.90      & 13.99 \\
+                  SIFT                & 1.81             & 24.54          & 0.00                & 2.72            & 44.54      & 14.72 \\
+                  \addlinespace
+                  U-SURF-64           & 4.54             & 23.63          & 0.00                & 4.54            & 47.27      & 15.99 \\
+                  U-SURF-128          & 1.81             & \textbf{20.00} & 0.00                & 3.63            & 41.81      & 13.45 \\
+                  U-SIFT              & \textbf{1.81}    & 20.90          & \textbf{0.00}       & \textbf{1.81}   & \textbf{38.18} & \textbf{12.54} \\
+                  \cmidrule(r){1-1}     \cmidrule(lr){2-2}   \cmidrule(lr){3-3} \cmidrule(lr){4-4}   \cmidrule(lr){5-5}  \cmidrule(lr){6-6}  \cmidrule(l){7-7}
+                  U-SURF-128+R        & 1.81             & 19.09          & 0.00                & 3.63             & 43.63     & 13.63 \\
+                  U-SIFT+R            & 2.72             & \textbf{14.54} & 0.00                & \textbf{0.90}    & 35.45     & 10.72 \\
+                  U-SURF-128+U-SIFT+R &  \textbf{0.90}   & 16.36          & \textbf{0.00}       & 2.72             & \textbf{32.72} & \textbf{10.54} \\       
+                  % \midrule 
+                  % \midrule 
+                  % DCT \cite{ekenel:facialocclusion:icb2009}, baseline%
+                  % & 8.2              & 61.8           & 7.3                & 16.4            & 62.7       & 31.28 \\
+                  % DCT \cite{ekenel:facialocclusion:icb2009}, realigned%
+                  % & 2.7              & 1.8            & 0.0                & 6.4             & 4.5        & 3.08  \\
+                  \bottomrule
+                \end{tabular}
+              \end{table}
+            \end{block}
+            \vfill
+            \begin{block}{Conclusions}
+              \begin{itemize}
+              \item Grid-based local feature extraction instead of interest points
+              \item Local descriptors:
+                \begin{itemize}
+                \item upright descriptor versions achieved better results
+                \item SURF-128 better than SURF-64
+                \end{itemize}
+              \item System robustness: manually aligned/unaligned/partially occluded faces
+                \begin{itemize}
+                \item SURF more robust to illumination
+                \item SIFT more robust to changes in viewing conditions
+                \end{itemize}
+              \item RANSAC-based system combination and outlier removal
+              \end{itemize}
+            \end{block}
+          }
+          % ---------------------------------------------------------%
+          % end the column
+        \end{minipage}
+      \end{beamercolorbox}
+    \end{column}
+    % ---------------------------------------------------------%
+    % end the column
+  \end{columns}
+  \vskip1ex
+  %\tiny\hfill\textcolor{ta2gray}{Created with \LaTeX \texttt{beamerposter}  \url{http://www-i6.informatik.rwth-aachen.de/~dreuw/latexbeamerposter.php}}
+  \tiny\hfill{Created with \LaTeX \texttt{beamerposter}  \url{http://www-i6.informatik.rwth-aachen.de/~dreuw/latexbeamerposter.php} \hskip1em}
+\end{frame}
+\end{document}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-PDF-mode: t
+%%% End:
