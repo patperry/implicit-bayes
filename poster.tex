@@ -103,11 +103,16 @@ Approximation}
             \vfill
 
             \begin{block}{Three eigenvector problems for graph Laplacian $L$}
+	    \begin{itemize}
+	      \item Consider three structure-revealing eigenvector problems for a
+	      (normalized) graph Laplacian:
+
               \begin{itemize}
               \item Original: minimize $x' L x$
               \item Relaxed to an SDP: minimize $\mathrm{Tr}(L X)$
               \item Regularized: minimize $\mathrm{Tr}(L X) + \tfrac{1}{\eta} G(X)$
               \end{itemize}
+	      \end{itemize}
 
 	      \vspace{1em}
 	      Mahoney and Orechhia (2011) show that certain choices of the penalty
@@ -116,6 +121,17 @@ Approximation}
 	      diffusion-based procedures \emph{implicitly} solves a
 	      regularized SDP \emph{exactly}.  The choice of $1/\eta$ is
 	      related to the parameters of the diffusion.
+
+\begin{center}
+    \begin{tabular}{ccc}
+      $G(X)$ &\phantom{MMM} & Solution \\
+      \hline
+      $\mathrm{Tr}(X \log X) - \mathrm{Tr}(X)$ && Heat Kernel \\
+      $- \log |X|$ && PageRank  \\
+      $\mathrm{Tr}(X^k)$ && Lazy Random Walk
+    \end{tabular}
+\end{center}
+	      
             \end{block}
 
 	    \vfill
@@ -125,7 +141,7 @@ Approximation}
 	        \item In \emph{explicit} regularization, we add a ``penalty'' to the
 		optimization criterion.
 
-		\vspace{2em}
+		\vspace{1em}
 		\item \textbf{Question:} Can regularization be implemented
 		\emph{implicitly} by running fast approximation algorithms, rather
 		than explicitly solving a modified problem exactly?
@@ -139,7 +155,7 @@ Approximation}
 		regularized versions of the exact algorithm.
 		\end{itemize}
 
-		\vspace{2em}
+		\vspace{1em}
 		\item \textbf{Question:} Is there a theoretical basis for
 		which dynamics (Heat Kernel, PageRank, or Lazy Random Walk) are appropriate
 		for which classes of graphs?
